@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # D30 Design System
 
 > **D30** — short for **"Dev aos 30"** ("Dev at 30") — a free, open community in **Brazilian Portuguese** for people transitioning into a developer career, especially those starting later in life (around 30, but explicitly open to any age). Built by **Augusto** (`@Dev.aos30` on Instagram), who is documenting his own transition from scratch.
@@ -298,3 +299,7 @@ JetBrains Mono is included as a forward-looking mono choice (not used in the sou
 4. New imagery: B&W portrait or no imagery at all. New iconography: Lucide, sparingly. New copy: Brazilian Portuguese, blunt, no emoji.
 
 When in doubt: **less is more, dark not gritty, purple is the only accent.**
+=======
+# D30
+My project, it will be a huge community
+>>>>>>> e513c20be629379eda661cdba8f1049f7966ed1b
