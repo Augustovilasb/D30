@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem -Recurse \"C:\\\\Users\\\\User\\\\Desktop\\\\D30 Design System\" | Where-Object { -not $_.PSIsContainer } | ForEach-Object { \"$\\($_.Extension\\) | $\\($_.FullName\\)\" } | Sort-Object)",
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\User\\\\Desktop\\\\D30 Design System\\\\reference\\\\d30-original-index.html\" -Pattern 'href=|src=' | ForEach-Object { $_.Line.Trim\\(\\) })",
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\User\\\\Desktop\\\\D30 Design System\\\\reference\\\\d30-v3-single-file.html\" -Pattern 'href=|src=' | Select-Object -First 10 | ForEach-Object { $_.Line.Trim\\(\\) })"
+    ]
+  }
+}

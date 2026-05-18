@@ -1,0 +1,270 @@
+/* ════════════════════════════════════════════════════════════
+   D30 Design System — Color + Type tokens
+   ════════════════════════════════════════════════════════════
+   Brand: D30 ("Dev aos 30") — comunidade de devs em transição
+   Aesthetic: dark, minimal, indie, almost-black canvas with a
+   single signature purple accent. Inter @ 300–900.
+   ════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* ── BASE PALETTE — backgrounds (near-black stack) ────────── */
+  --d30-bg:        #080808;   /* page canvas */
+  --d30-bg-2:      #0f0f0f;   /* cards, nav, modal surface */
+  --d30-bg-3:      #141414;   /* hover state for cards */
+  --d30-bg-4:      #1a1a1a;   /* active tab, scrollbar thumb */
+
+  /* ── BASE PALETTE — foreground / text ─────────────────────── */
+  --d30-text:      #f0f0f0;   /* primary text */
+  --d30-muted:     #888888;   /* secondary text, body copy */
+  --d30-muted-2:   #555555;   /* tertiary, eyebrows, hints */
+  --d30-text-inverse: #ffffff;/* text on purple */
+
+  /* ── BASE PALETTE — borders & dividers ────────────────────── */
+  --d30-border:    rgba(255,255,255,0.07);   /* default hairline */
+  --d30-border-2:  rgba(255,255,255,0.12);   /* stronger hairline */
+  --d30-border-purple-soft:  rgba(139,124,248,0.25);
+  --d30-border-purple-focus: rgba(139,124,248,0.5);
+
+  /* ── BRAND PURPLE — the single signature hue ─────────────── */
+  --d30-purple:    #8b7cf8;   /* primary accent — hover, dot, glow */
+  --d30-purple-2:  #6d5ce6;   /* default purple — buttons, CTAs */
+  --d30-purple-3:  #4c3db5;   /* deep purple — gradient anchor */
+
+  /* Purple tints (alpha overlays for backgrounds / glows) */
+  --d30-purple-bg-soft:   rgba(139,124,248,0.08);  /* dashed cta bg */
+  --d30-purple-bg-tint:   rgba(139,124,248,0.10);  /* badge bg */
+  --d30-purple-bg-hover:  rgba(139,124,248,0.14);  /* dashed cta hover */
+  --d30-purple-bg-strong: rgba(139,124,248,0.30);  /* press / click */
+  --d30-purple-glow:      rgba(139,124,248,0.40);  /* dot glow */
+
+  /* ── SEMANTIC ACCENT COLORS (used sparingly for tags) ─────── */
+  --d30-success:   #4ade80;
+  --d30-success-bg: rgba(34,197,94,0.12);
+  --d30-warning:   #fbbf24;
+  --d30-warning-bg: rgba(251,191,36,0.12);
+  --d30-pink:      #f472b6;
+  --d30-pink-bg:   rgba(244,114,182,0.12);
+  --d30-orange:    #fb923c;
+  --d30-danger:    #ef4444;
+
+  /* ── ELEVATION / SHADOWS ──────────────────────────────────── */
+  --d30-shadow-card:   0 8px 24px rgba(0,0,0,0.40);
+  --d30-shadow-modal:  0 12px 32px rgba(0,0,0,0.50);
+  --d30-shadow-toast:  0 8px 24px rgba(0,0,0,0.50);
+  --d30-shadow-purple: 0 8px 28px rgba(139,124,248,0.25);
+  --d30-ring-purple:   0 0 0 2px var(--d30-border-purple-soft);
+  --d30-glow-purple:   0 0 20px var(--d30-purple-glow);
+
+  /* ── RADII ────────────────────────────────────────────────── */
+  --d30-radius-xs:  4px;   /* tag pills */
+  --d30-radius-sm:  6px;   /* nav links */
+  --d30-radius-md:  8px;   /* inputs, items, small btns */
+  --d30-radius-lg:  10px;  /* primary buttons, ghost buttons */
+  --d30-radius-xl:  12px;  /* cards, menus, toasts */
+  --d30-radius-2xl: 14px;  /* large surfaces (forum) */
+  --d30-radius-3xl: 16px;  /* feature grid, profile card */
+  --d30-radius-4xl: 20px;  /* modal */
+  --d30-radius-5xl: 24px;  /* story card */
+  --d30-radius-pill: 999px;/* badges, chips */
+
+  /* ── SPACING SCALE (rem-based, 4px steps) ─────────────────── */
+  --d30-space-1: 0.25rem;   /* 4  */
+  --d30-space-2: 0.5rem;    /* 8  */
+  --d30-space-3: 0.75rem;   /* 12 */
+  --d30-space-4: 1rem;      /* 16 */
+  --d30-space-5: 1.25rem;   /* 20 */
+  --d30-space-6: 1.5rem;    /* 24 */
+  --d30-space-8: 2rem;      /* 32 */
+  --d30-space-10: 2.5rem;   /* 40 */
+  --d30-space-12: 3rem;     /* 48 */
+  --d30-space-16: 4rem;     /* 64 */
+  --d30-space-20: 5rem;     /* 80 */
+  --d30-space-24: 6rem;     /* 96 */
+
+  /* ── LAYOUT ───────────────────────────────────────────────── */
+  --d30-nav-height: 56px;
+  --d30-container-narrow: 720px;   /* roadmap, modals body */
+  --d30-container-prose:  760px;   /* about text */
+  --d30-container-wide:   1100px;  /* forum */
+  --d30-container-full:   1280px;
+
+  /* ── MOTION ───────────────────────────────────────────────── */
+  --d30-ease-out: cubic-bezier(.2,.7,.2,1);   /* letterIn, modal */
+  --d30-ease-default: ease;
+  --d30-dur-fast:    0.15s;   /* btn translate */
+  --d30-dur-base:    0.2s;    /* color, background swaps */
+  --d30-dur-med:     0.3s;    /* transforms, scale */
+  --d30-dur-slow:    0.5s;    /* image zoom on hover */
+  --d30-dur-page:    0.35s;   /* page fade */
+
+  /* ── TYPOGRAPHY — families ────────────────────────────────── */
+  --d30-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --d30-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* ── TYPOGRAPHY — weights ─────────────────────────────────── */
+  --d30-w-light:    300;
+  --d30-w-regular:  400;
+  --d30-w-medium:   500;
+  --d30-w-semibold: 600;
+  --d30-w-bold:     700;
+  --d30-w-extrabold:800;
+  --d30-w-black:    900;
+
+  /* ── TYPOGRAPHY — semantic sizes ──────────────────────────── */
+  /* Display — used for the giant D30 wordmark in hero */
+  --d30-fs-display:    clamp(56px, 10vw, 96px);
+  --d30-lh-display:    0.95;
+  --d30-tracking-display: -4px;
+
+  /* H1 — page titles (About, Roadmap) */
+  --d30-fs-h1:         clamp(36px, 6vw, 56px);
+  --d30-lh-h1:         1.1;
+  --d30-tracking-h1:   -2px;
+
+  /* H2 — modal titles */
+  --d30-fs-h2:         24px;
+  --d30-lh-h2:         1.2;
+  --d30-tracking-h2:   -1px;
+
+  /* H3 — sub-section / profile name */
+  --d30-fs-h3:         20px;
+  --d30-lh-h3:         1.3;
+  --d30-tracking-h3:   -0.5px;
+
+  /* H4 — story card title (responsive) */
+  --d30-fs-h4:         18px;
+  --d30-fs-story-title: clamp(32px, 5vw, 52px);
+
+  /* Body sizes */
+  --d30-fs-lede:       17px;   /* hero desc, about body */
+  --d30-fs-body:       15px;   /* default body */
+  --d30-fs-body-sm:    14px;   /* card body */
+  --d30-fs-body-xs:    13px;   /* nav, ui labels, msgs */
+
+  /* Meta + micro */
+  --d30-fs-meta:       12px;
+  --d30-fs-micro:      11px;
+  --d30-fs-stat:       28px;
+
+  /* Line heights */
+  --d30-lh-tight:      1.3;
+  --d30-lh-snug:       1.4;
+  --d30-lh-normal:     1.55;
+  --d30-lh-relaxed:    1.6;
+  --d30-lh-loose:      1.7;
+  --d30-lh-extra-loose:1.8;
+
+  /* Letter-spacing — used a lot for eyebrows + caps labels */
+  --d30-tracking-eyebrow:  2px;  /* PAGE LABEL · STRIP LABEL */
+  --d30-tracking-caps-sm:  1.5px;
+  --d30-tracking-caps:     1px;
+  --d30-tracking-tight:    -0.3px;
+}
+
+/* ════════════════════════════════════════════════════════════
+   SEMANTIC TYPOGRAPHY CLASSES
+   ════════════════════════════════════════════════════════════ */
+
+.d30-display {
+  font-family: var(--d30-font-sans);
+  font-weight: var(--d30-w-black);
+  font-size: var(--d30-fs-display);
+  line-height: var(--d30-lh-display);
+  letter-spacing: var(--d30-tracking-display);
+  color: var(--d30-text);
+}
+
+.d30-h1 {
+  font-family: var(--d30-font-sans);
+  font-weight: var(--d30-w-extrabold);
+  font-size: var(--d30-fs-h1);
+  line-height: var(--d30-lh-h1);
+  letter-spacing: var(--d30-tracking-h1);
+  color: var(--d30-text);
+}
+.d30-h1 span,
+.d30-h1 .accent { color: var(--d30-purple); }
+
+.d30-h2 {
+  font-family: var(--d30-font-sans);
+  font-weight: var(--d30-w-extrabold);
+  font-size: var(--d30-fs-h2);
+  line-height: var(--d30-lh-h2);
+  letter-spacing: var(--d30-tracking-h2);
+  color: var(--d30-text);
+}
+
+.d30-h3 {
+  font-family: var(--d30-font-sans);
+  font-weight: var(--d30-w-bold);
+  font-size: var(--d30-fs-h3);
+  line-height: var(--d30-lh-h3);
+  letter-spacing: var(--d30-tracking-h3);
+  color: var(--d30-text);
+}
+
+.d30-h4 {
+  font-family: var(--d30-font-sans);
+  font-weight: var(--d30-w-semibold);
+  font-size: var(--d30-fs-h4);
+  line-height: var(--d30-lh-snug);
+  color: var(--d30-text);
+}
+
+/* "Eyebrow" caps label — used above every page title */
+.d30-eyebrow {
+  font-family: var(--d30-font-sans);
+  font-weight: var(--d30-w-semibold);
+  font-size: var(--d30-fs-meta);
+  letter-spacing: var(--d30-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--d30-purple);
+}
+.d30-eyebrow.muted { color: var(--d30-muted-2); }
+
+.d30-lede {
+  font-family: var(--d30-font-sans);
+  font-size: var(--d30-fs-lede);
+  line-height: var(--d30-lh-loose);
+  color: var(--d30-muted);
+}
+.d30-lede strong { color: var(--d30-text); font-weight: var(--d30-w-semibold); }
+
+.d30-body {
+  font-family: var(--d30-font-sans);
+  font-size: var(--d30-fs-body);
+  line-height: var(--d30-lh-relaxed);
+  color: var(--d30-text);
+}
+
+.d30-body-muted {
+  font-family: var(--d30-font-sans);
+  font-size: var(--d30-fs-body-sm);
+  line-height: var(--d30-lh-relaxed);
+  color: var(--d30-muted);
+}
+
+.d30-meta {
+  font-family: var(--d30-font-sans);
+  font-size: var(--d30-fs-meta);
+  color: var(--d30-muted);
+}
+
+.d30-micro {
+  font-family: var(--d30-font-sans);
+  font-size: var(--d30-fs-micro);
+  color: var(--d30-muted-2);
+}
+
+.d30-code {
+  font-family: var(--d30-font-mono);
+  font-size: 0.9em;
+  background: var(--d30-bg-3);
+  border: 1px solid var(--d30-border);
+  padding: 0.1em 0.4em;
+  border-radius: var(--d30-radius-xs);
+  color: var(--d30-purple);
+}

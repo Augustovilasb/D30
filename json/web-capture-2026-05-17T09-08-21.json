@@ -1,0 +1,711 @@
+[
+  {
+    "id": "cap_mp9jya8h_6waart",
+    "selector": "ul.nav_links_wrap",
+    "label": "Work Approach Contact",
+    "tag": "ul",
+    "url": "https://www.harrygeorge.design/",
+    "title": "HG/DES | UX & Product Designer, Oxfordshire",
+    "timestamp": "2026-05-17T09:07:56.369Z",
+    "innerText": "Work\nApproach\nContact",
+    "outerHTML": "<ul data-trigger=\"group\" role=\"list\" class=\"nav_links_wrap w-variant-23049969-09ac-2789-520b-3c6ae895bbc6 w-list-unstyled\"><li class=\"nav_links_item\" style=\"translate: none; rotate: none; scale: none; filter: blur(0px); opacity: 1; transform: translate(0px, 0px);\"><a data-trigger=\"focus-other hover-other\" href=\"/work\" class=\"nav_links_link w-variant-23049969-09ac-2789-520b-3c6ae895bbc6 w-inline-block\"><div class=\"nav_links_text w-variant-23049969-09ac-2789-520b-3c6ae895bbc6 u-text-style-main\" style=\"translate: none; rotate: none; scale: none; transform: translate(0px, 0px);\">Work</div></a><link rel=\"prefetch\" href=\"/work\"></li><li class=\"nav_links_item\" style=\"translate: none; rotate: none; scale: none; filter: blur(0px); opacity: 1; transform: translate(0px, 0px);\"><a data-trigger=\"focus-other hover-other\" href=\"/approach\" class=\"nav_links_link w-variant-23049969-09ac-2789-520b-3c6ae895bbc6 w-inline-block\"><div class=\"nav_links_text w-variant-23049969-09ac-2789-520b-3c6ae895bbc6 u-text-style-main\" style=\"translate: none; rotate: none; scale: none; transform: translate(0px, 0px);\">Approach</div></a></li><li class=\"nav_links_item\" style=\"translate: none; rotate: none; scale: none; filter: blur(0px); opacity: 1; transform: translate(0px, 0px);\"><a data-trigger=\"focus-other hover-other\" href=\"/contact\" class=\"nav_links_link w-variant-23049969-09ac-2789-520b-3c6ae895bbc6 w-inline-block\"><div class=\"nav_links_text w-variant-23049969-09ac-2789-520b-3c6ae895bbc6 u-text-style-main\" style=\"translate: none; rotate: none; scale: none; transform: translate(0px, 0px);\">Contact</div></a></li></ul>",
+    "rect": {
+      "x": 280,
+      "y": 25,
+      "width": 1202,
+      "height": 64
+    },
+    "computedStyles": {
+      "display": "flex",
+      "width": "1201.95px",
+      "height": "64px",
+      "padding": "0px 0px 0px 16px",
+      "border": "0px none color(srgb 0.837255 0.837745 0.837255)",
+      "box-sizing": "border-box",
+      "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+      "color": "color(srgb 0.837255 0.837745 0.837255)",
+      "font-family": "\"PP Neue Montreal\", Arial, sans-serif",
+      "font-size": "16px",
+      "font-weight": "500",
+      "line-height": "21.6px",
+      "letter-spacing": "0.04px",
+      "text-decoration": "none",
+      "flex": "1 1 0%",
+      "justify-content": "flex-start",
+      "align-items": "stretch",
+      "transition": "all"
+    },
+    "cssRules": [
+      {
+        "selector": "*",
+        "css": "box-sizing: border-box;"
+      },
+      {
+        "selector": "ul, ol",
+        "css": "margin-top: 0px; margin-bottom: 10px; padding-left: 40px;"
+      },
+      {
+        "selector": ".w-list-unstyled",
+        "css": "padding-left: 0px; list-style: none;"
+      },
+      {
+        "selector": "ul, ol",
+        "css": "margin-bottom: 0px; padding-left: 0px; list-style: \"\";"
+      },
+      {
+        "selector": ".nav_links_wrap",
+        "css": "flex: 1 1 0%;"
+      },
+      {
+        "selector": ".nav_links_wrap:where(.w-variant-23049969-09ac-2789-520b-3c6ae895bbc6)",
+        "css": "padding-left: var(--_spacing---space--3); flex-flow: row; justify-content: flex-start; align-items: stretch; display: flex;"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---large: 0; --_responsive---medium: 1; --flex-medium: flex; --none-medium: none; --column-medium: column; --row-medium: row; --start-medium: start; --center-medium: center; --end-medium: end; --relative-medium: relative;",
+        "media": "(width < 60em)"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---medium: 0; --_responsive---small: 1; --flex-small: flex; --none-small: none; --column-small: column; --row-small: row; --start-small: start; --center-small: center; --end-small: end; --relative-small: relative;",
+        "media": "(width < 35em)"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---small: 0; --_responsive---xsmall: 1; --flex-xsmall: flex; --none-xsmall: none; --column-xsmall: column; --row-xsmall: row; --start-xsmall: start; --center-xsmall: center; --end-xsmall: end; --relative-xsmall: relative;",
+        "media": "(width < 20em)"
+      },
+      {
+        "selector": ".nav_links_wrap",
+        "css": "display: flex; align-items: stretch;",
+        "media": "(min-width: 63.125rem)"
+      },
+      {
+        "selector": ".nav_links_wrap",
+        "css": "display: flex; align-items: stretch;",
+        "media": "(min-width: 63.125rem)"
+      }
+    ]
+  },
+  {
+    "id": "cap_mp9jycsz_ndcs20",
+    "selector": "path.u-path",
+    "label": "path.u-path",
+    "tag": "path",
+    "url": "https://www.harrygeorge.design/",
+    "title": "HG/DES | UX & Product Designer, Oxfordshire",
+    "timestamp": "2026-05-17T09:07:59.700Z",
+    "innerText": "",
+    "outerHTML": "<path d=\"M93.6389 18C89.2445 18 86.1611 15.7227 85.9668 11.8223H88.7346C88.9288 14.148 90.3127 15.7227 93.5661 15.7227C96.3582 15.7227 97.2079 14.5114 97.2079 12.9367C97.2079 10.7322 95.5084 10.4172 92.3522 9.61777C89.6329 8.89098 86.6466 8.01884 86.6466 4.72409C86.6466 1.72005 88.9774 0 92.7163 0C96.6738 0 99.2474 2.01077 99.5144 5.49933H96.7466C96.4553 3.41588 95.2656 2.27725 92.7406 2.27725C90.5555 2.27725 89.4387 3.07672 89.4387 4.57873C89.4387 6.51682 91.2596 6.92867 93.4933 7.48587C96.8438 8.33378 100 9.13324 100 12.7914C100 15.7712 97.9849 18 93.6389 18Z\" class=\"u-path\"></path>",
+    "rect": {
+      "x": 250,
+      "y": 50,
+      "width": 11,
+      "height": 14
+    },
+    "computedStyles": {
+      "border": "0px none color(srgb 0.837255 0.837745 0.837255)",
+      "box-sizing": "border-box",
+      "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+      "color": "color(srgb 0.837255 0.837745 0.837255)",
+      "font-family": "\"PP Neue Montreal\", Arial, sans-serif",
+      "font-size": "16px",
+      "font-weight": "500",
+      "line-height": "21.6px",
+      "letter-spacing": "0.04px",
+      "text-decoration": "none",
+      "transition": "all",
+      "cursor": "pointer"
+    },
+    "cssRules": [
+      {
+        "selector": "*",
+        "css": "box-sizing: border-box;"
+      },
+      {
+        "selector": ".u-path",
+        "css": "vector-effect: non-scaling-stroke;"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---large: 0; --_responsive---medium: 1; --flex-medium: flex; --none-medium: none; --column-medium: column; --row-medium: row; --start-medium: start; --center-medium: center; --end-medium: end; --relative-medium: relative;",
+        "media": "(width < 60em)"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---medium: 0; --_responsive---small: 1; --flex-small: flex; --none-small: none; --column-small: column; --row-small: row; --start-small: start; --center-small: center; --end-small: end; --relative-small: relative;",
+        "media": "(width < 35em)"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---small: 0; --_responsive---xsmall: 1; --flex-xsmall: flex; --none-xsmall: none; --column-xsmall: column; --row-xsmall: row; --start-xsmall: start; --center-xsmall: center; --end-xsmall: end; --relative-xsmall: relative;",
+        "media": "(width < 20em)"
+      }
+    ]
+  },
+  {
+    "id": "cap_mp9jyd8z_l1gemj",
+    "selector": "div.nav_links_text",
+    "label": "Work",
+    "tag": "div",
+    "url": "https://www.harrygeorge.design/",
+    "title": "HG/DES | UX & Product Designer, Oxfordshire",
+    "timestamp": "2026-05-17T09:08:00.275Z",
+    "innerText": "Work",
+    "outerHTML": "<div class=\"nav_links_text w-variant-23049969-09ac-2789-520b-3c6ae895bbc6 u-text-style-main\" style=\"translate: none; rotate: none; scale: none; transform: translate(0px, -2px);\">Work</div>",
+    "rect": {
+      "x": 308,
+      "y": 49,
+      "width": 37,
+      "height": 12
+    },
+    "computedStyles": {
+      "display": "flow-root",
+      "width": "36.8594px",
+      "height": "12.1875px",
+      "border": "0px none color(srgb 0.837255 0.837745 0.837255)",
+      "box-sizing": "border-box",
+      "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+      "color": "color(srgb 0.837255 0.837745 0.837255)",
+      "font-family": "\"PP Neue Montreal\", Arial, sans-serif",
+      "font-size": "16px",
+      "font-weight": "500",
+      "line-height": "21.6px",
+      "letter-spacing": "0.04px",
+      "text-decoration": "none",
+      "transform": "matrix(1, 0, 0, 1, 0, -2)",
+      "transition": "opacity 0.3s",
+      "cursor": "pointer"
+    },
+    "cssRules": [
+      {
+        "selector": "*",
+        "css": "box-sizing: border-box;"
+      },
+      {
+        "selector": ".u-text-style-main",
+        "css": "font-family: var(--_text-style---font-family); font-size: var(--_text-style---font-size); line-height: var(--_text-style---line-height); font-weight: var(--_text-style---font-weight); letter-spacing: var(--_text-style---letter-spacing); --_text-style---font-family: var(--_typography---font--primary-family); --_text-style---font-size: var(--_typography---font-size--text-main); --_text-style---line-height: var(--_typography---line-height--body-height); --_text-style---font-weight: var(--_typography---font--primary-medium); --_text-style---letter-spacing: var(--_typography---letter-spacing--spacing-7); --_text-style---margin-bottom: var(--_spacing---space--4); --_text-style---text-wrap: pretty; --_text-style---margin-top: var(--_spacing---space--4); --_text-style---trim-top: var(--_typography---font--primary-trim-top); --_text-style---trim-bottom: var(--_typography---font--primary-trim-bottom); --_text-style---text-transform: var(--_typography---text-transform--none); text-transform: var(--_text-style---text-transform,none); text-wrap: var(--_text-style---text-wrap); display: flow-root;"
+      },
+      {
+        "selector": ".nav_links_text:where(.w-variant-23049969-09ac-2789-520b-3c6ae895bbc6)",
+        "css": "opacity: calc(1 - .5*var(--_trigger---off)); transition-property: opacity; transition-duration: 0.3s; transition-timing-function: ease;"
+      },
+      {
+        "selector": ".nav_links_text.u-text-style-main",
+        "css": "--_text-style---font-family: var(--_typography---font--primary-family); --_text-style---font-size: var(--_typography---font-size--h5); --_text-style---line-height: var(--_typography---line-height--heading-height-4); --_text-style---font-weight: var(--_typography---font--primary-medium); --_text-style---letter-spacing: var(--_typography---letter-spacing--spacing-5); --_text-style---margin-bottom: var(--_spacing---space--4); --_text-style---text-wrap: balance; --_text-style---margin-top: var(--_spacing---space--7); --_text-style---trim-top: var(--_typography---font--primary-trim-top); --_text-style---trim-bottom: var(--_typography---font--primary-trim-bottom); --_text-style---text-transform: var(--_typography---text-transform--none);",
+        "media": "screen and (max-width: 991px)"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---large: 0; --_responsive---medium: 1; --flex-medium: flex; --none-medium: none; --column-medium: column; --row-medium: row; --start-medium: start; --center-medium: center; --end-medium: end; --relative-medium: relative;",
+        "media": "(width < 60em)"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---medium: 0; --_responsive---small: 1; --flex-small: flex; --none-small: none; --column-small: column; --row-small: row; --start-small: start; --center-small: center; --end-small: end; --relative-small: relative;",
+        "media": "(width < 35em)"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---small: 0; --_responsive---xsmall: 1; --flex-xsmall: flex; --none-xsmall: none; --column-xsmall: column; --row-xsmall: row; --start-xsmall: start; --center-xsmall: center; --end-xsmall: end; --relative-xsmall: relative;",
+        "media": "(width < 20em)"
+      }
+    ]
+  },
+  {
+    "id": "cap_mp9jydkm_7st6zw",
+    "selector": "div.nav_links_text",
+    "label": "Approach",
+    "tag": "div",
+    "url": "https://www.harrygeorge.design/",
+    "title": "HG/DES | UX & Product Designer, Oxfordshire",
+    "timestamp": "2026-05-17T09:08:00.694Z",
+    "innerText": "Approach",
+    "outerHTML": "<div class=\"nav_links_text w-variant-23049969-09ac-2789-520b-3c6ae895bbc6 u-text-style-main\" style=\"translate: none; rotate: none; scale: none; transform: translate3d(0px, -1.9962px, 0px);\">Approach</div>",
+    "rect": {
+      "x": 396,
+      "y": 49,
+      "width": 69,
+      "height": 12
+    },
+    "computedStyles": {
+      "display": "flow-root",
+      "width": "69.0312px",
+      "height": "12.1875px",
+      "border": "0px none color(srgb 0.837255 0.837745 0.837255)",
+      "box-sizing": "border-box",
+      "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+      "color": "color(srgb 0.837255 0.837745 0.837255)",
+      "font-family": "\"PP Neue Montreal\", Arial, sans-serif",
+      "font-size": "16px",
+      "font-weight": "500",
+      "line-height": "21.6px",
+      "letter-spacing": "0.04px",
+      "text-decoration": "none",
+      "transform": "matrix(1, 0, 0, 1, 0, -1.9962)",
+      "transition": "opacity 0.3s",
+      "cursor": "pointer"
+    },
+    "cssRules": [
+      {
+        "selector": "*",
+        "css": "box-sizing: border-box;"
+      },
+      {
+        "selector": ".u-text-style-main",
+        "css": "font-family: var(--_text-style---font-family); font-size: var(--_text-style---font-size); line-height: var(--_text-style---line-height); font-weight: var(--_text-style---font-weight); letter-spacing: var(--_text-style---letter-spacing); --_text-style---font-family: var(--_typography---font--primary-family); --_text-style---font-size: var(--_typography---font-size--text-main); --_text-style---line-height: var(--_typography---line-height--body-height); --_text-style---font-weight: var(--_typography---font--primary-medium); --_text-style---letter-spacing: var(--_typography---letter-spacing--spacing-7); --_text-style---margin-bottom: var(--_spacing---space--4); --_text-style---text-wrap: pretty; --_text-style---margin-top: var(--_spacing---space--4); --_text-style---trim-top: var(--_typography---font--primary-trim-top); --_text-style---trim-bottom: var(--_typography---font--primary-trim-bottom); --_text-style---text-transform: var(--_typography---text-transform--none); text-transform: var(--_text-style---text-transform,none); text-wrap: var(--_text-style---text-wrap); display: flow-root;"
+      },
+      {
+        "selector": ".nav_links_text:where(.w-variant-23049969-09ac-2789-520b-3c6ae895bbc6)",
+        "css": "opacity: calc(1 - .5*var(--_trigger---off)); transition-property: opacity; transition-duration: 0.3s; transition-timing-function: ease;"
+      },
+      {
+        "selector": ".nav_links_text.u-text-style-main",
+        "css": "--_text-style---font-family: var(--_typography---font--primary-family); --_text-style---font-size: var(--_typography---font-size--h5); --_text-style---line-height: var(--_typography---line-height--heading-height-4); --_text-style---font-weight: var(--_typography---font--primary-medium); --_text-style---letter-spacing: var(--_typography---letter-spacing--spacing-5); --_text-style---margin-bottom: var(--_spacing---space--4); --_text-style---text-wrap: balance; --_text-style---margin-top: var(--_spacing---space--7); --_text-style---trim-top: var(--_typography---font--primary-trim-top); --_text-style---trim-bottom: var(--_typography---font--primary-trim-bottom); --_text-style---text-transform: var(--_typography---text-transform--none);",
+        "media": "screen and (max-width: 991px)"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---large: 0; --_responsive---medium: 1; --flex-medium: flex; --none-medium: none; --column-medium: column; --row-medium: row; --start-medium: start; --center-medium: center; --end-medium: end; --relative-medium: relative;",
+        "media": "(width < 60em)"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---medium: 0; --_responsive---small: 1; --flex-small: flex; --none-small: none; --column-small: column; --row-small: row; --start-small: start; --center-small: center; --end-small: end; --relative-small: relative;",
+        "media": "(width < 35em)"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---small: 0; --_responsive---xsmall: 1; --flex-xsmall: flex; --none-xsmall: none; --column-xsmall: column; --row-xsmall: row; --start-xsmall: start; --center-xsmall: center; --end-xsmall: end; --relative-xsmall: relative;",
+        "media": "(width < 20em)"
+      }
+    ]
+  },
+  {
+    "id": "cap_mp9jydtu_vjvi2p",
+    "selector": "div.nav_links_text",
+    "label": "Contact",
+    "tag": "div",
+    "url": "https://www.harrygeorge.design/",
+    "title": "HG/DES | UX & Product Designer, Oxfordshire",
+    "timestamp": "2026-05-17T09:08:01.026Z",
+    "innerText": "Contact",
+    "outerHTML": "<div class=\"nav_links_text w-variant-23049969-09ac-2789-520b-3c6ae895bbc6 u-text-style-main\" style=\"translate: none; rotate: none; scale: none; transform: translate3d(0px, -1.9191px, 0px);\">Contact</div>",
+    "rect": {
+      "x": 517,
+      "y": 49,
+      "width": 56,
+      "height": 12
+    },
+    "computedStyles": {
+      "display": "flow-root",
+      "width": "56.0312px",
+      "height": "12.1875px",
+      "border": "0px none color(srgb 0.837255 0.837745 0.837255)",
+      "box-sizing": "border-box",
+      "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+      "color": "color(srgb 0.837255 0.837745 0.837255)",
+      "opacity": "0.980219",
+      "font-family": "\"PP Neue Montreal\", Arial, sans-serif",
+      "font-size": "16px",
+      "font-weight": "500",
+      "line-height": "21.6px",
+      "letter-spacing": "0.04px",
+      "text-decoration": "none",
+      "transform": "matrix(1, 0, 0, 1, 0, -1.9191)",
+      "transition": "opacity 0.3s",
+      "cursor": "pointer"
+    },
+    "cssRules": [
+      {
+        "selector": "*",
+        "css": "box-sizing: border-box;"
+      },
+      {
+        "selector": ".u-text-style-main",
+        "css": "font-family: var(--_text-style---font-family); font-size: var(--_text-style---font-size); line-height: var(--_text-style---line-height); font-weight: var(--_text-style---font-weight); letter-spacing: var(--_text-style---letter-spacing); --_text-style---font-family: var(--_typography---font--primary-family); --_text-style---font-size: var(--_typography---font-size--text-main); --_text-style---line-height: var(--_typography---line-height--body-height); --_text-style---font-weight: var(--_typography---font--primary-medium); --_text-style---letter-spacing: var(--_typography---letter-spacing--spacing-7); --_text-style---margin-bottom: var(--_spacing---space--4); --_text-style---text-wrap: pretty; --_text-style---margin-top: var(--_spacing---space--4); --_text-style---trim-top: var(--_typography---font--primary-trim-top); --_text-style---trim-bottom: var(--_typography---font--primary-trim-bottom); --_text-style---text-transform: var(--_typography---text-transform--none); text-transform: var(--_text-style---text-transform,none); text-wrap: var(--_text-style---text-wrap); display: flow-root;"
+      },
+      {
+        "selector": ".nav_links_text:where(.w-variant-23049969-09ac-2789-520b-3c6ae895bbc6)",
+        "css": "opacity: calc(1 - .5*var(--_trigger---off)); transition-property: opacity; transition-duration: 0.3s; transition-timing-function: ease;"
+      },
+      {
+        "selector": ".nav_links_text.u-text-style-main",
+        "css": "--_text-style---font-family: var(--_typography---font--primary-family); --_text-style---font-size: var(--_typography---font-size--h5); --_text-style---line-height: var(--_typography---line-height--heading-height-4); --_text-style---font-weight: var(--_typography---font--primary-medium); --_text-style---letter-spacing: var(--_typography---letter-spacing--spacing-5); --_text-style---margin-bottom: var(--_spacing---space--4); --_text-style---text-wrap: balance; --_text-style---margin-top: var(--_spacing---space--7); --_text-style---trim-top: var(--_typography---font--primary-trim-top); --_text-style---trim-bottom: var(--_typography---font--primary-trim-bottom); --_text-style---text-transform: var(--_typography---text-transform--none);",
+        "media": "screen and (max-width: 991px)"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---large: 0; --_responsive---medium: 1; --flex-medium: flex; --none-medium: none; --column-medium: column; --row-medium: row; --start-medium: start; --center-medium: center; --end-medium: end; --relative-medium: relative;",
+        "media": "(width < 60em)"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---medium: 0; --_responsive---small: 1; --flex-small: flex; --none-small: none; --column-small: column; --row-small: row; --start-small: start; --center-small: center; --end-small: end; --relative-small: relative;",
+        "media": "(width < 35em)"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---small: 0; --_responsive---xsmall: 1; --flex-xsmall: flex; --none-xsmall: none; --column-xsmall: column; --row-xsmall: row; --start-xsmall: start; --center-xsmall: center; --end-xsmall: end; --relative-xsmall: relative;",
+        "media": "(width < 20em)"
+      }
+    ]
+  },
+  {
+    "id": "cap_mp9jyf0v_jh9xth",
+    "selector": "button.clickable_btn",
+    "label": "Let’s Work Together",
+    "tag": "button",
+    "url": "https://www.harrygeorge.design/",
+    "title": "HG/DES | UX & Product Designer, Oxfordshire",
+    "timestamp": "2026-05-17T09:08:02.575Z",
+    "innerText": "Let’s Work Together",
+    "outerHTML": "<button type=\"button\" class=\"clickable_btn\"><span class=\"clickable_text u-sr-only\">Let’s Work Together</span></button>",
+    "rect": {
+      "x": 1498,
+      "y": 38,
+      "width": 184,
+      "height": 38
+    },
+    "computedStyles": {
+      "display": "block",
+      "position": "absolute",
+      "top": "0px",
+      "right": "0px",
+      "bottom": "0px",
+      "left": "0px",
+      "width": "184.047px",
+      "height": "38.1875px",
+      "border": "0px none color(srgb 0.837255 0.837745 0.837255)",
+      "border-radius": "3px",
+      "box-sizing": "border-box",
+      "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+      "color": "color(srgb 0.837255 0.837745 0.837255)",
+      "font-family": "\"PP Neue Montreal\", Arial, sans-serif",
+      "font-size": "16px",
+      "font-weight": "500",
+      "line-height": "21.6px",
+      "text-align": "center",
+      "text-decoration": "none",
+      "transition": "all",
+      "cursor": "pointer"
+    },
+    "cssRules": [
+      {
+        "selector": "button, input, optgroup, select, textarea",
+        "css": "color: inherit; font: inherit; margin: 0px;"
+      },
+      {
+        "selector": "button",
+        "css": "overflow: visible;"
+      },
+      {
+        "selector": "button, select",
+        "css": "text-transform: none;"
+      },
+      {
+        "selector": "button, html input[type=\"button\"], input[type=\"reset\"]",
+        "css": "appearance: button; cursor: pointer;"
+      },
+      {
+        "selector": "*",
+        "css": "box-sizing: border-box;"
+      },
+      {
+        "selector": "button, [type=\"button\"], [type=\"reset\"]",
+        "css": "cursor: pointer; appearance: button; border: 0px;"
+      },
+      {
+        "selector": ".clickable_btn",
+        "css": "border-radius: inherit; width: 100%; height: 100%; display: none; position: absolute; inset: 0%;"
+      },
+      {
+        "selector": "button",
+        "css": "background-color: unset; padding: unset; text-align: inherit;"
+      },
+      {
+        "selector": "button:not(:disabled)",
+        "css": "cursor: pointer;"
+      },
+      {
+        "selector": "a, button, :where([tabindex]), input",
+        "css": "outline-offset: var(--focus--offset-outer);"
+      },
+      {
+        "selector": ".clickable_wrap a[href=\"#\"] ~ button",
+        "css": "display: block;"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---large: 0; --_responsive---medium: 1; --flex-medium: flex; --none-medium: none; --column-medium: column; --row-medium: row; --start-medium: start; --center-medium: center; --end-medium: end; --relative-medium: relative;",
+        "media": "(width < 60em)"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---medium: 0; --_responsive---small: 1; --flex-small: flex; --none-small: none; --column-small: column; --row-small: row; --start-small: start; --center-small: center; --end-small: end; --relative-small: relative;",
+        "media": "(width < 35em)"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---small: 0; --_responsive---xsmall: 1; --flex-xsmall: flex; --none-xsmall: none; --column-xsmall: column; --row-xsmall: row; --start-xsmall: start; --center-xsmall: center; --end-xsmall: end; --relative-xsmall: relative;",
+        "media": "(width < 20em)"
+      }
+    ]
+  },
+  {
+    "id": "cap_mp9jyfdv_vsyqut",
+    "selector": "a.clickable_link",
+    "label": "Button Text",
+    "tag": "a",
+    "url": "https://www.harrygeorge.design/",
+    "title": "HG/DES | UX & Product Designer, Oxfordshire",
+    "timestamp": "2026-05-17T09:08:03.043Z",
+    "innerText": "Button Text",
+    "outerHTML": "<a target=\"\" href=\"/confidential\" class=\"clickable_link w-inline-block\"><span class=\"clickable_text u-sr-only\">Button Text</span></a>",
+    "rect": {
+      "x": 1697,
+      "y": 38,
+      "width": 38,
+      "height": 38
+    },
+    "computedStyles": {
+      "display": "block",
+      "position": "absolute",
+      "top": "0px",
+      "right": "0px",
+      "bottom": "0px",
+      "left": "0px",
+      "width": "38px",
+      "height": "38px",
+      "border": "0px none color(srgb 0.837255 0.837745 0.837255)",
+      "border-radius": "3px",
+      "box-sizing": "border-box",
+      "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+      "color": "color(srgb 0.837255 0.837745 0.837255)",
+      "font-family": "\"PP Neue Montreal\", Arial, sans-serif",
+      "font-size": "16px",
+      "font-weight": "500",
+      "line-height": "21.6px",
+      "letter-spacing": "0.04px",
+      "text-align": "center",
+      "text-decoration": "none",
+      "transition": "all",
+      "cursor": "pointer"
+    },
+    "cssRules": [
+      {
+        "selector": "a",
+        "css": "background-color: rgba(0, 0, 0, 0);"
+      },
+      {
+        "selector": "a:active, a:hover",
+        "css": "outline: 0px;"
+      },
+      {
+        "selector": "*",
+        "css": "box-sizing: border-box;"
+      },
+      {
+        "selector": ".w-inline-block",
+        "css": "max-width: 100%; display: inline-block;"
+      },
+      {
+        "selector": "a",
+        "css": "color: inherit; outline-width: var(--focus--width); outline-offset: var(--focus--offset-outer); text-decoration: none;"
+      },
+      {
+        "selector": ".clickable_link",
+        "css": "border-radius: inherit; width: 100%; height: 100%; display: block; position: absolute; inset: 0%;"
+      },
+      {
+        "selector": "a, button, :where([tabindex]), input",
+        "css": "outline-offset: var(--focus--offset-outer);"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---large: 0; --_responsive---medium: 1; --flex-medium: flex; --none-medium: none; --column-medium: column; --row-medium: row; --start-medium: start; --center-medium: center; --end-medium: end; --relative-medium: relative;",
+        "media": "(width < 60em)"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---medium: 0; --_responsive---small: 1; --flex-small: flex; --none-small: none; --column-small: column; --row-small: row; --start-small: start; --center-small: center; --end-small: end; --relative-small: relative;",
+        "media": "(width < 35em)"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---small: 0; --_responsive---xsmall: 1; --flex-xsmall: flex; --none-xsmall: none; --column-xsmall: column; --row-xsmall: row; --start-xsmall: start; --center-xsmall: center; --end-xsmall: end; --relative-xsmall: relative;",
+        "media": "(width < 20em)"
+      }
+    ]
+  },
+  {
+    "id": "cap_mp9jyjcd_msevgx",
+    "selector": "ul.nav_links_wrap",
+    "label": "Work Approach Contact",
+    "tag": "ul",
+    "url": "https://www.harrygeorge.design/",
+    "title": "HG/DES | UX & Product Designer, Oxfordshire",
+    "timestamp": "2026-05-17T09:08:08.173Z",
+    "innerText": "Work\nApproach\nContact",
+    "outerHTML": "<ul data-trigger=\"group\" role=\"list\" class=\"nav_links_wrap w-variant-23049969-09ac-2789-520b-3c6ae895bbc6 w-list-unstyled\"><li class=\"nav_links_item\" style=\"translate: none; rotate: none; scale: none; filter: blur(0px); opacity: 1; transform: translate(0px, 0px);\"><a data-trigger=\"focus-other hover-other\" href=\"/work\" class=\"nav_links_link w-variant-23049969-09ac-2789-520b-3c6ae895bbc6 w-inline-block\"><div class=\"nav_links_text w-variant-23049969-09ac-2789-520b-3c6ae895bbc6 u-text-style-main\" style=\"translate: none; rotate: none; scale: none; transform: translate(0px, 0px);\">Work</div></a><link rel=\"prefetch\" href=\"/work\"></li><li class=\"nav_links_item\" style=\"translate: none; rotate: none; scale: none; filter: blur(0px); opacity: 1; transform: translate(0px, 0px);\"><a data-trigger=\"focus-other hover-other\" href=\"/approach\" class=\"nav_links_link w-variant-23049969-09ac-2789-520b-3c6ae895bbc6 w-inline-block\"><div class=\"nav_links_text w-variant-23049969-09ac-2789-520b-3c6ae895bbc6 u-text-style-main\" style=\"translate: none; rotate: none; scale: none; transform: translate(0px, 0px);\">Approach</div></a></li><li class=\"nav_links_item\" style=\"translate: none; rotate: none; scale: none; filter: blur(0px); opacity: 1; transform: translate(0px, 0px);\"><a data-trigger=\"focus-other hover-other\" href=\"/contact\" class=\"nav_links_link w-variant-23049969-09ac-2789-520b-3c6ae895bbc6 w-inline-block\"><div class=\"nav_links_text w-variant-23049969-09ac-2789-520b-3c6ae895bbc6 u-text-style-main\" style=\"translate: none; rotate: none; scale: none; transform: translate(0px, 0px);\">Contact</div></a></li></ul>",
+    "rect": {
+      "x": 400,
+      "y": 25,
+      "width": 962,
+      "height": 60
+    },
+    "computedStyles": {
+      "display": "flex",
+      "width": "961.953px",
+      "height": "64px",
+      "padding": "0px 0px 0px 16px",
+      "border": "0px none color(srgb 0.190196 0.193627 0.190196)",
+      "box-sizing": "border-box",
+      "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+      "color": "color(srgb 0.190196 0.193627 0.190196)",
+      "font-family": "\"PP Neue Montreal\", Arial, sans-serif",
+      "font-size": "16px",
+      "font-weight": "500",
+      "line-height": "21.6px",
+      "letter-spacing": "0.04px",
+      "text-decoration": "none",
+      "flex": "1 1 0%",
+      "justify-content": "flex-start",
+      "align-items": "stretch",
+      "transition": "all"
+    },
+    "cssRules": [
+      {
+        "selector": "*",
+        "css": "box-sizing: border-box;"
+      },
+      {
+        "selector": "ul, ol",
+        "css": "margin-top: 0px; margin-bottom: 10px; padding-left: 40px;"
+      },
+      {
+        "selector": ".w-list-unstyled",
+        "css": "padding-left: 0px; list-style: none;"
+      },
+      {
+        "selector": "ul, ol",
+        "css": "margin-bottom: 0px; padding-left: 0px; list-style: \"\";"
+      },
+      {
+        "selector": ".nav_links_wrap",
+        "css": "flex: 1 1 0%;"
+      },
+      {
+        "selector": ".nav_links_wrap:where(.w-variant-23049969-09ac-2789-520b-3c6ae895bbc6)",
+        "css": "padding-left: var(--_spacing---space--3); flex-flow: row; justify-content: flex-start; align-items: stretch; display: flex;"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---large: 0; --_responsive---medium: 1; --flex-medium: flex; --none-medium: none; --column-medium: column; --row-medium: row; --start-medium: start; --center-medium: center; --end-medium: end; --relative-medium: relative;",
+        "media": "(width < 60em)"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---medium: 0; --_responsive---small: 1; --flex-small: flex; --none-small: none; --column-small: column; --row-small: row; --start-small: start; --center-small: center; --end-small: end; --relative-small: relative;",
+        "media": "(width < 35em)"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---small: 0; --_responsive---xsmall: 1; --flex-xsmall: flex; --none-xsmall: none; --column-xsmall: column; --row-xsmall: row; --start-xsmall: start; --center-xsmall: center; --end-xsmall: end; --relative-xsmall: relative;",
+        "media": "(width < 20em)"
+      },
+      {
+        "selector": ".nav_links_wrap",
+        "css": "display: flex; align-items: stretch;",
+        "media": "(min-width: 63.125rem)"
+      },
+      {
+        "selector": ".nav_links_wrap",
+        "css": "display: flex; align-items: stretch;",
+        "media": "(min-width: 63.125rem)"
+      }
+    ]
+  },
+  {
+    "id": "cap_mp9jyp73_jw0f1c",
+    "selector": "h2",
+    "label": "I've built digital experiences for estab…",
+    "tag": "h2",
+    "url": "https://www.harrygeorge.design/",
+    "title": "HG/DES | UX & Product Designer, Oxfordshire",
+    "timestamp": "2026-05-17T09:08:15.759Z",
+    "innerText": "I've built digital experiences for established organisations, startups, and everything in between. The focus stays the same: systems that scale, solving the communication problems that actually matter, and keeping people first throughout the entire process.",
+    "outerHTML": "<h2>I've built digital experiences for established organisations, startups, and everything in between. The focus stays the same: <strong>systems that scale</strong>, solving the communication problems that actually matter, and keeping <strong>people first</strong> throughout the entire process.</h2>",
+    "rect": {
+      "x": 153,
+      "y": 161,
+      "width": 1463,
+      "height": 188
+    },
+    "computedStyles": {
+      "display": "flow-root",
+      "width": "1463.03px",
+      "height": "187.656px",
+      "border": "0px none rgb(241, 241, 241)",
+      "box-sizing": "border-box",
+      "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+      "color": "rgb(241, 241, 241)",
+      "font-family": "\"PP Neue Montreal\", Arial, sans-serif",
+      "font-size": "48px",
+      "font-weight": "500",
+      "line-height": "50.4px",
+      "letter-spacing": "-1.44px",
+      "text-decoration": "none",
+      "transition": "all"
+    },
+    "cssRules": [
+      {
+        "selector": "*",
+        "css": "box-sizing: border-box;"
+      },
+      {
+        "selector": "h1, h2, h3, h4, h5, h6",
+        "css": "margin-bottom: 10px; font-weight: 700;"
+      },
+      {
+        "selector": "h2",
+        "css": "margin-top: 20px; font-size: 32px; line-height: 36px;"
+      },
+      {
+        "selector": "h1, h2, h3, h4, h5, h6, p",
+        "css": "display: flow-root;"
+      },
+      {
+        "selector": "h1, h2, h3, h4, h5, h6, p, blockquote, label",
+        "css": "font-family: inherit; font-size: inherit; font-weight: inherit; line-height: inherit; letter-spacing: inherit; text-transform: inherit; text-wrap: inherit; margin-top: 0px; margin-bottom: 0px;"
+      },
+      {
+        "selector": ":is(.u-margin-trim, .w-richtext, .u-content-wrapper, [class*=\"u-container\"], [class*=\"u-layout-column\"]) > :not(:not(.w-condition-invisible, .u-cover-absolute, .u-ignore-trim) ~ :not(.w-condition-invisible, .u-cover-absolute, .u-ignore-trim)), :is(.u-margin-trim, .w-richtext, .u-content-wrapper, [class*=\"u-container\"], [class*=\"u-layout-column\"]) > :not(:not(.w-condition-invisible, .u-cover-absolute, .u-ignore-trim) ~ :not(.w-condition-invisible, .u-cover-absolute, .u-ignore-trim)).u-display-contents > :first-child",
+        "css": "margin-top: 0px;"
+      },
+      {
+        "selector": ":is(.u-margin-trim, .w-richtext, .u-content-wrapper, [class*=\"u-container\"], [class*=\"u-layout-column\"]) > :not(:has(~ :not(.w-condition-invisible, .u-cover-absolute, .u-ignore-trim))), :is(.u-margin-trim, .w-richtext, .u-content-wrapper, [class*=\"u-container\"], [class*=\"u-layout-column\"]) > :not(:has(~ :not(.w-condition-invisible, .u-cover-absolute, .u-ignore-trim))).u-display-contents > :last-child",
+        "css": "margin-bottom: 0px;"
+      },
+      {
+        "selector": ".u-text > *",
+        "css": "width: 100%; max-width: inherit !important; margin-inline: 0px !important; margin-top: 0px !important;"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---large: 0; --_responsive---medium: 1; --flex-medium: flex; --none-medium: none; --column-medium: column; --row-medium: row; --start-medium: start; --center-medium: center; --end-medium: end; --relative-medium: relative;",
+        "media": "(width < 60em)"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---medium: 0; --_responsive---small: 1; --flex-small: flex; --none-small: none; --column-small: column; --row-small: row; --start-small: start; --center-small: center; --end-small: end; --relative-small: relative;",
+        "media": "(width < 35em)"
+      },
+      {
+        "selector": "*",
+        "css": "--_responsive---small: 0; --_responsive---xsmall: 1; --flex-xsmall: flex; --none-xsmall: none; --column-xsmall: column; --row-xsmall: row; --start-xsmall: start; --center-xsmall: center; --end-xsmall: end; --relative-xsmall: relative;",
+        "media": "(width < 20em)"
+      }
+    ]
+  }
+]

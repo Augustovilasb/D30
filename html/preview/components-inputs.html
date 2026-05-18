@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html><html><head><meta charset="UTF-8"><link rel="stylesheet" href="../../css/_card.css">
+<style>
+.field { display:flex;flex-direction:column;gap:6px;flex:1 }
+.field label { font-size:12px;font-weight:500;color:#888;letter-spacing:.3px }
+.field input { background:#080808;border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:11px 14px;font-size:14px;color:#f0f0f0;font-family:Inter;outline:none }
+.field input.focus { border-color:rgba(139,124,248,0.5);background:#0f0f0f }
+.field input::placeholder { color:#555 }
+</style>
+</head><body>
+<div class="card">
+  <div class="row stretch">
+    <div class="field">
+      <label>Email</label>
+      <input type="text" placeholder="voce@email.com">
+    </div>
+    <div class="field">
+      <label>Senha</label>
+      <input class="focus" type="text" value="â€¢â€¢â€¢â€¢â€¢â€¢">
+    </div>
+  </div>
+  <div class="row stretch">
+    <div class="field">
+      <label>Email</label>
+      <input style="border-color:#ef4444" type="text" value="email-invalido">
+      <span style="font-size:12px;color:#ef4444">Formato invÃ¡lido.</span>
+    </div>
+    <div class="field">
+      <label>Senha</label>
+      <input type="text" value="senha123">
+      <div style="display:flex;gap:4px;margin-top:2px"><div style="flex:1;height:3px;border-radius:2px;background:#fbbf24"></div><div style="flex:1;height:3px;border-radius:2px;background:#fbbf24"></div><div style="flex:1;height:3px;border-radius:2px;background:#1a1a1a"></div></div>
+      <span style="font-size:11px;color:#555">Senha mÃ©dia.</span>
+    </div>
+  </div>
+</div></body></html>
