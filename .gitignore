@@ -11,3 +11,4 @@ archive/
 uploads/
 outputs/
 agentes/
+agentes/.env
