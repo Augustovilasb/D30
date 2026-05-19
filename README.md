@@ -2,7 +2,7 @@
 
 > Comunidade gratuita em português para quem está em transição de carreira para dev — em qualquer idade.
 
-![D30 Preview](assets/preview.png)
+![D30 Preview](images/preview.png)
 
 ---
 
