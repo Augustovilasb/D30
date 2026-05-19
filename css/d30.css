@@ -246,12 +246,43 @@ nav {
 .features-strip { padding: 5rem 2rem; border-top: 1px solid var(--border); }
 .strip-label { text-align: center; font-size: 12px; font-weight: 600; letter-spacing: 2px; color: var(--muted2); text-transform: uppercase; margin-bottom: 3rem; }
 .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1px; max-width: 860px; margin: 0 auto; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
-.feature-item { padding: 2rem 1.5rem; background: var(--bg2); transition: background .3s, transform .3s; position: relative; }
-.feature-item:hover { background: var(--bg3); }
-.feat-num { font-size: 12px; font-weight: 600; color: var(--purple); letter-spacing: 1px; margin-bottom: 1rem; opacity: .8; transition: opacity .3s, transform .3s; }
-.feature-item:hover .feat-num { opacity: 1; transform: translateX(2px); }
-.feat-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
-.feat-desc { font-size: 13px; color: var(--muted); line-height: 1.55; }
+.feature-item {
+  padding: 0;
+  background: var(--bg2);
+  position: relative;
+  min-height: 160px;
+  cursor: pointer;
+  perspective: 900px;
+}
+.feature-item-inner {
+  width: 100%; height: 100%; min-height: 160px;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(.4,0,.2,1);
+}
+.feature-item.flipped .feature-item-inner { transform: rotateY(180deg); }
+
+.feat-face {
+  position: absolute; inset: 0;
+  padding: 2rem 1.5rem;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex; flex-direction: column; justify-content: space-between;
+  background: var(--bg2);
+  transition: background .3s;
+}
+.feature-item:hover .feat-face--front { background: var(--bg3); }
+.feat-face--back {
+  transform: rotateY(180deg);
+  background: var(--bg2);
+  border: 1px solid rgba(139,124,248,0.18);
+  justify-content: center; gap: 12px;
+}
+
+.feat-num { font-size: 12px; font-weight: 600; color: var(--purple); letter-spacing: 1px; opacity: .8; }
+.feat-title { font-size: 14px; font-weight: 600; color: var(--text); }
+.feat-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+.feat-hint { font-size: 11px; color: var(--muted2); }
 
 .reveal { opacity: 0; transform: translateY(30px); transition: opacity .8s ease, transform .8s ease; }
 .reveal.visible { opacity: 1; transform: translateY(0); }

@@ -101,16 +101,31 @@ function HomePage({ onNavigate, onSignIn }) {
   );
 }
 
+function FeatureCard({ f }) {
+  const [flipped, setFlipped] = React.useState(false);
+  return (
+    <div className={'feature-item' + (flipped ? ' flipped' : '')} data-cursor="hover" onClick={() => setFlipped(v => !v)}>
+      <div className="feature-item-inner">
+        <div className="feat-face feat-face--front">
+          <div className="feat-num">{f.num}</div>
+          <div className="feat-title">{f.title}</div>
+          <div className="feat-hint">clique para ver →</div>
+        </div>
+        <div className="feat-face feat-face--back">
+          <div className="feat-num">{f.num}</div>
+          <div className="feat-desc">{f.desc}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function AboutWithFeatures() {
   return (
     <section className="about-features">
       <div className="about-features-grid">
         {FEATURES.map((f) => (
-          <div key={f.num} className="feature-item" data-cursor="hover">
-            <div className="feat-num">{f.num}</div>
-            <div className="feat-title">{f.title}</div>
-            <div className="feat-desc">{f.desc}</div>
-          </div>
+          <FeatureCard key={f.num} f={f} />
         ))}
       </div>
       <div className="about-features-text">
@@ -167,11 +182,7 @@ function FeaturesStrip() {
       <p className="strip-label reveal visible">O que você encontra aqui</p>
       <div className="features-grid reveal visible">
         {FEATURES.map((f) => (
-          <div key={f.num} className="feature-item" data-cursor="hover">
-            <div className="feat-num">{f.num}</div>
-            <div className="feat-title">{f.title}</div>
-            <div className="feat-desc">{f.desc}</div>
-          </div>
+          <FeatureCard key={f.num} f={f} />
         ))}
       </div>
     </div>
