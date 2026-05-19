@@ -70,8 +70,7 @@
     var animRaf  = null;
 
     function refresh() {
-      var found = Array.from(document.querySelectorAll('.fp-section'));
-      if (found.length) sections = found;
+      sections = Array.from(document.querySelectorAll('.fp-section'));
     }
 
     // Deriva seção atual do scroll real — nunca fica dessincronizado
