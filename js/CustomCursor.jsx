@@ -9,11 +9,15 @@ function CustomCursor() {
     if (matchMedia('(hover: none)').matches || window.innerWidth < 768) return;
     document.body.setAttribute('data-cursor-mode', 'ghost');
     const dot = dotRef.current, ring = ringRef.current;
+    let cx = 0, cy = 0, raf = 0;
 
-    const move = (e) => {
-      const t = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+    const move = (e) => { cx = e.clientX; cy = e.clientY; };
+
+    const tick = () => {
+      const t = `translate(${cx}px,${cy}px) translate(-50%,-50%)`;
       if (dot)  dot.style.transform  = t;
       if (ring) ring.style.transform = t;
+      raf = requestAnimationFrame(tick);
     };
 
     const onDown = () => ring && ring.classList.add('clicking');
@@ -33,8 +37,10 @@ function CustomCursor() {
     window.addEventListener('mouseup',   onUp);
     document.addEventListener('mouseover', onOver);
     document.addEventListener('mouseout',  onOut);
+    raf = requestAnimationFrame(tick);
 
     return () => {
+      cancelAnimationFrame(raf);
       window.removeEventListener('mousemove', move);
       window.removeEventListener('mousedown', onDown);
       window.removeEventListener('mouseup',   onUp);

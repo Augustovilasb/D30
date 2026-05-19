@@ -165,42 +165,8 @@
     });
   }
 
-  // ── Magnetic (antigravity) effect ──
-  // Elements with class .magnetic or matching MAGNETIC_SELECTORS get pulled toward cursor
-  var MAGNETIC_SELECTORS = '.btn, .nav-brand, .side-rail-btn';
-  var magnetEls = [];
-
-  function refreshMagnetic() {
-    magnetEls = Array.from(
-      document.querySelectorAll(MAGNETIC_SELECTORS + ', .magnetic')
-    );
-    magnetEls.forEach(function (el) {
-      el.style.transition = 'transform 0.35s cubic-bezier(0.23, 1.5, 0.32, 1)';
-    });
-  }
-
-  function initMagnetic() {
-    var RADIUS   = 100; // px — attraction radius
-    var STRENGTH = 0.38; // how far elements move (0–1)
-
-    document.addEventListener('mousemove', function (e) {
-      magnetEls.forEach(function (el) {
-        var r  = el.getBoundingClientRect();
-        var cx = r.left + r.width  / 2;
-        var cy = r.top  + r.height / 2;
-        var dx = e.clientX - cx;
-        var dy = e.clientY - cy;
-        var dist = Math.hypot(dx, dy);
-
-        if (dist < RADIUS) {
-          var pull = (1 - dist / RADIUS) * STRENGTH;
-          el.style.transform = 'translate(' + (dx * pull).toFixed(2) + 'px,' + (dy * pull).toFixed(2) + 'px)';
-        } else if (el.style.transform !== '') {
-          el.style.transform = '';
-        }
-      });
-    }, { passive: true });
-  }
+  function refreshMagnetic() {}
+  function initMagnetic() {}
 
   // ── Init on load ──
   window.addEventListener('load', function () {

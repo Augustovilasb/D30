@@ -42,7 +42,7 @@ body {
   transform: translate(-50%, -50%);
   will-change: transform;
 }
-.cursor-dot { width: 6px; height: 6px; background: var(--purple); transition: opacity .2s, transform .1s; }
+.cursor-dot { width: 6px; height: 6px; background: var(--purple); transition: opacity .2s; }
 .cursor-ring {
   width: 36px; height: 36px;
   border: 1.5px solid rgba(139,124,248,0.5);
