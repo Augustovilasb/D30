@@ -355,6 +355,7 @@ nav {
 .page-label { font-size: 12px; font-weight: 600; letter-spacing: 2px; color: var(--purple); text-transform: uppercase; margin-bottom: 1rem; }
 .page-title { font-size: clamp(36px, 6vw, 56px); font-weight: 800; letter-spacing: -2px; line-height: 1.1; color: var(--text); margin-bottom: 1.5rem; }
 .page-title span { color: var(--purple); }
+.page-title em { font-style: italic; color: var(--muted2); }
 .about-text { font-size: 17px; color: var(--muted); line-height: 1.8; margin-bottom: 1.25rem; }
 .about-text strong { color: var(--text); font-weight: 600; }
 .about-divider { width: 100%; height: 1px; background: var(--border); margin: 3rem 0; }
@@ -566,10 +567,16 @@ nav {
 .check { font-size: 14px; flex-shrink: 0; }
 
 /* ── ROADMAP v3 — colored phase cards + side ruler ── */
-.rm3-overall { display: flex; align-items: center; gap: 12px; margin: 1.25rem 0 2rem; }
-.rm3-overall-bar  { flex: 1; height: 2px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
-.rm3-overall-fill { height: 100%; background: rgba(255,255,255,0.55); border-radius: 2px; transition: width 0.5s ease; }
-.rm3-overall-label { font-size: 11px; color: #555; white-space: nowrap; letter-spacing: 0.03em; }
+.rm3-lead { font-size: 15px; color: var(--muted); margin: 0.5rem 0 0; line-height: 1.5; }
+.rm3-lead--sub { font-size: 13px; color: var(--muted2); margin-top: 0.2rem; }
+
+.rm3-overall { margin: 2rem 0 2.5rem; }
+.rm3-overall-bar  { position: relative; width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: visible; }
+.rm3-overall-fill { height: 100%; background: rgba(255,255,255,0.6); border-radius: 4px; transition: width 0.6s ease; }
+.rm3-overall-label { position: absolute; top: 50%; transform: translate(-50%, calc(-100% - 9px)); font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.7); white-space: nowrap; transition: left 0.6s ease; pointer-events: none; }
+.rm3-overall-meta  { display: flex; justify-content: space-between; align-items: baseline; margin-top: 10px; }
+.rm3-overall-pct   { font-size: 16px; font-weight: 800; color: rgba(255,255,255,0.82); letter-spacing: -0.3px; }
+.rm3-overall-count { font-size: 12px; color: rgba(255,255,255,0.35); }
 
 .rm3-stack { display: flex; flex-direction: column; gap: 10px; }
 
@@ -583,17 +590,10 @@ nav {
   overflow: hidden;
   transition: opacity 0.25s;
 }
-.rm3-card.locked   { opacity: 0.35; }
-.rm3-card.all-done { opacity: 0.55; }
+.rm3-card.locked   { background: rgba(255,255,255,0.04); opacity: 0.45; }
+.rm3-card.all-done { background: rgba(255,255,255,0.18); opacity: 1; }
 
-/* Dark phase colors */
-.rm3-card[data-phase="p1"] { background: #1c1a12; }
-.rm3-card[data-phase="p2"] { background: #121c13; }
-.rm3-card[data-phase="p3"] { background: #1c1610; }
-.rm3-card[data-phase="p4"] { background: #1c1014; }
-.rm3-card[data-phase="p5"] { background: #1a1c10; }
-.rm3-card[data-phase="p6"] { background: #101c16; }
-.rm3-card[data-phase="p7"] { background: #14141c; }
+/* Phase card backgrounds — gray only */
 
 .rm3-card-header {
   display: flex; align-items: center; gap: 6px;
@@ -614,10 +614,11 @@ nav {
 
 .rm3-course { display: flex; flex-direction: column; gap: 8px; }
 .rm3-course + .rm3-course { padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.07); }
-.rm3-course.done { opacity: 0.45; }
 .rm3-course-info  { display: flex; flex-direction: column; gap: 3px; }
-.rm3-course-title { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.92); line-height: 1.3; }
-.rm3-course-sub   { font-size: 11px; color: rgba(255,255,255,0.48); }
+.rm3-course-title { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.28); line-height: 1.3; }
+.rm3-course-sub   { font-size: 11px; color: rgba(255,255,255,0.18); }
+.rm3-course.done .rm3-course-title { color: rgba(255,255,255,0.72); }
+.rm3-course.done .rm3-course-sub   { color: rgba(255,255,255,0.42); }
 .rm3-course-actions { display: flex; gap: 6px; flex-wrap: wrap; }
 
 .rm3-watch {

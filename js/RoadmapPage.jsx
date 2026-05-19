@@ -61,14 +61,21 @@ function RoadmapPage() {
   return (
     <div className="page active fade-in">
       <div className="roadmap-wrap">
-        <p className="page-label">Road Map</p>
-        <h1 className="page-title">Seu caminho,<br/>passo a passo.</h1>
+        <h1 className="page-title">Roadmap iniciante para <em>Dev Junior</em>.</h1>
+        <p className="rm3-lead">Tudo que você precisa para iniciar sua carreira em programação.</p>
+        <p className="rm3-lead rm3-lead--sub">Esse é exatamente o roadmap que estou fazendo.</p>
 
         <div className="rm3-overall">
           <div className="rm3-overall-bar">
             <div className="rm3-overall-fill" style={{ width: pct + '%' }} />
+            {pct >= 3 && (
+              <span className="rm3-overall-label" style={{ left: pct + '%' }}>{pct}%</span>
+            )}
           </div>
-          <span className="rm3-overall-label">{totalDone}/{COURSES.length} cursos · {pct}%</span>
+          <div className="rm3-overall-meta">
+            <span className="rm3-overall-pct">{pct}% concluído</span>
+            <span className="rm3-overall-count">{totalDone}/{COURSES.length} cursos</span>
+          </div>
         </div>
 
         <div className="rm3-stack">
