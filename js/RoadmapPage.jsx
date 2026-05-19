@@ -1,128 +1,62 @@
-/* RoadmapPage.jsx — personal roadmap with sequential unlock */
+/* RoadmapPage.jsx — colored phase cards, vertical stack, side ruler */
 
 const COURSES = [
-  {
-    id: 'logica',
-    phase: 'Fase 01', phaseLabel: 'Base',
-    title: 'Lógica de Programação',
-    subtitle: 'Virado no Jiraya · DevDojo',
-    url: 'https://www.youtube.com/watch?v=ycyL5CqZoUo&list=PL62G310vn6nH-uBTKREcUWDkOi2Q9n4OZ',
-    desc: 'Antes de qualquer linguagem, aprenda a pensar como programador. Algoritmos, estruturas de controle e resolução de problemas.',
-  },
-  {
-    id: 'java',
-    phase: 'Fase 02', phaseLabel: 'Linguagem',
-    title: 'Maratona Java',
-    subtitle: 'Virado no Jiraya · DevDojo',
-    url: 'https://www.youtube.com/watch?v=F2Y867f1J8U&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW',
-    desc: 'Java do zero ao avançado. POO, coleções, generics, streams — a linguagem do mercado enterprise.',
-  },
-  {
-    id: 'git',
-    phase: 'Fase 03', phaseLabel: 'Ferramentas',
-    title: 'Git e Github',
-    subtitle: 'Curso Gratuito',
-    url: 'https://www.youtube.com/watch?v=2c7yWlpWDJM&list=PLcoYAcR89n-qbO7YAVj5S0alABLis_QVU',
-    desc: 'Versionamento de código. Indispensável pra qualquer dev — commits, branches, pull requests.',
-  },
-  {
-    id: 'sql',
-    phase: 'Fase 03', phaseLabel: 'Ferramentas',
-    title: 'SQL com MySQL',
-    subtitle: 'Curso Completo',
-    url: 'https://www.youtube.com/watch?v=lHYV_H1526Q&list=PLbIBj8vQhvm2WT-pjGS5x7zUzmh4VgvRk',
-    desc: 'Banco de dados relacional. Queries, joins, modelagem — o essencial de qualquer back-end.',
-  },
-  {
-    id: 'api-tests',
-    phase: 'Fase 04', phaseLabel: 'Testes',
-    title: 'Testes de API Rest',
-    subtitle: 'Curso Gratuito · Introdução',
-    url: 'https://www.youtube.com/watch?v=VqVQ7vHY32o&list=PLf8x7B3nFTl17WeEVj405tHlstiq1kNBX',
-    desc: 'Antes de sair construindo, aprenda a testar. Qualidade de API desde o começo do projeto.',
-  },
-  {
-    id: 'spring1',
-    phase: 'Fase 05', phaseLabel: 'Spring Boot',
-    title: 'Spring Boot Direto Das Trincheiras',
-    subtitle: 'DevDojo',
-    url: 'https://www.youtube.com/watch?v=beRdNB8lNUI&list=PL62G310vn6nFTNJ4JbW8BuhAiK16MEc_x',
-    desc: 'Introdução prática ao framework mais usado no mercado Java. Sem enrolação.',
-  },
-  {
-    id: 'spring2',
-    phase: 'Fase 05', phaseLabel: 'Spring Boot',
-    title: 'Spring Boot Essentials 00',
-    subtitle: 'DevDojo',
-    url: 'https://www.youtube.com/watch?v=R-F-UcDo_5I&list=PL62G310vn6nF3gssjqfCKLpTK2sZJ_a_1',
-    desc: 'Fundamentos sólidos: APIs RESTful, JPA, validação e boas práticas de projeto.',
-  },
-  {
-    id: 'spring3',
-    phase: 'Fase 05', phaseLabel: 'Spring Boot',
-    title: 'Spring Boot Essentials 2',
-    subtitle: 'DevDojo',
-    url: 'https://www.youtube.com/watch?v=bCzsSXE4Jzg&list=PL62G310vn6nFBIxp6ZwGnm8xMcGE3VA5H',
-    desc: 'Continuação — Spring Security, testes de integração, deploy e conceitos avançados.',
-  },
-  {
-    id: 'resteasy',
-    phase: 'Fase 05', phaseLabel: 'Spring Boot',
-    title: 'REST com RESTEasy',
-    subtitle: 'Configuração completa',
-    url: 'https://www.youtube.com/watch?v=QxohK_Er0EM&list=PL62G310vn6nEZU20j1J38xEUwuQLuEUFS',
-    desc: 'APIs RESTful com JAX-RS. Alternativa ao Spring MVC com foco em performance e padrões.',
-  },
-  {
-    id: 'docker',
-    phase: 'Fase 06', phaseLabel: 'DevOps & Cloud',
-    title: 'Docker',
-    subtitle: 'Curso Completo',
-    url: 'https://www.youtube.com/watch?v=OERbOJZwGAU&list=PLViOsriojeLrdw5VByn96gphHFxqH3O_N',
-    desc: 'Containerização de aplicações. Essencial pra fazer deploy consistente em qualquer ambiente.',
-  },
-  {
-    id: 'cloud',
-    phase: 'Fase 06', phaseLabel: 'DevOps & Cloud',
-    title: 'Introdução à Cloud',
-    subtitle: 'Conceitos e prática',
-    url: 'https://www.youtube.com/watch?v=x4PdyxH7KIw&list=PL62G310vn6nGyKUJVqa_VvATxkm1E-d5k',
-    desc: 'Entenda a infraestrutura moderna. Fundamentos de cloud computing e arquitetura distribuída.',
-  },
-  {
-    id: 'aws',
-    phase: 'Fase 06', phaseLabel: 'DevOps & Cloud',
-    title: 'AWS White Belt',
-    subtitle: 'Amazon Web Services',
-    url: 'https://www.youtube.com/watch?v=tZWNcpiXvFM&list=PL62G310vn6nHwfC31Q2hqh-3nO-6Rceyd',
-    desc: 'A nuvem mais usada no mercado. EC2, S3, RDS, Lambda — os serviços que todo dev precisa conhecer.',
-  },
+  { id: 'logica',   title: 'Lógica de Programação',              subtitle: 'Virado no Jiraya · DevDojo',  url: 'https://www.youtube.com/watch?v=ycyL5CqZoUo&list=PL62G310vn6nH-uBTKREcUWDkOi2Q9n4OZ' },
+  { id: 'java',     title: 'Maratona Java',                      subtitle: 'Virado no Jiraya · DevDojo',  url: 'https://www.youtube.com/watch?v=F2Y867f1J8U&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW' },
+  { id: 'git',      title: 'Git e Github',                       subtitle: 'Curso Gratuito',              url: 'https://www.youtube.com/watch?v=2c7yWlpWDJM&list=PLcoYAcR89n-qbO7YAVj5S0alABLis_QVU' },
+  { id: 'sql',      title: 'SQL com MySQL',                      subtitle: 'Curso Completo',              url: 'https://www.youtube.com/watch?v=lHYV_H1526Q&list=PLbIBj8vQhvm2WT-pjGS5x7zUzmh4VgvRk' },
+  { id: 'apitests', title: 'Testes de API Rest',                 subtitle: 'Introdução · Gratuito',       url: 'https://www.youtube.com/watch?v=VqVQ7vHY32o&list=PLf8x7B3nFTl17WeEVj405tHlstiq1kNBX' },
+  { id: 'spring1',  title: 'Spring Boot Direto Das Trincheiras', subtitle: 'DevDojo',                     url: 'https://www.youtube.com/watch?v=beRdNB8lNUI&list=PL62G310vn6nFTNJ4JbW8BuhAiK16MEc_x' },
+  { id: 'spring2',  title: 'Spring Boot Essentials 00',          subtitle: 'DevDojo',                     url: 'https://www.youtube.com/watch?v=R-F-UcDo_5I&list=PL62G310vn6nF3gssjqfCKLpTK2sZJ_a_1' },
+  { id: 'spring3',  title: 'Spring Boot Essentials 2',           subtitle: 'DevDojo',                     url: 'https://www.youtube.com/watch?v=bCzsSXE4Jzg&list=PL62G310vn6nFBIxp6ZwGnm8xMcGE3VA5H' },
+  { id: 'resteasy', title: 'REST com RESTEasy',                  subtitle: 'Configuração completa',       url: 'https://www.youtube.com/watch?v=QxohK_Er0EM&list=PL62G310vn6nEZU20j1J38xEUwuQLuEUFS' },
+  { id: 'docker',   title: 'Docker',                             subtitle: 'Curso Completo',              url: 'https://www.youtube.com/watch?v=OERbOJZwGAU&list=PLViOsriojeLrdw5VByn96gphHFxqH3O_N' },
+  { id: 'cloud',    title: 'Introdução à Cloud',                 subtitle: 'Conceitos e prática',         url: 'https://www.youtube.com/watch?v=x4PdyxH7KIw&list=PL62G310vn6nGyKUJVqa_VvATxkm1E-d5k' },
+  { id: 'aws',      title: 'AWS White Belt',                     subtitle: 'Amazon Web Services',         url: 'https://www.youtube.com/watch?v=tZWNcpiXvFM&list=PL62G310vn6nHwfC31Q2hqh-3nO-6Rceyd' },
 ];
 
-const RM_KEY = 'd30_roadmap_v2';
+const PHASES = [
+  { id: 'p1', num: '01', label: 'Base',           ids: ['logica'] },
+  { id: 'p2', num: '02', label: 'Versionamento',  ids: ['git'] },
+  { id: 'p3', num: '03', label: 'Linguagem',      ids: ['java'] },
+  { id: 'p4', num: '04', label: 'Banco de Dados', ids: ['sql'] },
+  { id: 'p5', num: '05', label: 'Testes',         ids: ['apitests'] },
+  { id: 'p6', num: '06', label: 'Spring Boot',    ids: ['spring1', 'spring2', 'spring3', 'resteasy'] },
+  { id: 'p7', num: '07', label: 'DevOps & Cloud', ids: ['docker', 'cloud', 'aws'] },
+];
+
+const COURSE_MAP = Object.fromEntries(COURSES.map(c => [c.id, c]));
+const RM_KEY = 'd30_roadmap_v3';
 
 function rmLoad() {
   try { const r = localStorage.getItem(RM_KEY); return r ? new Set(JSON.parse(r)) : new Set(); }
   catch { return new Set(); }
 }
-function rmSave(set) {
-  try { localStorage.setItem(RM_KEY, JSON.stringify([...set])); } catch {}
+function rmSave(s) {
+  try { localStorage.setItem(RM_KEY, JSON.stringify([...s])); } catch {}
 }
 
 function RoadmapPage() {
-  const [done, setDone] = React.useState(() => rmLoad());
+  const [done,      setDone]      = React.useState(() => rmLoad());
+  const [unlocking, setUnlocking] = React.useState(new Set());
 
   const toggle = React.useCallback((id) => {
     setDone(prev => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id); else next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+        setUnlocking(u => { const n = new Set(u); n.add(id); return n; });
+        setTimeout(() => setUnlocking(u => { const n = new Set(u); n.delete(id); return n; }), 500);
+      }
       rmSave(next);
       return next;
     });
   }, []);
 
-  const doneCount = COURSES.filter(c => done.has(c.id)).length;
-  const pct = Math.round(doneCount / COURSES.length * 100);
+  const totalDone = COURSES.filter(c => done.has(c.id)).length;
+  const pct = Math.round(totalDone / COURSES.length * 100);
 
   return (
     <div className="page active fade-in">
@@ -130,97 +64,111 @@ function RoadmapPage() {
         <p className="page-label">Road Map</p>
         <h1 className="page-title">Seu caminho,<br/>passo a passo.</h1>
 
-        <div className="rm2-progress-bar">
-          <div className="rm2-progress-fill" style={{ width: pct + '%' }} />
+        <div className="rm3-overall">
+          <div className="rm3-overall-bar">
+            <div className="rm3-overall-fill" style={{ width: pct + '%' }} />
+          </div>
+          <span className="rm3-overall-label">{totalDone}/{COURSES.length} cursos · {pct}%</span>
         </div>
-        <p className="rm2-progress-label">{doneCount} de {COURSES.length} cursos concluídos · {pct}%</p>
 
-        <div className="rm2-timeline">
-          {COURSES.map((course, i) => {
-            const isDone    = done.has(course.id);
-            const isLocked  = i > 0 && !done.has(COURSES[i - 1].id);
-            const isNewPhase = i === 0 || COURSES[i - 1].phase !== course.phase;
+        <div className="rm3-stack">
+          {PHASES.map((phase, i) => {
+            const unlocked  = i === 0 || PHASES[i - 1].ids.every(id => done.has(id));
+            const doneCount = phase.ids.filter(id => done.has(id)).length;
+            const phasePct  = Math.round(doneCount / phase.ids.length * 100);
+            const allDone   = doneCount === phase.ids.length;
             return (
-              <React.Fragment key={course.id}>
-                {isNewPhase && (
-                  <div className="rm2-phase-header">
-                    <span className="rm2-phase-num">{course.phase}</span>
-                    <span className="rm2-phase-lbl">{course.phaseLabel}</span>
-                  </div>
-                )}
-                <CourseCard
-                  course={course}
-                  index={i}
-                  isDone={isDone}
-                  isLocked={isLocked}
-                  isLast={i === COURSES.length - 1}
-                  onToggle={() => toggle(course.id)}
-                />
-              </React.Fragment>
+              <PhaseCard
+                key={phase.id}
+                phase={phase}
+                unlocked={unlocked}
+                allDone={allDone}
+                doneCount={doneCount}
+                phasePct={phasePct}
+                done={done}
+                unlocking={unlocking}
+                onToggle={toggle}
+              />
             );
           })}
-
-          {doneCount === COURSES.length && (
-            <div className="rm2-congrats">
-              <div className="rm2-congrats-icon">🎯</div>
-              <p>Roadmap concluído. Agora vai atrás da vaga.</p>
-            </div>
-          )}
         </div>
+
+        {totalDone === COURSES.length && (
+          <p className="rm3-congrats">Roadmap concluído. Agora vai atrás da vaga.</p>
+        )}
       </div>
       <Footer />
     </div>
   );
 }
 
-function CourseCard({ course, index, isDone, isLocked, isLast, onToggle }) {
-  const state = isDone ? 'done' : isLocked ? 'locked' : 'active';
+function PhaseCard({ phase, unlocked, allDone, doneCount, phasePct, done, unlocking, onToggle }) {
+  const cls = 'rm3-card' + (!unlocked ? ' locked' : allDone ? ' all-done' : '');
   return (
-    <div className="rm2-entry">
-      <div className="rm2-stem">
-        <div className={'rm2-node ' + state}>
-          {isDone
-            ? <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            : isLocked
-            ? <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-            : <span>{index + 1}</span>
+    <div className="rm3-entry">
+      <div className={cls} data-phase={phase.id}>
+        <div className="rm3-card-header">
+          <span className="rm3-card-num">{phase.num}</span>
+          <span className="rm3-card-sep">·</span>
+          <span className="rm3-card-label">{phase.label}</span>
+          {!unlocked
+            ? <svg className="rm3-lock-icon" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+            : <span className="rm3-card-count">{doneCount}/{phase.ids.length}</span>
           }
         </div>
-        {!isLast && <div className={'rm2-connector' + (isDone ? ' done' : '')} />}
+        <div className="rm3-card-body">
+          {!unlocked ? (
+            <>
+              <p className="rm3-lock-msg">Conclua a fase anterior para desbloquear.</p>
+              <div className="rm3-locked-list">
+                {phase.ids.map(id => (
+                  <span key={id} className="rm3-locked-item">{COURSE_MAP[id].title}</span>
+                ))}
+              </div>
+            </>
+          ) : (
+            phase.ids.map(id => {
+              const c         = COURSE_MAP[id];
+              const isDone    = done.has(id);
+              const isAnim    = unlocking.has(id);
+              return (
+                <div key={id} className={'rm3-course' + (isDone ? ' done' : '')}>
+                  <div className="rm3-course-info">
+                    <span className="rm3-course-title">{c.title}</span>
+                    <span className="rm3-course-sub">{c.subtitle}</span>
+                  </div>
+                  <div className="rm3-course-actions">
+                    <a className="rm3-watch" href={c.url} target="_blank" rel="noopener noreferrer" data-cursor="hover">
+                      Assistir ↗
+                    </a>
+                    <button
+                      className={'rm3-check' + (isDone ? ' done' : '') + (isAnim ? ' unlocking' : '')}
+                      data-cursor="hover"
+                      onClick={() => onToggle(id)}
+                    >
+                      {isDone ? '✓ Concluído' : 'Marcar concluído'}
+                    </button>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
       </div>
 
-      <div className={'rm2-card ' + state}>
-        <div className="rm2-card-top">
-          <div className="rm2-card-title">{course.title}</div>
-          <div className="rm2-card-sub">{course.subtitle}</div>
+      {/* Side ruler */}
+      <div className="rm3-ruler" data-phase={phase.id}>
+        <span className="rm3-ruler-top">100</span>
+        <div className="rm3-ruler-track">
+          <div className="rm3-ruler-fill" style={{ height: phasePct + '%' }} />
+          {[75, 50, 25].map(n => (
+            <div key={n} className="rm3-ruler-tick" style={{ bottom: n + '%' }} />
+          ))}
         </div>
-        {!isLocked
-          ? <p className="rm2-card-desc">{course.desc}</p>
-          : <p className="rm2-locked-hint">Conclua o curso anterior para desbloquear.</p>
-        }
-        {!isLocked && (
-          <div className="rm2-actions">
-            <a
-              className="rm2-link-btn"
-              href={course.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-cursor="hover"
-            >
-              Assistir ↗
-            </a>
-            <button
-              className={'rm2-check-btn' + (isDone ? ' done' : '')}
-              data-cursor="hover"
-              onClick={onToggle}
-            >
-              {isDone ? '✓ Concluído' : 'Marcar como concluído'}
-            </button>
-          </div>
-        )}
+        <span className="rm3-ruler-bot">0</span>
       </div>
     </div>
   );
 }
 
-Object.assign(window, { RoadmapPage, COURSES });
+Object.assign(window, { RoadmapPage, COURSES, PHASES });

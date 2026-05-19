@@ -33,9 +33,10 @@ function Field({ label, error, hint, children }) {
 }
 
 function LoginModal({ open, onClose, onSignIn, onSwitch, toast }) {
-  const [email, setEmail] = React.useState('');
+  const [email,    setEmail]    = React.useState('');
   const [password, setPassword] = React.useState('');
-  const [errors, setErrors] = React.useState({});
+  const [remember, setRemember] = React.useState(false);
+  const [errors,   setErrors]   = React.useState({});
 
   const submit = (e) => {
     e.preventDefault();
@@ -64,6 +65,10 @@ function LoginModal({ open, onClose, onSignIn, onSwitch, toast }) {
         <Field label="Senha" error={errors.password}>
           <input type="password" placeholder="••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
         </Field>
+        <label className="form-remember" data-cursor="hover">
+          <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
+          <span>Lembrar de mim</span>
+        </label>
         <div className="form-actions">
           <button type="submit" className="btn-primary" data-cursor="hover">Entrar</button>
         </div>
@@ -100,7 +105,7 @@ function SignupModal({ open, onClose, onSignIn, onSwitch, toast }) {
   };
 
   return (
-    <Modal open={open} onClose={onClose} label="Criar conta" title="Faz parte da D30." subtitle="Sem custo, sem pré-requisito. Só preenche e tá dentro.">
+    <Modal open={open} onClose={onClose} label="Criar conta" title="Queremos você na comunidade.">
       <form onSubmit={submit} noValidate>
         <Field label="Nome" error={errors.name}>
           <input type="text" placeholder="Como te chamam?" value={name} onChange={(e) => setName(e.target.value)} />

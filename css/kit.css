@@ -1013,23 +1013,61 @@ nav.nav--floating {
 .about-hero { padding: 3.5rem 2rem 2.5rem !important; }
 .roadmap-wrap { padding: 3.5rem 2rem 4rem !important; max-width: 820px !important; }
 
-/* Roadmap v2 — light theme */
-.rm2-node.locked { background: #f0f0f0 !important; border-color: rgba(0,0,0,0.14) !important; color: #aaa !important; }
-.rm2-connector   { background: rgba(0,0,0,0.1) !important; }
-.rm2-connector.done { background: #7c3aed !important; opacity: 0.3 !important; }
-.rm2-card        { border-color: rgba(0,0,0,0.1) !important; }
-.rm2-card.active { border-color: rgba(124,58,237,0.35) !important; background: rgba(124,58,237,0.03) !important; }
-.rm2-card.done   { border-color: rgba(0,0,0,0.07) !important; }
-.rm2-card-title  { color: #111 !important; }
-.rm2-card-sub    { color: #999 !important; }
-.rm2-card-desc   { color: #666 !important; }
-.rm2-locked-hint { color: #bbb !important; }
-.rm2-check-btn   { color: #999 !important; border-color: rgba(0,0,0,0.15) !important; }
-.rm2-progress-bar{ background: rgba(0,0,0,0.08) !important; }
-.rm2-phase-num   { color: #bbb !important; }
-.rm2-phase-header::after { background: rgba(0,0,0,0.08) !important; }
-.rm2-link-btn    { color: #7c3aed !important; border-color: rgba(124,58,237,0.35) !important; }
-.rm2-congrats p  { color: #111 !important; }
+/* Roadmap v3 — light theme: colored folder cards + ruler */
+.rm3-overall-bar   { background: rgba(0,0,0,0.08) !important; }
+.rm3-overall-fill  { background: #333 !important; }
+.rm3-overall-label { color: #bbb !important; }
+
+/* Light phase colors — warm folder tones */
+.rm3-card[data-phase="p1"] { background: #f5efdc !important; }
+.rm3-card[data-phase="p2"] { background: #dff0e4 !important; }
+.rm3-card[data-phase="p3"] { background: #f5e8d2 !important; }
+.rm3-card[data-phase="p4"] { background: #f5dce5 !important; }
+.rm3-card[data-phase="p5"] { background: #f2f0d8 !important; }
+.rm3-card[data-phase="p6"] { background: #daeada !important; }
+.rm3-card[data-phase="p7"] { background: #e0dff5 !important; }
+
+.rm3-card { border-color: rgba(0,0,0,0.08) !important; box-shadow: 0 2px 10px rgba(0,0,0,0.06) !important; }
+.rm3-card.locked   { opacity: 0.45 !important; box-shadow: none !important; }
+.rm3-card.all-done { opacity: 0.6 !important; }
+
+.rm3-card-header { border-bottom-color: rgba(0,0,0,0.1) !important; }
+.rm3-card-num    { color: rgba(0,0,0,0.45) !important; }
+.rm3-card-sep    { color: rgba(0,0,0,0.28) !important; }
+.rm3-card-label  { color: #111 !important; }
+.rm3-card-count  { color: rgba(0,0,0,0.45) !important; }
+.rm3-lock-icon   { color: rgba(0,0,0,0.55) !important; }
+
+.rm3-lock-msg    { color: rgba(0,0,0,0.55) !important; }
+.rm3-locked-item { color: rgba(0,0,0,0.45) !important; }
+
+.rm3-course + .rm3-course { border-top-color: rgba(0,0,0,0.1) !important; }
+.rm3-course.done { opacity: 0.48 !important; }
+.rm3-course-title { color: #111 !important; font-weight: 700 !important; }
+.rm3-course-sub   { color: rgba(0,0,0,0.5) !important; }
+
+.rm3-watch { color: rgba(0,0,0,0.72) !important; border-color: rgba(0,0,0,0.25) !important; }
+.rm3-watch:hover { background: rgba(0,0,0,0.06) !important; border-color: rgba(0,0,0,0.4) !important; }
+
+.rm3-check { color: rgba(0,0,0,0.45) !important; border-color: rgba(0,0,0,0.18) !important; }
+.rm3-check:hover { border-color: rgba(0,0,0,0.38) !important; color: rgba(0,0,0,0.75) !important; }
+.rm3-check.done  { color: rgba(0,0,0,0.78) !important; border-color: rgba(0,0,0,0.35) !important; font-weight: 700 !important; }
+
+/* Ruler — light theme */
+.rm3-ruler-top, .rm3-ruler-bot { color: rgba(0,0,0,0.25) !important; }
+.rm3-ruler-track { background: rgba(0,0,0,0.08) !important; }
+.rm3-ruler-tick  { background: rgba(0,0,0,0.12) !important; }
+
+/* Ruler fill per phase — light */
+.rm3-ruler[data-phase="p1"] .rm3-ruler-fill { background: rgba(120,80,10,0.35) !important; }
+.rm3-ruler[data-phase="p2"] .rm3-ruler-fill { background: rgba(20,120,50,0.35) !important; }
+.rm3-ruler[data-phase="p3"] .rm3-ruler-fill { background: rgba(150,80,10,0.35) !important; }
+.rm3-ruler[data-phase="p4"] .rm3-ruler-fill { background: rgba(160,30,70,0.3) !important; }
+.rm3-ruler[data-phase="p5"] .rm3-ruler-fill { background: rgba(120,110,10,0.35) !important; }
+.rm3-ruler[data-phase="p6"] .rm3-ruler-fill { background: rgba(20,110,50,0.35) !important; }
+.rm3-ruler[data-phase="p7"] .rm3-ruler-fill { background: rgba(60,60,160,0.3) !important; }
+
+.rm3-congrats { color: #333 !important; }
 
 /* ════════════════════════════════════════════════════════════
    FEATURES STRIP — un-glue the 4 cards: real gap + individual
