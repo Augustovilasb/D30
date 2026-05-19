@@ -101,6 +101,215 @@ function HomePage({ onNavigate, onSignIn }) {
   );
 }
 
+const FEATURES = [
+  { num: '—', title: 'Minha história', isStory: true },
+  {
+    num: '01', title: 'Fórum ativo',
+    backLabel: 'Discussões sobre',
+    desc: 'Um fórum de verdade — não um grupo de WhatsApp cheio de figurinha. Um lugar onde você posta uma dúvida e alguém que já passou por aquilo te responde de verdade. Sem ego, sem julgamento.',
+    topics: ['Dúvidas técnicas e de carreira', 'Vida de quem está em transição', 'Dicas de estudo e produtividade', 'Trampo: oportunidades e experiências', 'Desabafos e conquistas do dia a dia'],
+    tagline: 'Essa é a essência da D30.',
+  },
+  {
+    num: '02', title: 'Palestras',
+    backLabel: 'Profissionais & especialistas',
+    desc: 'Toda mês um convidado diferente. Não são aqueles papos genéricos de YouTube — são conversas reais com pessoas que chegaram lá e que estão dispostas a contar como foi de verdade.',
+    topics: ['Devs que fizeram transição de carreira', 'Pessoas que foram contratadas sem faculdade', 'Especialistas em tecnologia, saúde e dinheiro', 'Vagas internacionais: como é trabalhar fora', 'Sessão de perguntas ao vivo com o público'],
+    tagline: 'Vai ser demais.',
+  },
+  {
+    num: '03', title: 'Road Map',
+    backLabel: 'Roadmap de estudos',
+    desc: 'Sem enrolação: um caminho claro do zero até o primeiro emprego. Com foco em Java no back-end — a linguagem que o mercado ainda contrata muito e que eu uso.',
+    topics: ['Fundamentos: lógica, Git, terminal', 'HTML · CSS · JavaScript do zero', 'Java do zero: sintaxe, POO, coleções', 'Spring Boot: REST API, JPA, segurança', 'Banco de dados: SQL, PostgreSQL, MySQL', 'Portfólio e preparação para entrevistas'],
+    tagline: 'O SEU caminho.',
+  },
+  {
+    num: '04', title: 'Apoio real',
+    backLabel: 'Para quem estuda com a vida cheia',
+    desc: 'Tem filho, tem conta pra pagar, tem trabalho de dia. Aqui não tem guru falando que é só acordar às 5h da manhã. Tem gente real que entende o que é estudar com a vida cheia.',
+    topics: ['Sem fórmula mágica ou coach motivacional', 'Rotinas reais: 1h por dia já é suficiente', 'Como manter consistência sem se destruir', 'Pessoas que já estavam no seu lugar', 'Erros, travamentos e voltas — normalizados', 'Consistência acima de velocidade'],
+    tagline: 'Você não tá sozinho.',
+  },
+  {
+    num: '05', title: 'Sala de estudos',
+    backLabel: 'Discord · ao vivo',
+    desc: 'Uma sala de voz sempre aberta no Discord. Liga o microfone ou fica só ouvindo — do jeito que funcionar pra você. Melhor do que estudar em silêncio em casa.',
+    topics: ['Sala de estudos silenciosa (foco)', 'Canal de tira-dúvidas ao vivo', 'Screen share para revisar código junto', 'Grupos por nível: iniciante, intermediário', 'Pomodoro coletivo nas noites de semana', 'Voz · texto · vídeo — você escolhe'],
+    tagline: 'Estuda junto. Avança junto.',
+  },
+  {
+    num: '06', title: 'Vagas filtradas',
+    backLabel: 'Vagas no LinkedIn',
+    desc: 'Chega de perder horas garimpando vaga ruim. A gente filtra, organiza e posta só o que faz sentido pra quem está começando ou em transição — com detalhes, requisitos e link direto.',
+    topics: ['Vagas júnior e estágio em tech', 'Transição de carreira aceita', 'Remoto, híbrido e presencial', 'Requisitos e faixa salarial quando disponível', 'Link direto para aplicação no LinkedIn', 'Atualizado toda semana'],
+    tagline: 'A vaga certa. No lugar certo.',
+  },
+];
+
+function FeatureTab({ f, active, onClick }) {
+  return (
+    <div
+      className={'feature-item' + (active ? ' active-tab' : '') + (f.isStory ? ' feature-item--story' : '')}
+      data-cursor="hover"
+      onClick={onClick}
+    >
+      {!f.isStory && <div className="feat-num">{f.num}</div>}
+      <div className="feat-title">{f.title}</div>
+    </div>
+  );
+}
+
+function FeaturePanel({ card }) {
+  if (card.isStory) {
+    return (
+      <div className="story-card-inner">
+        <div className="story-section-top">
+          <p className="story-eyebrow">minha história até aqui</p>
+          <p className="story-intro">
+            Tentei tudo — Educação Física, Exército, 3 anos de Civil, formei em Produção.
+            No fundo eu sabia que <strong>nada disso era pra mim.</strong>
+          </p>
+        </div>
+
+        <div className="story-section-mid">
+          <p className="story-decision">4 anos atrás<br/>decidi sair do Brasil.</p>
+          <div className="story-tags">
+            <span>Sem inglês</span>
+            <span>Sem nunca ter saído do país</span>
+            <span>Cleaner</span>
+            <span>Warehouse</span>
+            <span>Cozinha</span>
+          </div>
+        </div>
+
+        <blockquote className="story-quote">
+          Pela primeira vez na vida,<br/>eu tava feliz estudando.
+        </blockquote>
+
+        <p className="story-close">
+          É por isso que criei essa comunidade.{' '}
+          <span>Pra você não passar pelo mesmo.</span>
+        </p>
+      </div>
+    );
+  }
+  return (
+    <div className="feature-panel-content">
+      <div className="feat-top">
+        {card.backLabel && <p className="feat-back-label">{card.backLabel}</p>}
+        {card.desc && <p className="feat-desc-body">{card.desc}</p>}
+        <ul className="feat-topics">
+          {card.topics.map((t, i) => <li key={i}>{t}</li>)}
+        </ul>
+      </div>
+      {card.tagline && <p className="feat-tagline">{card.tagline}</p>}
+    </div>
+  );
+}
+
+function AboutWithFeatures() {
+  const [selected, setSelected] = React.useState(0);
+  const stackRef = React.useRef(null);
+  const lockedRef = React.useRef(false);
+  const touchYRef = React.useRef(null);
+
+  const go = React.useCallback((next) => {
+    if (lockedRef.current || next < 0 || next >= FEATURES.length) return;
+    lockedRef.current = true;
+    setSelected(next);
+    setTimeout(() => { lockedRef.current = false; }, 400);
+  }, []);
+
+  React.useEffect(() => {
+    const el = stackRef.current;
+    if (!el) return;
+
+    const onWheel = (e) => {
+      if (lockedRef.current) { e.stopPropagation(); e.preventDefault(); return; }
+      const down = e.deltaY > 0;
+      if (down && selected < FEATURES.length - 1) {
+        e.stopPropagation(); e.preventDefault(); go(selected + 1);
+      } else if (!down && selected > 0) {
+        e.stopPropagation(); e.preventDefault(); go(selected - 1);
+      }
+    };
+
+    const onTouchStart = (e) => { touchYRef.current = e.touches[0].clientY; };
+    const onTouchEnd = (e) => {
+      if (touchYRef.current === null || lockedRef.current) return;
+      const dy = touchYRef.current - e.changedTouches[0].clientY;
+      touchYRef.current = null;
+      if (Math.abs(dy) < 40) return;
+      dy > 0 ? go(selected + 1) : go(selected - 1);
+    };
+
+    el.addEventListener('wheel',      onWheel,      { passive: false });
+    el.addEventListener('touchstart', onTouchStart, { passive: true });
+    el.addEventListener('touchend',   onTouchEnd,   { passive: true });
+    return () => {
+      el.removeEventListener('wheel',      onWheel);
+      el.removeEventListener('touchstart', onTouchStart);
+      el.removeEventListener('touchend',   onTouchEnd);
+    };
+  }, [selected, go]);
+
+  return (
+    <section className="about-features">
+      <div className="folders-layout">
+        <div className="folders-nav">
+          {FEATURES.map((f, i) => (
+            <button
+              key={f.num}
+              className={'folders-nav-item' + (i === selected ? ' active' : '')}
+              onClick={() => go(i)}
+              data-cursor="hover"
+            >
+              <span className="folders-nav-num">{f.isStory ? '—' : f.num}</span>
+              <span className="folders-nav-title">{f.title}</span>
+            </button>
+          ))}
+        </div>
+        <div className="folders-stack" ref={stackRef}>
+        {FEATURES.map((f, i) => {
+          const depth = i - selected;
+          let style;
+          if (i < selected) {
+            // já passou — sai pelo topo
+            style = { transform: 'translateY(-112%) rotate(-1deg)', opacity: 0, zIndex: 1 };
+          } else if (i === selected) {
+            // ativa — frente
+            style = { transform: 'translateY(0) scale(1)', opacity: 1, zIndex: FEATURES.length + 1 };
+          } else {
+            // empilhada atrás — cada uma um pouco mais baixa e menor
+            const offset = Math.min(depth * 18, 54);
+            const scale  = Math.max(1 - depth * 0.04, 0.88);
+            style = { transform: `translateY(${offset}px) scale(${scale})`, opacity: 1, zIndex: FEATURES.length - depth };
+          }
+
+          return (
+            <div key={f.num} className="folder-card" style={style} onClick={i > selected ? () => go(i) : undefined}>
+              <div className="folder-card-header">
+                {!f.isStory && <span className="folder-card-num">{f.num}</span>}
+                <span className="folder-card-title">{f.title}</span>
+                {i === selected && selected < FEATURES.length - 1 && (
+                  <span className="folder-card-hint">scroll ↓</span>
+                )}
+              </div>
+              {i === selected && (
+                <div className="folder-card-body">
+                  <FeaturePanel key={selected} card={f} />
+                </div>
+              )}
+            </div>
+          );
+        })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function FeatureCard({ f }) {
   const [flipped, setFlipped] = React.useState(false);
   return (
@@ -120,68 +329,12 @@ function FeatureCard({ f }) {
   );
 }
 
-function AboutWithFeatures() {
-  return (
-    <section className="about-features">
-      <div className="about-features-grid">
-        {FEATURES.map((f) => (
-          <FeatureCard key={f.num} f={f} />
-        ))}
-      </div>
-      <div className="about-features-text">
-        <div className="founder-story-inline">
-          <p className="founder-story-label">minha história até aqui</p>
-          <div className="founder-story-body">
-            <p className="founder-story-p founder-story-p--intro">
-              Tentei tudo. Educação Física? Não.<br/>
-              Exército? Não. Engenharia?<br/>
-              3 anos de eng. Civil, formei em eng. de Produção.<br/>
-              <span className="founder-muted">Mas no fundo eu sabia que isso <strong>nunca foi pra mim.</strong></span>
-            </p>
-            <p className="founder-story-p founder-story-p--decision">
-              4 anos atrás decidi parar de me mudar do brasil.
-            </p>
-            <p className="founder-story-p">
-              <span className="founder-tag">Sem inglês.</span>{' '}
-              <span className="founder-tag">Sem nunca ter saído do país.</span>{' '}
-              <span className="founder-tag">Cleaner.</span>{' '}
-              <span className="founder-tag">Warehouse.</span>{' '}
-              <span className="founder-tag">Cozinha.</span><br/>
-              Aí entrei num curso de Ciência da Computação sem nunca ter visto uma IDE antes...<br/>
-              mas durante o curso eu só pensava: por que eu não fiz esse curso antes?
-            </p>
-            <p className="founder-story-p founder-story-p--em">
-              Pela primeira vez na vida,<br/>eu estava feliz estudando algo.
-            </p>
-            <p className="founder-story-p">
-              Mesmo que não encontre um trabalho,<br/>
-              mesmo que eu não me torne um dev de verdade,<br/>
-              vou continuar estudando. Porque é isso que quero fazer.
-            </p>
-            <p className="founder-story-p founder-story-p--close">
-              E é por isso que criei essa comunidade.<br/>
-              <span className="founder-muted">Porque não quero que você passe pelo mesmo.</span>
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-const FEATURES = [
-  { num: '01', title: 'Fórum ativo',  desc: 'Tire dúvidas, compartilhe progresso e ajude quem tá atrás de você.' },
-  { num: '02', title: 'Palestras',    desc: 'Convidados reais de diferentes áreas — recrutadores, devs, líderes.' },
-  { num: '03', title: 'Road Map',     desc: 'Um guia de onde começar e pra onde ir na transição de carreira.' },
-  { num: '04', title: 'Apoio real',   desc: 'Uma rede que entende estudar com carga cheia, sem tempo sobrando.' },
-];
-
 function FeaturesStrip() {
   return (
     <div className="features-strip">
       <p className="strip-label reveal visible">O que você encontra aqui</p>
       <div className="features-grid reveal visible">
-        {FEATURES.map((f) => (
+        {FEATURES.filter(f => !f.isStory).map((f) => (
           <FeatureCard key={f.num} f={f} />
         ))}
       </div>

@@ -88,7 +88,7 @@
       if (animRaf) cancelAnimationFrame(animRaf);
       var startY = window.scrollY;
       var start  = null;
-      var dur    = 580;
+      var dur    = 420;
 
       (function step(ts) {
         if (!start) start = ts;
@@ -110,8 +110,8 @@
     window.addEventListener('wheel', function(e) {
       refresh();
       if (!sections.length) return;
+      if (locked) { e.preventDefault(); return; }
       e.preventDefault();
-      if (locked) return;
       goTo(getCurrent() + (e.deltaY > 0 ? 1 : -1));
     }, { passive: false });
 

@@ -260,6 +260,7 @@ nav {
   transform-style: preserve-3d;
   transition: transform 0.55s cubic-bezier(.4,0,.2,1);
 }
+
 .feature-item.flipped .feature-item-inner { transform: rotateY(180deg); }
 
 .feat-face {
@@ -276,13 +277,75 @@ nav {
   transform: rotateY(180deg);
   background: var(--bg2);
   border: 1px solid rgba(139,124,248,0.18);
-  justify-content: center; gap: 12px;
+  justify-content: flex-start; gap: 12px;
 }
 
 .feat-num { font-size: 12px; font-weight: 600; color: var(--purple); letter-spacing: 1px; opacity: .8; }
 .feat-title { font-size: 14px; font-weight: 600; color: var(--text); }
 .feat-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
 .feat-hint { font-size: 11px; color: var(--muted2); }
+.feat-back-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--muted2);
+  margin-bottom: 1rem;
+}
+.feat-back-label::before {
+  content: '';
+  display: block;
+  width: 22px; height: 1px;
+  background: var(--border2);
+  flex-shrink: 0;
+}
+
+.feat-desc-body {
+  font-size: clamp(14px, 1.2vw, 16px);
+  color: var(--text);
+  line-height: 1.7;
+  font-weight: 400;
+  margin-bottom: 1.4rem;
+}
+
+.feat-top { display: flex; flex-direction: column; flex: 1; }
+
+.feat-topics {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.feat-topics li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+}
+.feat-topics li:first-child { border-top: 1px solid var(--border); }
+.feat-topics li::before {
+  content: '';
+  display: block;
+  width: 14px; height: 1px;
+  background: var(--border2);
+  flex-shrink: 0;
+}
+
+.feat-tagline {
+  font-size: clamp(26px, 2.8vw, 38px);
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  line-height: 1.05;
+  color: var(--text);
+  padding-top: 1.4rem;
+  margin-top: 1.4rem;
+  border-top: 1px solid var(--border);
+}
 
 .reveal { opacity: 0; transform: translateY(30px); transition: opacity .8s ease, transform .8s ease; }
 .reveal.visible { opacity: 1; transform: translateY(0); }
