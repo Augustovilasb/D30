@@ -100,9 +100,19 @@ function Nav({ page, onNavigate, user, onSignIn, onSignOut }) {
       </div>
       <div className="nav-slot nav-slot--center">
         <div className="nav-links">
-          <button className="nav-link" data-cursor="hover" onClick={() => goAnchor('top')}>Home</button>
-          <button className="nav-link" data-cursor="hover" onClick={() => goAnchor('fp-about')}>About</button>
-          <button className="nav-link" data-cursor="hover" onClick={() => goAnchor('fp-founder')}>Fundador</button>
+          {user ? (
+            <React.Fragment>
+              <button className={'nav-link' + (page === 'forum'     ? ' active' : '')} data-cursor="hover" onClick={() => onNavigate('forum')}>Fórum</button>
+              <button className={'nav-link' + (page === 'roadmap'   ? ' active' : '')} data-cursor="hover" onClick={() => onNavigate('roadmap')}>Road Map</button>
+              <button className={'nav-link' + (page === 'palestras' ? ' active' : '')} data-cursor="hover" onClick={() => onNavigate('palestras')}>Palestras</button>
+            </React.Fragment>
+          ) : (
+            <React.Fragment>
+              <button className="nav-link" data-cursor="hover" onClick={() => goAnchor('top')}>Home</button>
+              <button className="nav-link" data-cursor="hover" onClick={() => goAnchor('fp-about')}>About</button>
+              <button className="nav-link" data-cursor="hover" onClick={() => goAnchor('fp-founder')}>Fundador</button>
+            </React.Fragment>
+          )}
         </div>
       </div>
       <div className="nav-slot nav-slot--right">
