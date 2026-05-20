@@ -69,17 +69,28 @@ function AiAnalysis({ sessions, type, apiKey }) {
     try { return localStorage.getItem(AI_LAST_KEY(type)) === today; } catch { return false; }
   }, [type, today]);
 
-  const minSessions = type === 'daily' ? 2 : type === 'weekly' ? 7 : 15;
-  const hasEnoughSessions = sessions.length >= minSessions;
-  const hasEnoughTime     = todayStudiedSecs >= MIN_DAILY_SECS;
-  const canAnalyze        = hasEnoughSessions && hasEnoughTime && !alreadyUsedToday;
+  const hasWeekOfData = React.useMemo(() => {
+    if (!sessions.length) return false;
+    const oldest = sessions.reduce((min, s) => s.date < min ? s.date : min, sessions[0].date);
+    const daysAgo = Math.floor((Date.now() - new Date(oldest).getTime()) / 86400000);
+    return daysAgo >= 7;
+  }, [sessions]);
 
-  const blockReason = !hasEnoughTime
+  const hasEnoughTime = todayStudiedSecs >= MIN_DAILY_SECS;
+  const canAnalyze    = hasWeekOfData && hasEnoughTime && !alreadyUsedToday;
+
+  const daysRegistered = React.useMemo(() => {
+    if (!sessions.length) return 0;
+    const oldest = sessions.reduce((min, s) => s.date < min ? s.date : min, sessions[0].date);
+    return Math.floor((Date.now() - new Date(oldest).getTime()) / 86400000);
+  }, [sessions]);
+
+  const blockReason = !hasWeekOfData
+    ? `Você tem ${daysRegistered} dia${daysRegistered !== 1 ? 's' : ''} de dados. É necessário pelo menos 7 dias para gerar análises.`
+    : !hasEnoughTime
     ? `Estude pelo menos 30 min hoje (${Math.round(todayStudiedSecs / 60)}min registrados).`
     : alreadyUsedToday
     ? 'Você já gerou essa análise hoje. Volte amanhã.'
-    : !hasEnoughSessions
-    ? `Mínimo de ${minSessions} sessões necessárias.`
     : null;
 
   const buildPrompt = () => {
