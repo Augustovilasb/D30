@@ -94,48 +94,51 @@ function Nav({ page, onNavigate, user, onSignIn, onSignOut, indicCount, onNaviga
   }, []);
 
   return (
-    <nav className={[floating ? 'nav--floating' : '', user ? 'nav--app' : ''].filter(Boolean).join(' ')}>
-      <div className="nav-slot nav-slot--left">
-        <Logo onClick={() => goAnchor('top')} />
-      </div>
-      <div className="nav-slot nav-slot--center">
-        <div className="nav-links">
-          {user ? (
-            <React.Fragment>
-              <button className={'nav-link' + (page === 'forum'     ? ' active' : '')} data-cursor="hover" onClick={() => onNavigate('forum')}>Fórum</button>
-              <button className={'nav-link' + (page === 'roadmap'   ? ' active' : '')} data-cursor="hover" onClick={() => onNavigate('roadmap')}>Roadmap</button>
-              <button className={'nav-link' + (page === 'palestras' ? ' active' : '')} data-cursor="hover" onClick={() => onNavigate('palestras')}>Palestras</button>
-              <button className={'nav-link' + (page === 'tracker'   ? ' active' : '')} data-cursor="hover" onClick={() => (onNavigateTo || onNavigate)('tracker')}>Tracker</button>
-              <button className={'nav-link' + (page === 'ranking'   ? ' active' : '')} data-cursor="hover" onClick={() => (onNavigateTo || onNavigate)('ranking')}>Ranking</button>
-              <button className={'nav-link' + (page === 'profile'   ? ' active' : '')} data-cursor="hover" onClick={() => (onNavigateTo || onNavigate)('profile')}>Perfil</button>
-            </React.Fragment>
-          ) : (
-            <React.Fragment>
-              <button className="nav-link" data-cursor="hover" onClick={() => goAnchor('top')}>Home</button>
-              <button className="nav-link" data-cursor="hover" onClick={() => goAnchor('fp-about')}>About</button>
-              <button className="nav-link" data-cursor="hover" onClick={() => goAnchor('fp-founder')}>Fundador</button>
-            </React.Fragment>
-          )}
+    <React.Fragment>
+      <nav className={[floating ? 'nav--floating' : '', user ? 'nav--app' : ''].filter(Boolean).join(' ')}>
+        <div className="nav-slot nav-slot--left">
+          <Logo onClick={() => goAnchor('top')} />
         </div>
-      </div>
-      <div className="nav-slot nav-slot--right">
-        <div className="nav-right">
-          <ThemeToggle />
-          {user && <NotificationsBell onNavigate={onNavigateTo || onNavigate} />}
-          {user ? (
-            <UserChip user={user} onSignOut={onSignOut} indicCount={indicCount} onNavigateProfile={onNavigateProfile} onNavigate={onNavigateTo || onNavigate} />
-          ) : (
-            <React.Fragment>
-              <button className="nav-cta ghost" data-cursor="hover" onClick={() => onSignIn('login')}>
-                <LockIcon />
-                <span>Entrar</span>
-              </button>
-              <button className="nav-cta" data-cursor="hover" onClick={() => onSignIn('signup')}>Entrar na comunidade</button>
-            </React.Fragment>
-          )}
+        <div className="nav-slot nav-slot--center">
+          <div className="nav-links">
+            {user ? (
+              <React.Fragment>
+                <button className={'nav-link' + (page === 'forum'     ? ' active' : '')} data-cursor="hover" onClick={() => onNavigate('forum')}>Fórum</button>
+                <button className={'nav-link' + (page === 'roadmap'   ? ' active' : '')} data-cursor="hover" onClick={() => onNavigate('roadmap')}>Roadmap</button>
+                <button className={'nav-link' + (page === 'palestras' ? ' active' : '')} data-cursor="hover" onClick={() => onNavigate('palestras')}>Palestras</button>
+                <button className={'nav-link' + (page === 'tracker'   ? ' active' : '')} data-cursor="hover" onClick={() => (onNavigateTo || onNavigate)('tracker')}>Tracker</button>
+                <button className={'nav-link' + (page === 'ranking'   ? ' active' : '')} data-cursor="hover" onClick={() => (onNavigateTo || onNavigate)('ranking')}>Ranking</button>
+                <button className={'nav-link' + (page === 'profile'   ? ' active' : '')} data-cursor="hover" onClick={() => (onNavigateTo || onNavigate)('profile')}>Perfil</button>
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <button className="nav-link" data-cursor="hover" onClick={() => goAnchor('top')}>Home</button>
+                <button className="nav-link" data-cursor="hover" onClick={() => goAnchor('fp-about')}>About</button>
+                <button className="nav-link" data-cursor="hover" onClick={() => goAnchor('fp-founder')}>Fundador</button>
+              </React.Fragment>
+            )}
+          </div>
         </div>
-      </div>
-    </nav>
+        <div className="nav-slot nav-slot--right">
+          <div className="nav-right">
+            <ThemeToggle />
+            {user && <NotificationsBell onNavigate={onNavigateTo || onNavigate} />}
+            {user ? (
+              <UserChip user={user} onSignOut={onSignOut} indicCount={indicCount} onNavigateProfile={onNavigateProfile} onNavigate={onNavigateTo || onNavigate} />
+            ) : (
+              <React.Fragment>
+                <button className="nav-cta ghost" data-cursor="hover" onClick={() => onSignIn('login')}>
+                  <LockIcon />
+                  <span>Entrar</span>
+                </button>
+                <button className="nav-cta nav-cta--signup" data-cursor="hover" onClick={() => onSignIn('signup')}>Entrar na comunidade</button>
+              </React.Fragment>
+            )}
+          </div>
+        </div>
+      </nav>
+      {user && <MobileNav page={page} onNavigate={onNavigateTo || onNavigate} />}
+    </React.Fragment>
   );
 }
 
@@ -162,6 +165,45 @@ function UserChip({ user, onSignOut, indicCount, onNavigateProfile, onNavigate }
         <div className="user-menu-divider"></div>
         <button className="user-menu-item danger" data-cursor="hover" onClick={onSignOut}>Sair</button>
       </div>
+    </div>
+  );
+}
+
+function MobileNav({ page, onNavigate }) {
+  const tabs = [
+    {
+      id: 'forum', label: 'Fórum',
+      icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    },
+    {
+      id: 'roadmap', label: 'Road',
+      icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg>
+    },
+    {
+      id: 'palestras', label: 'Talks',
+      icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+    },
+    {
+      id: 'tracker', label: 'Tracker',
+      icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    },
+    {
+      id: 'ranking', label: 'Ranking',
+      icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    },
+    {
+      id: 'profile', label: 'Perfil',
+      icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    },
+  ];
+  return (
+    <div className="mobile-nav">
+      {tabs.map(t => (
+        <button key={t.id} className={'mobile-nav-btn' + (page === t.id ? ' active' : '')} onClick={() => onNavigate(t.id)}>
+          {t.icon}
+          <span>{t.label}</span>
+        </button>
+      ))}
     </div>
   );
 }
