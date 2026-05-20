@@ -29,7 +29,7 @@ function useDark() {
 }
 
 /* ── Chart.js canvas ── */
-function ChartCanvas({ cfg, height = 220 }) {
+function ChartCanvas({ cfg, height = 280 }) {
   const ref   = React.useRef(null);
   const chart = React.useRef(null);
   const key   = JSON.stringify(cfg);
@@ -126,7 +126,7 @@ function KpiCard({ label, value, sub, trend }) {
 }
 
 /* ── Impact bar chart ── */
-function ImpactChart({ sessions, field, labels, title, onFilter, activeVal, dark }) {
+function ImpactChart({ sessions, field, labels, title, onFilter, activeVal, dark, height = 280 }) {
   const data = React.useMemo(() => labels.map(l => {
     const group = sessions.filter(s => s[field] === l);
     return group.length
@@ -160,7 +160,7 @@ function ImpactChart({ sessions, field, labels, title, onFilter, activeVal, dark
         <p className="trk-chart-title">{title}</p>
         {activeVal && <span className="trk-chart-badge">filtrado ✕</span>}
       </div>
-      <ChartCanvas cfg={cfg} height={200} />
+      <ChartCanvas cfg={cfg} height={height} />
       <p className="trk-chart-hint">Clique para filtrar</p>
     </div>
   );
@@ -395,10 +395,10 @@ function TrackerDashboard({ onStartTimer }) {
           <ChartCanvas cfg={radarCfg} />
         </div>
 
-        <ImpactChart sessions={sessions} field="sleep"     labels={['Dormi muito bem','Dormi ok','Dormi pouco','Não dormi direito']} title="Impacto do sono"         onFilter={setFilter} activeVal={activeFilter?.field==='sleep'     ? activeFilter.value : null} dark={dark} />
-        <ImpactChart sessions={sessions} field="nutrition" labels={['Me alimentei bem','Normal','Me alimentei mal']}                 title="Impacto da alimentação"  onFilter={setFilter} activeVal={activeFilter?.field==='nutrition' ? activeFilter.value : null} dark={dark} />
-        <ImpactChart sessions={sessions} field="hydration" labels={['Bebi bastante','Normal','Bebi pouco']}                          title="Impacto da hidratação"   onFilter={setFilter} activeVal={activeFilter?.field==='hydration' ? activeFilter.value : null} dark={dark} />
-        <ImpactChart sessions={sessions} field="activity"  labels={['Me exercitei','Caminhei','Fiquei parado']}                      title="Impacto da atividade"    onFilter={setFilter} activeVal={activeFilter?.field==='activity'  ? activeFilter.value : null} dark={dark} />
+        <ImpactChart sessions={sessions} field="sleep"     labels={['Dormi muito bem','Dormi ok','Dormi pouco','Não dormi direito']} title="Impacto do sono"         onFilter={setFilter} activeVal={activeFilter?.field==='sleep'     ? activeFilter.value : null} dark={dark} height={280} />
+        <ImpactChart sessions={sessions} field="nutrition" labels={['Me alimentei bem','Normal','Me alimentei mal']}                 title="Impacto da alimentação"  onFilter={setFilter} activeVal={activeFilter?.field==='nutrition' ? activeFilter.value : null} dark={dark} height={280} />
+        <ImpactChart sessions={sessions} field="hydration" labels={['Bebi bastante','Normal','Bebi pouco']}                          title="Impacto da hidratação"   onFilter={setFilter} activeVal={activeFilter?.field==='hydration' ? activeFilter.value : null} dark={dark} height={280} />
+        <ImpactChart sessions={sessions} field="activity"  labels={['Me exercitei','Caminhei','Fiquei parado']}                      title="Impacto da atividade"    onFilter={setFilter} activeVal={activeFilter?.field==='activity'  ? activeFilter.value : null} dark={dark} height={280} />
       </div>
 
       {sessions.length === 0 && (
