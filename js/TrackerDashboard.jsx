@@ -373,9 +373,6 @@ function TrackerDashboard({ onStartTimer, onDemoLoad }) {
         <KpiCard label="Total acumulado"     value={fmtH(kpis.allH) + 'h'}                          sub="histórico completo" />
       </div>
 
-      {/* Heatmap */}
-      <ActivityHeatmap sessions={allSessions} />
-
       {/* Charts */}
       <div className="trk-charts-grid">
         <div className="trk-chart-card">

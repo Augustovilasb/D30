@@ -51,6 +51,7 @@ function BadgeToast({ badge, onDone }) {
 
 /* ── AI Analysis ── */
 const AI_LAST_KEY    = type => `d30_ai_last_${type}`;
+const AI_TEXT_KEY    = type => `d30_ai_text_${type}`;
 const MIN_DAILY_SECS = 30 * 60;
 
 /* helpers */
@@ -136,9 +137,10 @@ function MdRenderer({ text, loading }) {
 }
 
 function AiAnalysis({ sessions, type, apiKey }) {
-  const [text,    setText]    = React.useState('');
+  const [text,    setText]    = React.useState(() => { try { return localStorage.getItem(AI_TEXT_KEY(type)) || ''; } catch { return ''; } });
   const [loading, setLoading] = React.useState(false);
   const [error,   setError]   = React.useState('');
+  const accRef = React.useRef('');
 
   const today = new Date().toISOString().split('T')[0];
 
@@ -335,7 +337,7 @@ Use **negrito** nos números importantes. Máximo 5 linhas por seção.`;
 
   const run = async () => {
     if (!apiKey) { setError('Configure sua API key da Anthropic em Meu Perfil.'); return; }
-    setLoading(true); setText(''); setError('');
+    setLoading(true); setText(''); setError(''); accRef.current = '';
     try { localStorage.setItem(AI_LAST_KEY(type), today); } catch {}
     try {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -365,10 +367,14 @@ Use **negrito** nos números importantes. Máximo 5 linhas por seção.`;
           if (raw === '[DONE]') break;
           try {
             const j = JSON.parse(raw);
-            if (j.type === 'content_block_delta' && j.delta?.text) setText(t => t + j.delta.text);
+            if (j.type === 'content_block_delta' && j.delta?.text) {
+              accRef.current += j.delta.text;
+              setText(accRef.current);
+            }
           } catch {}
         }
       }
+      try { localStorage.setItem(AI_TEXT_KEY(type), accRef.current); } catch {}
     } catch (e) {
       try { localStorage.removeItem(AI_LAST_KEY(type)); } catch {}
       setError('Não foi possível gerar a análise. Verifique sua API key em Meu Perfil.');
@@ -521,19 +527,75 @@ function TrackerSuccess({ session, newBadges, onNew, onDashboard, apiKey }) {
   );
 }
 
-/* ── Sessões recentes (no dashboard da semana) ── */
-function RecentSessions() {
-  const sessions = window.Data.load().slice(-5).reverse();
-  if (!sessions.length) return null;
+/* ── Calendário mensal de atividade ── */
+const MONTH_NAMES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const DAY_NAMES   = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+
+function MonthlyCalendar({ sessions }) {
+  const now   = new Date();
+  const [year,  setYear]  = React.useState(now.getFullYear());
+  const [month, setMonth] = React.useState(now.getMonth());
+
+  const sessMap = React.useMemo(() => {
+    const m = {};
+    sessions.forEach(s => { m[s.date] = (m[s.date] || 0) + (s.duration || 0); });
+    return m;
+  }, [sessions]);
+
+  const prevMonth = () => { if (month === 0) { setYear(y => y-1); setMonth(11); } else setMonth(m => m-1); };
+  const nextMonth = () => { if (month === 11) { setYear(y => y+1); setMonth(0); } else setMonth(m => m+1); };
+
+  const isCurrentMonth = year === now.getFullYear() && month === now.getMonth();
+  const firstDow    = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const cells = [...Array(firstDow).fill(null), ...Array.from({ length: daysInMonth }, (_, i) => i + 1)];
+  while (cells.length % 7 !== 0) cells.push(null);
+
+  const todayStr = now.toISOString().split('T')[0];
+
+  function calColor(secs) {
+    if (!secs) return null;
+    const h = secs / 3600;
+    if (h < 1) return '#bbf7d0';
+    if (h < 2) return '#4ade80';
+    if (h < 4) return '#16a34a';
+    return '#15803d';
+  }
+
+  const monthTotal = React.useMemo(() => {
+    return Object.entries(sessMap)
+      .filter(([d]) => d.startsWith(`${year}-${String(month+1).padStart(2,'0')}`))
+      .reduce((a, [, s]) => a + s, 0);
+  }, [sessMap, year, month]);
+
   return (
-    <div className="trk-recent">
-      <p className="trk-chart-title">Últimas sessões</p>
-      {sessions.map(s => (
-        <div key={s.id} className="trk-recent-item">
-          <span className="trk-recent-subject">{s.subject || '—'}</span>
-          <span className="trk-recent-meta">{s.date} · {Math.round((s.duration||0)/60)}min · {s.performance}</span>
+    <div className="trk-month-cal">
+      <div className="trk-month-cal-head">
+        <button className="trk-month-nav" data-cursor="hover" onClick={prevMonth}>‹</button>
+        <div className="trk-month-cal-title">
+          <span className="trk-month-name">{MONTH_NAMES[month]} {year}</span>
+          {monthTotal > 0 && <span className="trk-month-total">{Math.round(monthTotal/3600*10)/10}h estudadas</span>}
         </div>
-      ))}
+        <button className="trk-month-nav" data-cursor="hover" onClick={nextMonth} disabled={isCurrentMonth}>›</button>
+      </div>
+      <div className="trk-month-grid">
+        {DAY_NAMES.map(d => <div key={d} className="trk-month-day-name">{d}</div>)}
+        {cells.map((day, i) => {
+          if (!day) return <div key={i} className="trk-month-cell trk-month-cell--empty" />;
+          const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+          const secs  = sessMap[dateStr] || 0;
+          const bg    = calColor(secs);
+          const isToday = dateStr === todayStr;
+          return (
+            <div key={i} className={'trk-month-cell' + (isToday ? ' today' : '') + (secs ? ' has-study' : '')}
+              style={bg ? { background: bg } : {}}
+              title={secs ? `${Math.round(secs/60)}min` : ''}>
+              <span className="trk-month-day-num">{day}</span>
+              {secs > 0 && <span className="trk-month-mins">{Math.round(secs/60)}m</span>}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -557,9 +619,19 @@ function StudyTracker({ user }) {
   const [newBadges,   setNewBadges]   = React.useState([]);
   const [badgeQueue,  setBadgeQueue]  = React.useState([]);
   const [dataTick,    setDataTick]    = React.useState(0);
+  const [aiModal,     setAiModal]     = React.useState(null);
 
   const sessions = React.useMemo(() => window.Data.load(), [dataTick]);
   const reloadData = React.useCallback(() => setDataTick(t => t + 1), []);
+
+  const aiCache = React.useMemo(() => {
+    const g = k => { try { return localStorage.getItem(k) || ''; } catch { return ''; } };
+    return {
+      daily:   { date: g('d30_ai_last_daily'),   text: g('d30_ai_text_daily')   },
+      weekly:  { date: g('d30_ai_last_weekly'),  text: g('d30_ai_text_weekly')  },
+      monthly: { date: g('d30_ai_last_monthly'), text: g('d30_ai_text_monthly') },
+    };
+  }, [dataTick]);
 
   const startRef   = React.useRef(null);
   const pausedRef  = React.useRef(0);
@@ -626,59 +698,119 @@ function StudyTracker({ user }) {
   const isComplete = React.useMemo(() => Object.values(form).every(v => v !== ''), [form]);
   const setField   = key => val => setForm(f => ({ ...f, [key]: val }));
 
-  const isTimerActive = ['running', 'paused', 'form'].includes(view);
+  const isTimerActive = ['running', 'paused'].includes(view);
+
+  const sessionsBlock = sessions.length > 0 && (
+    <div className="trk-sessions-bottom">
+      <p className="trk-chart-title" style={{ marginBottom: 14 }}>Últimas sessões</p>
+      <div className="trk-sess-grid">
+        {sessions.slice(-12).reverse().map(s => {
+          const perfColor = s.performance === 'Rendeu muito' ? '#10b981'
+                          : s.performance === 'Não rendeu'   ? '#ef4444' : '#f59e0b';
+          const dateLabel = new Date(s.date + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+          const hasAi = aiCache.daily.date === s.date && !!aiCache.daily.text;
+          return (
+            <div key={s.id} className="trk-sess-card">
+              <span className="trk-sess-subject">{s.subject || '—'}</span>
+              <span className="trk-sess-info">{dateLabel} · {Math.round((s.duration || 0) / 60)}min</span>
+              <span className="trk-sess-perf" style={{ color: perfColor }}>{s.performance || '—'}</span>
+              {hasAi ? (
+                <button className="trk-sess-ai-badge has" data-cursor="hover"
+                  onClick={() => setAiModal({ title: '📅 Análise — ' + dateLabel, text: aiCache.daily.text })}>
+                  ✨ Ver análise
+                </button>
+              ) : (
+                <span className="trk-sess-ai-badge missing">Sem análise</span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 
   return (
     <div className="page active fade-in">
       <div className="trk-wrap">
 
-        {/* Tab nav — hidden while timer is running */}
+        {/* Tab nav — oculto só enquanto o timer corre */}
         {!isTimerActive && (
           <div className="trk-tabs">
             <button className={'trk-tab' + (tab === 'timer'     ? ' active' : '')} data-cursor="hover" onClick={() => setTab('timer')}>⏱ Timer</button>
             <button className={'trk-tab' + (tab === 'dashboard' ? ' active' : '')} data-cursor="hover" onClick={() => setTab('dashboard')}>📊 Dashboard</button>
+            <button className={'trk-tab' + (tab === 'analises'  ? ' active' : '')} data-cursor="hover" onClick={() => setTab('analises')}>✨ Análises</button>
           </div>
         )}
 
         {/* Timer tab */}
         {tab === 'timer' && (
           <>
-            {view === 'idle'    && <TrackerIdle onStart={handleStart} />}
-            {(view === 'running' || view === 'paused') && (
-              <TrackerActive elapsed={elapsed} paused={view === 'paused'}
-                onPause={handlePause} onResume={handleResume} onEnd={handleEnd} />
-            )}
+            {/* Layout permanente: card esquerdo + calendário + sessões */}
+            <div className="trk-timer-home">
+              <div className="trk-timer-top">
+                <div className="trk-left-card">
+                  {view === 'idle' && <TrackerIdle onStart={handleStart} />}
+                  {(view === 'running' || view === 'paused') && (
+                    <TrackerActive elapsed={elapsed} paused={view === 'paused'}
+                      onPause={handlePause} onResume={handleResume} onEnd={handleEnd} />
+                  )}
+                  {view === 'success' && (
+                    <TrackerSuccess
+                      session={lastSession}
+                      newBadges={newBadges}
+                      apiKey={apiKey}
+                      onNew={() => { setForm(EMPTY_FORM); setElapsed(0); setView('idle'); }}
+                      onDashboard={() => { setView('idle'); setTab('dashboard'); }}
+                    />
+                  )}
+                </div>
+                <MonthlyCalendar sessions={sessions} />
+              </div>
+              {sessionsBlock}
+            </div>
+
+            {/* Formulário como modal */}
             {view === 'form' && (
-              <TrackerForm elapsed={elapsed} form={form} setField={setField}
-                isComplete={isComplete} onSave={handleSave} saving={saving} />
-            )}
-            {view === 'success' && (
-              <TrackerSuccess
-                session={lastSession}
-                newBadges={newBadges}
-                apiKey={apiKey}
-                onNew={() => { setForm(EMPTY_FORM); setElapsed(0); setView('idle'); }}
-                onDashboard={() => { setView('idle'); setTab('dashboard'); }}
-              />
+              <div className="trk-form-overlay">
+                <div className="trk-form-modal">
+                  <TrackerForm elapsed={elapsed} form={form} setField={setField}
+                    isComplete={isComplete} onSave={handleSave} saving={saving} />
+                </div>
+              </div>
             )}
           </>
         )}
 
         {/* Dashboard tab */}
         {tab === 'dashboard' && (
-          <>
-            <TrackerDashboard onStartTimer={() => setTab('timer')} onDemoLoad={reloadData} />
-            <RecentSessions />
-            <div className="trk-ai-section">
-              <p className="trk-section-title" style={{ marginBottom: 12 }}>Análise com IA</p>
-              <AiAnalysis sessions={sessions} type="daily"   apiKey={apiKey} />
-              <AiAnalysis sessions={sessions} type="weekly"  apiKey={apiKey} />
-              <AiAnalysis sessions={sessions} type="monthly" apiKey={apiKey} />
-            </div>
-          </>
+          <TrackerDashboard onStartTimer={() => setTab('timer')} onDemoLoad={reloadData} />
+        )}
+
+        {/* Análises tab */}
+        {tab === 'analises' && (
+          <div className="trk-ai-section">
+            <AiAnalysis sessions={sessions} type="daily"   apiKey={apiKey} />
+            <AiAnalysis sessions={sessions} type="weekly"  apiKey={apiKey} />
+            <AiAnalysis sessions={sessions} type="monthly" apiKey={apiKey} />
+          </div>
         )}
 
       </div>
+
+      {/* Modal de análise */}
+      {aiModal && (
+        <div className="trk-ai-modal-overlay" onClick={() => setAiModal(null)}>
+          <div className="trk-ai-modal" onClick={e => e.stopPropagation()}>
+            <div className="trk-ai-modal-head">
+              <span className="trk-ai-modal-title">{aiModal.title}</span>
+              <button className="trk-ai-modal-close" data-cursor="hover" onClick={() => setAiModal(null)}>✕</button>
+            </div>
+            <div className="trk-ai-modal-body">
+              <MdRenderer text={aiModal.text} loading={false} />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Badge toasts */}
       <div className="trk-badge-queue">
