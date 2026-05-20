@@ -15,7 +15,8 @@
       "Bash(Measure-Object -Line)",
       "Bash(git push *)",
       "Bash(git stash *)",
-      "Bash(git checkout *)"
+      "Bash(git checkout *)",
+      "WebFetch(domain:d30.dev)"
     ]
   }
 }
