@@ -309,7 +309,7 @@ function AboutWithFeatures() {
                 {!f.isStory && <span className="folder-card-num">{f.num}</span>}
                 <span className="folder-card-title">{f.title}</span>
                 {i === selected && selected < FEATURES.length - 1 && (
-                  <span className="folder-card-hint">scroll ↓</span>
+                  <span className="folder-card-hint">deslize →</span>
                 )}
               </div>
               {i === selected && (
