@@ -25,23 +25,23 @@ function AboutIntro() {
 function AugustoSection() {
   return (
     <div className="founder-section" id="augusto">
-      <p className="founder-eyebrow">Fundador</p>
-      <div className="founder-top">
-        <div className="founder-top-left">
-          <h2 className="founder-name">Augusto<br/>Vilas Boas.</h2>
-          <p className="founder-role">Dev em formação</p>
-        </div>
-        <div className="founder-top-right">
+      <div className="founder-col founder-col--id">
+        <p className="founder-eyebrow">Fundador</p>
+        <h2 className="founder-name">Augusto<br/>Vilas Boas.</h2>
+        <p className="founder-role">Dev em formação</p>
+      </div>
+      <div className="founder-col founder-col--bio">
+        <p className="founder-bio">
+          Documentando a transição de carreira do zero.
+          Porque ninguém deveria fazer esse caminho completamente sozinho.
+        </p>
+        <div className="founder-social-row">
           <SocialLink kind="instagram" label="Instagram" href="https://www.instagram.com/dev.aos30/"          handle="@dev.aos30" />
           <SocialLink kind="linkedin"  label="LinkedIn"  href="https://www.linkedin.com/in/augustovilasboas/" handle="augustovilasboas" />
           <SocialLink kind="github"    label="GitHub"    href="https://github.com/Augustovilasb"              handle="Augustovilasb" />
         </div>
       </div>
-      <div className="founder-bottom">
-        <p className="founder-bio">
-          Documentando a transição de carreira do zero.
-          Porque ninguém deveria fazer esse caminho completamente sozinho.
-        </p>
+      <div className="founder-col founder-col--photo">
         <div className="founder-photo">
           <img src="../../images/augusto.png" alt="Augusto" />
         </div>
