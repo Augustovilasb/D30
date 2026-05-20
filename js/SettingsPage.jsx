@@ -110,28 +110,28 @@ function SettingsPage({ user, onUpdate, onSignOut, onNavigate }) {
               }
             </div>
             <div className="settings-avatar-input">
-              <label className="settings-label">Foto de perfil (URL)</label>
-              <input className="settings-input" type="url" placeholder="https://..." value={form.avatar_url} onChange={e => set('avatar_url', e.target.value)} />
+              <label className="settings-label" htmlFor="s-avatar">Foto de perfil (URL)</label>
+              <input id="s-avatar" name="avatar_url" className="settings-input" type="url" placeholder="https://..." value={form.avatar_url} onChange={e => set('avatar_url', e.target.value)} />
               <p className="settings-hint">Cole o link de uma imagem pública (ex: GitHub avatar)</p>
             </div>
           </div>
 
           <div className="settings-grid">
             <div className="settings-field">
-              <label className="settings-label">Nome completo</label>
-              <input className="settings-input" type="text" placeholder="Seu nome" value={form.full_name} onChange={e => set('full_name', e.target.value)} />
+              <label className="settings-label" htmlFor="s-fullname">Nome completo</label>
+              <input id="s-fullname" name="full_name" className="settings-input" type="text" placeholder="Seu nome" value={form.full_name} onChange={e => set('full_name', e.target.value)} />
             </div>
             <div className="settings-field">
-              <label className="settings-label">Username</label>
-              <input className="settings-input" type="text" placeholder="seunome" value={form.username} onChange={e => set('username', e.target.value.toLowerCase().replace(/[^a-z0-9_]/g,''))} />
+              <label className="settings-label" htmlFor="s-username">Username</label>
+              <input id="s-username" name="username" className="settings-input" type="text" placeholder="seunome" value={form.username} onChange={e => set('username', e.target.value.toLowerCase().replace(/[^a-z0-9_]/g,''))} />
             </div>
             <div className="settings-field settings-field--full">
-              <label className="settings-label">Bio</label>
-              <textarea className="settings-input settings-textarea" placeholder="Fala um pouco sobre você..." value={form.bio} onChange={e => set('bio', e.target.value)} rows={3} />
+              <label className="settings-label" htmlFor="s-bio">Bio</label>
+              <textarea id="s-bio" name="bio" className="settings-input settings-textarea" placeholder="Fala um pouco sobre você..." value={form.bio} onChange={e => set('bio', e.target.value)} rows={3} />
             </div>
             <div className="settings-field settings-field--full">
-              <label className="settings-label">Profissão / Stack</label>
-              <input className="settings-input" type="text" placeholder="Ex: Dev Full-Stack · Java & React" value={form.profession} onChange={e => set('profession', e.target.value)} />
+              <label className="settings-label" htmlFor="s-profession">Profissão / Stack</label>
+              <input id="s-profession" name="profession" className="settings-input" type="text" placeholder="Ex: Dev Full-Stack · Java & React" value={form.profession} onChange={e => set('profession', e.target.value)} />
             </div>
           </div>
         </div>
@@ -141,9 +141,9 @@ function SettingsPage({ user, onUpdate, onSignOut, onNavigate }) {
           <p className="settings-section-label">Redes sociais</p>
           <div className="settings-grid">
             <div className="settings-field">
-              <label className="settings-label">GitHub</label>
+              <label className="settings-label" htmlFor="s-github">GitHub</label>
               <div className="settings-key-row">
-                <input className="settings-input" type="url" placeholder="https://github.com/..." value={form.github_url} onChange={e => set('github_url', e.target.value)} />
+                <input id="s-github" name="github_url" className="settings-input" type="url" placeholder="https://github.com/..." value={form.github_url} onChange={e => set('github_url', e.target.value)} />
                 {form.github_url.trim() && (
                   <button className="settings-key-toggle" data-cursor="hover" onClick={importFromGithub} disabled={ghImporting}>
                     {ghImporting ? '…' : ghImported ? 'Importado ✓' : 'Importar'}
@@ -153,20 +153,20 @@ function SettingsPage({ user, onUpdate, onSignOut, onNavigate }) {
               <p className="settings-hint">Importa nome, foto e bio do seu perfil público do GitHub</p>
             </div>
             <div className="settings-field">
-              <label className="settings-label">LinkedIn</label>
-              <input className="settings-input" type="url" placeholder="https://linkedin.com/in/..." value={form.linkedin_url} onChange={e => set('linkedin_url', e.target.value)} />
+              <label className="settings-label" htmlFor="s-linkedin">LinkedIn</label>
+              <input id="s-linkedin" name="linkedin_url" className="settings-input" type="url" placeholder="https://linkedin.com/in/..." value={form.linkedin_url} onChange={e => set('linkedin_url', e.target.value)} />
             </div>
             <div className="settings-field">
-              <label className="settings-label">Instagram</label>
-              <input className="settings-input" type="url" placeholder="https://instagram.com/..." value={form.instagram_url} onChange={e => set('instagram_url', e.target.value)} />
+              <label className="settings-label" htmlFor="s-instagram">Instagram</label>
+              <input id="s-instagram" name="instagram_url" className="settings-input" type="url" placeholder="https://instagram.com/..." value={form.instagram_url} onChange={e => set('instagram_url', e.target.value)} />
             </div>
             <div className="settings-field">
-              <label className="settings-label">Twitter / X</label>
-              <input className="settings-input" type="url" placeholder="https://x.com/..." value={form.twitter_url} onChange={e => set('twitter_url', e.target.value)} />
+              <label className="settings-label" htmlFor="s-twitter">Twitter / X</label>
+              <input id="s-twitter" name="twitter_url" className="settings-input" type="url" placeholder="https://x.com/..." value={form.twitter_url} onChange={e => set('twitter_url', e.target.value)} />
             </div>
             <div className="settings-field">
-              <label className="settings-label">Website / Portfólio</label>
-              <input className="settings-input" type="url" placeholder="https://..." value={form.website_url} onChange={e => set('website_url', e.target.value)} />
+              <label className="settings-label" htmlFor="s-website">Website / Portfólio</label>
+              <input id="s-website" name="website_url" className="settings-input" type="url" placeholder="https://..." value={form.website_url} onChange={e => set('website_url', e.target.value)} />
             </div>
           </div>
         </div>
@@ -174,10 +174,10 @@ function SettingsPage({ user, onUpdate, onSignOut, onNavigate }) {
         {/* API key */}
         <div className="settings-section">
           <p className="settings-section-label">Análise com IA</p>
-          <label className="settings-label">API Key da Anthropic</label>
+          <label className="settings-label" htmlFor="s-aikey">API Key da Anthropic</label>
           <p className="settings-hint">Necessária para gerar análises no Tracker. Obtenha em <a href="https://console.anthropic.com" target="_blank" rel="noopener noreferrer">console.anthropic.com</a></p>
           <div className="settings-key-row">
-            <input className="settings-input" type={showKey ? 'text' : 'password'} placeholder="sk-ant-..." value={aiKey} onChange={e => setAiKey(e.target.value)} />
+            <input id="s-aikey" name="ai_key" className="settings-input" type={showKey ? 'text' : 'password'} placeholder="sk-ant-..." value={aiKey} onChange={e => setAiKey(e.target.value)} />
             <button className="settings-key-toggle" data-cursor="hover" onClick={() => setShowKey(v => !v)}>{showKey ? 'Ocultar' : 'Ver'}</button>
           </div>
         </div>
