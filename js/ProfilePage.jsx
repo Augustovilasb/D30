@@ -92,10 +92,10 @@ function ActivityGrid({ sessions }) {
   function color(secs) {
     if (!secs) return 'var(--bg3)';
     const h = secs / 3600;
-    if (h < 1) return '#bbf7d0';
-    if (h < 2) return '#4ade80';
-    if (h < 4) return '#16a34a';
-    return '#15803d';
+    if (h < 1) return '#444';
+    if (h < 2) return '#666';
+    if (h < 4) return '#999';
+    return '#ccc';
   }
 
   return (
@@ -300,14 +300,14 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
 
         {/* ── Stats com ícones SVG ── */}
         <div className="pub-stats-row">
-          <StatCard iconSlug="primeiros_passos" value={`${totalHours}h`}   label="estudadas"    color="#3b82f6" />
-          <StatCard iconSlug="consistente"      value={sessions.length}     label="sessões"      color="#6366f1" />
-          <StatCard iconSlug="primeira_chama"   value={streak}              label="streak atual" color="#f97316" />
-          <StatCard iconSlug="lendario"         value={bestStreak}          label="recorde"      color="#ef4444" />
-          <StatCard iconSlug="palestrante_fiel" value={palestrasCount === null ? '—' : palestrasCount} label="palestras" color="#8b5cf6" />
-          <StatCard iconSlug="primeira_sessao"  value={forumCount === null ? '—' : forumCount}         label="tópicos"   color="#06b6d4" />
+          <StatCard iconSlug="primeiros_passos" value={`${totalHours}h`}   label="estudadas"    />
+          <StatCard iconSlug="consistente"      value={sessions.length}     label="sessões"      />
+          <StatCard iconSlug="primeira_chama"   value={streak}              label="streak atual" />
+          <StatCard iconSlug="lendario"         value={bestStreak}          label="recorde"      />
+          <StatCard iconSlug="palestrante_fiel" value={palestrasCount === null ? '—' : palestrasCount} label="palestras" />
+          <StatCard iconSlug="primeira_sessao"  value={forumCount === null ? '—' : forumCount}         label="tópicos"   />
           {totalCourses > 0 && (
-            <StatCard iconSlug="dedicado" value={`${doneCourses}/${totalCourses}`} label="cursos" color="#22c55e" />
+            <StatCard iconSlug="dedicado" value={`${doneCourses}/${totalCourses}`} label="cursos" />
           )}
         </div>
 
@@ -318,7 +318,7 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
             <ActivityGrid sessions={sessions} />
             <div className="pub-activity-legend">
               <span>Menos</span>
-              {['var(--bg3)', '#bbf7d0', '#4ade80', '#16a34a', '#15803d'].map((c, i) => (
+              {['var(--bg3)', '#444', '#666', '#999', '#ccc'].map((c, i) => (
                 <div key={i} style={{ width: 11, height: 11, borderRadius: 3, background: c, flexShrink: 0 }} />
               ))}
               <span>Mais</span>
