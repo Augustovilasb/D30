@@ -13,7 +13,7 @@ const RAIL_ITEMS = [
   },
   {
     id: 'roadmap',
-    label: 'Road Map',
+    label: 'Roadmap',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
@@ -31,6 +31,26 @@ const RAIL_ITEMS = [
         <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
         <line x1="12" y1="19" x2="12" y2="23"/>
         <line x1="8" y1="23" x2="16" y2="23"/>
+      </svg>
+    ),
+  },
+  {
+    id: 'tracker',
+    label: 'Tracker',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <polyline points="12 6 12 12 16 14"/>
+      </svg>
+    ),
+  },
+  {
+    id: 'profile',
+    label: 'Perfil',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
       </svg>
     ),
   },

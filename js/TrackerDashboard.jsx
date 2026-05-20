@@ -359,6 +359,9 @@ function TrackerDashboard({ onStartTimer, onDemoLoad }) {
             {activeFilter.value} ✕
           </button>
         )}
+        <button className="trk-demo-btn" data-cursor="hover" onClick={loadDemo} style={{ marginLeft: 'auto' }}>
+          Carregar demo
+        </button>
       </div>
 
       {/* KPI */}

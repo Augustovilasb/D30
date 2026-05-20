@@ -90,7 +90,7 @@ function App() {
       <div className="kit-shell">
         <CustomCursor />
         <Nav page={page} onNavigate={navigate} onNavigateTo={navigate} user={user} onSignIn={(which) => setModal(which)} onSignOut={signOut} indicCount={user && user.email === 'augustovilasb@hotmail.com' ? indicCount : 0} onNavigateProfile={() => navigate('profile')} />
-        <SideRail visible={false} page={page} onNavigate={navigate} />
+        <SideRail visible={!!user} page={page} onNavigate={navigate} />
 
         <div className="page-shell" style={{ opacity: fading ? 0 : 1 }}>
           {page === 'home'      && <HomePage      onNavigate={navigate} onSignIn={() => setModal(user ? null : 'signup')} />}
