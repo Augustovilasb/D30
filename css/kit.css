@@ -4986,7 +4986,7 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
   }
   .founder-col--btns { align-self: center !important; align-items: flex-end !important; }
   .founder-photo { width: 100% !important; aspect-ratio: 1/1 !important; border-radius: 50% !important; }
-  .founder-photo img { object-position: center 20% !important; }
+  .founder-photo img { object-position: center 35% !important; }
 
   /* Profile hero */
   .pub-hero { flex-wrap: wrap; gap: 12px !important; align-items: flex-start !important; }
