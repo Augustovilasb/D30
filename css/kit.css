@@ -4981,11 +4981,10 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
   .folders-stack { height: auto !important; min-height: unset !important; position: relative !important; }
   .folder-card { display: none !important; position: relative !important; inset: auto !important; height: auto !important; transform: none !important; }
   .folder-card--active { display: flex !important; }
-  .folder-card-body { max-height: 50vh !important; overflow-y: auto !important; }
+  .folder-card-body { max-height: none !important; overflow-y: visible !important; }
 
   /* Founder section */
   .founder-section { grid-template-columns: 1fr !important; padding: 2rem 1rem !important; gap: 2rem !important; text-align: left !important; }
-  .founder-col--photo { display: none !important; }
 
   /* Profile hero */
   .pub-hero { flex-wrap: wrap; gap: 16px; }

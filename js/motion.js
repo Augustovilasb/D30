@@ -107,6 +107,7 @@
     window.fpGoTo = goTo;
 
     window.addEventListener('wheel', function(e) {
+      if (window.innerWidth <= 768) return;
       refresh();
       if (!sections.length) return;
       if (locked) { e.preventDefault(); return; }

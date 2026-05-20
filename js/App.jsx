@@ -139,7 +139,11 @@ function App() {
     prevUserRef.current = user;
   }, [user]);
 
-  const signOut = () => { setUser(null); pushToast('info', 'Até a próxima.'); };
+  const signOut = () => {
+    try { window.sb.auth.signOut(); } catch {}
+    setUser(null);
+    pushToast('info', 'Até a próxima.');
+  };
 
   const openModal = (which) => {
     if (which === 'newPost' && !user) { setModal('login'); return; }
