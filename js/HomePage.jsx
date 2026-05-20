@@ -223,7 +223,7 @@ function AboutWithFeatures() {
   const [selected, setSelected] = React.useState(0);
   const stackRef = React.useRef(null);
   const lockedRef = React.useRef(false);
-  const touchYRef = React.useRef(null);
+  const touchStartRef = React.useRef(null);
 
   const go = React.useCallback((next) => {
     if (lockedRef.current || next < 0 || next >= FEATURES.length) return;
@@ -248,15 +248,16 @@ function AboutWithFeatures() {
     };
 
     const onTouchStart = (e) => {
-      if (window.innerWidth <= 768) return;
-      touchYRef.current = e.touches[0].clientY;
+      touchStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
     };
     const onTouchEnd = (e) => {
-      if (window.innerWidth <= 768 || touchYRef.current === null || lockedRef.current) return;
-      const dy = touchYRef.current - e.changedTouches[0].clientY;
-      touchYRef.current = null;
-      if (Math.abs(dy) < 40) return;
-      dy > 0 ? go(selected + 1) : go(selected - 1);
+      if (touchStartRef.current === null || lockedRef.current) return;
+      const dx = touchStartRef.current.x - e.changedTouches[0].clientX;
+      const dy = touchStartRef.current.y - e.changedTouches[0].clientY;
+      touchStartRef.current = null;
+      // só responde ao swipe horizontal — deixa scroll vertical livre
+      if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return;
+      dx > 0 ? go(selected + 1) : go(selected - 1);
     };
 
     el.addEventListener('wheel',      onWheel,      { passive: false });
