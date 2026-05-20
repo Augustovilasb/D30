@@ -58,101 +58,6 @@ function StatCard({ iconSlug, value, label, color }) {
   );
 }
 
-/* GitHub card — busca dados da API pública */
-function GitHubCard({ githubUrl }) {
-  const [gh,    setGh]    = React.useState(null);
-  const [repos, setRepos] = React.useState([]);
-  const [err,   setErr]   = React.useState(false);
-
-  const username = React.useMemo(() => {
-    const m = (githubUrl || '').match(/github\.com\/([^/\s?#]+)/);
-    return m ? m[1] : null;
-  }, [githubUrl]);
-
-  React.useEffect(() => {
-    if (!username) return;
-    Promise.all([
-      fetch(`https://api.github.com/users/${username}`).then(r => r.json()),
-      fetch(`https://api.github.com/users/${username}/repos?sort=stars&per_page=4&type=owner`).then(r => r.json()),
-    ]).then(([user, repoList]) => {
-      if (user.message) { setErr(true); return; }
-      setGh(user);
-      setRepos(Array.isArray(repoList) ? repoList.filter(r => !r.fork).slice(0, 3) : []);
-    }).catch(() => setErr(true));
-  }, [username]);
-
-  if (!username) return null;
-  if (err) return null;
-  if (!gh) return (
-    <div className="pub-gh-card pub-gh-card--loading">
-      <div className="pub-gh-header">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style={{ color: 'var(--muted)' }}>
-          <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
-        </svg>
-        <span style={{ fontSize: 13, color: 'var(--muted)' }}>Carregando GitHub…</span>
-      </div>
-    </div>
-  );
-
-  const LANG_COLORS = { JavaScript:'#f1e05a', TypeScript:'#3178c6', Python:'#3572A5', Java:'#b07219', Go:'#00ADD8', Rust:'#dea584', 'C++':'#f34b7d', CSS:'#563d7c', HTML:'#e34c26', PHP:'#4F5D95', Ruby:'#701516', Swift:'#fa7343', Kotlin:'#A97BFF', Dart:'#00B4AB', 'C#':'#178600' };
-
-  return (
-    <div className="pub-gh-card">
-      <div className="pub-gh-header">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style={{ color: 'var(--text)', flexShrink: 0 }}>
-          <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
-        </svg>
-        <a href={githubUrl} target="_blank" rel="noopener noreferrer" className="pub-gh-username">@{username}</a>
-        {gh.location && <span className="pub-gh-location">· {gh.location}</span>}
-      </div>
-
-      <div className="pub-gh-stats">
-        <div className="pub-gh-stat">
-          <span className="pub-gh-stat-val">{gh.public_repos}</span>
-          <span className="pub-gh-stat-lbl">repositórios</span>
-        </div>
-        <div className="pub-gh-stat-sep" />
-        <div className="pub-gh-stat">
-          <span className="pub-gh-stat-val">{gh.followers}</span>
-          <span className="pub-gh-stat-lbl">seguidores</span>
-        </div>
-        <div className="pub-gh-stat-sep" />
-        <div className="pub-gh-stat">
-          <span className="pub-gh-stat-val">{gh.following}</span>
-          <span className="pub-gh-stat-lbl">seguindo</span>
-        </div>
-      </div>
-
-      {repos.length > 0 && (
-        <div className="pub-gh-repos">
-          {repos.map(r => (
-            <a key={r.id} href={r.html_url} target="_blank" rel="noopener noreferrer" className="pub-gh-repo" data-cursor="hover">
-              <div className="pub-gh-repo-top">
-                <span className="pub-gh-repo-name">{r.name}</span>
-                <div className="pub-gh-repo-meta">
-                  {r.language && (
-                    <span className="pub-gh-repo-lang">
-                      <span className="pub-gh-lang-dot" style={{ background: LANG_COLORS[r.language] || '#888' }} />
-                      {r.language}
-                    </span>
-                  )}
-                  {r.stargazers_count > 0 && (
-                    <span className="pub-gh-repo-stars">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                      {r.stargazers_count}
-                    </span>
-                  )}
-                </div>
-              </div>
-              {r.description && <p className="pub-gh-repo-desc">{r.description}</p>}
-            </a>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
 function InstagramIcon() {
   return (
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -396,9 +301,6 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
             <StatCard iconSlug="dedicado" value={`${doneCourses}/${totalCourses}`} label="cursos" color="#22c55e" />
           )}
         </div>
-
-        {/* ── GitHub card ── */}
-        {user.github_url && <GitHubCard githubUrl={user.github_url} />}
 
         {/* ── Atividade full-width ── */}
         {sessions.length > 0 && (
