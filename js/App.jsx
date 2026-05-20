@@ -115,13 +115,15 @@ function App() {
     return () => data?.subscription?.unsubscribe();
   }, []);
 
-  const signIn = (u) => setUser(u);
+  const justLoggedInRef = React.useRef(false);
+  const signIn = (u) => { justLoggedInRef.current = true; setUser(u); };
 
-  /* Só redireciona pro fórum quando o usuário efetivamente faz login
-     (transição null → user), não quando o Supabase re-emite o auth state */
+  /* Redireciona pro fórum só quando o usuário clica em Entrar no modal,
+     nunca no refresh (justLoggedInRef garante isso) */
   const prevUserRef = React.useRef(undefined);
   React.useEffect(() => {
-    if (!publicUsername && user && prevUserRef.current === null) {
+    if (!publicUsername && user && prevUserRef.current === null && justLoggedInRef.current) {
+      justLoggedInRef.current = false;
       navigate('forum');
     }
     prevUserRef.current = user;
