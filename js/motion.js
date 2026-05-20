@@ -121,6 +121,7 @@
     window.addEventListener('touchend', function(e) {
       refresh();
       if (!sections.length || locked) return;
+      if (e.target.closest('.folders-stack')) return;
       var dy = touchY - e.changedTouches[0].clientY;
       if (Math.abs(dy) > 40) goTo(getCurrent() + (dy > 0 ? 1 : -1));
     }, { passive: true });

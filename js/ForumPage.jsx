@@ -19,11 +19,13 @@ function stripHtml(html) {
 
 function ForumPage({ user, onSignIn, toast }) {
   const isOwner = user && user.email === FORUM_OWNER_EMAIL;
+  const [mobileView, setMobileView] = React.useState('list'); // 'list' | 'thread'
+  const isMobile = () => window.innerWidth <= 768;
 
   const [topics,    setTopics]    = React.useState(FORUM_TOPICS);
   const [cat,       setCat]       = React.useState('all');
   const [query,     setQuery]     = React.useState('');
-  const [activeId,  setActiveId]  = React.useState(FORUM_TOPICS[0].id);
+  const [activeId,  setActiveId]  = React.useState(null);
   const [postModal, setPostModal] = React.useState(false);
   const [extras,    setExtras]    = React.useState({});
   const [closed,    setClosed]    = React.useState({});
@@ -122,7 +124,15 @@ function ForumPage({ user, onSignIn, toast }) {
     return list;
   }, [topics, cat, query, closed, likes]);
 
-  const active = filtered.find(t => t.id === activeId) || filtered[0] || null;
+  const active = filtered.find(t => t.id === activeId) || null;
+
+  const handleSelectTopic = React.useCallback((id) => {
+    setActiveId(id);
+    if (isMobile()) setMobileView('thread');
+  }, []);
+
+  const showList   = !isMobile() || mobileView === 'list';
+  const showThread = !isMobile() || mobileView === 'thread';
 
   return (
     <div className="page active fade-in">
@@ -135,31 +145,38 @@ function ForumPage({ user, onSignIn, toast }) {
 
         <div className="forum-card">
           <div className="forum-toolbar">
-            <div className="forum-cats">
-              {CATEGORIES.map(c => (
-                <button key={c.id} className={'fcat' + (cat === c.id ? ' active' : '')} data-cursor="hover" onClick={() => setCat(c.id)}>{c.label}</button>
-              ))}
-            </div>
+            {mobileView === 'thread' && isMobile() && (
+              <button className="forum-back-btn" onClick={() => setMobileView('list')}>← Voltar</button>
+            )}
+            {showList && (
+              <div className="forum-cats">
+                {CATEGORIES.map(c => (
+                  <button key={c.id} className={'fcat' + (cat === c.id ? ' active' : '')} data-cursor="hover" onClick={() => setCat(c.id)}>{c.label}</button>
+                ))}
+              </div>
+            )}
             <button className="forum-new-btn" data-cursor="hover" onClick={() => setPostModal(true)}>+ Nova</button>
           </div>
 
           <div className="forum-split">
-            <TopicsPane
-              topics={filtered}
-              query={query}
-              setQuery={setQuery}
-              activeId={active ? active.id : null}
-              setActiveId={setActiveId}
-              extras={extras}
-              closed={closed}
-              likes={likes}
-              likedMe={likedMe}
-              onLike={toggleLike}
-              dislikes={dislikes}
-              dislikedMe={dislikedMe}
-              onDislike={(topicId, e) => { e.stopPropagation(); toggleDislike(topicId, 'topic'); }}
-            />
-            {active
+            {showList && (
+              <TopicsPane
+                topics={filtered}
+                query={query}
+                setQuery={setQuery}
+                activeId={active ? active.id : null}
+                setActiveId={handleSelectTopic}
+                extras={extras}
+                closed={closed}
+                likes={likes}
+                likedMe={likedMe}
+                onLike={toggleLike}
+                dislikes={dislikes}
+                dislikedMe={dislikedMe}
+                onDislike={(topicId, e) => { e.stopPropagation(); toggleDislike(topicId, 'topic'); }}
+              />
+            )}
+            {showThread && (active
               ? <ThreadPane
                   topic={active}
                   user={user}
@@ -177,8 +194,8 @@ function ForumPage({ user, onSignIn, toast }) {
                   onVoteUp={(key) => voteMsgUp(active.id, key)}
                   onVoteDown={(key) => voteMsgDown(active.id, key)}
                 />
-              : <div className="thread-pane"><div className="thread-empty">Nenhum tópico nessa categoria ainda.</div></div>
-            }
+              : <div className="thread-pane"><div className="thread-empty">Selecione um tópico ao lado.</div></div>
+            )}
           </div>
         </div>
       </div>

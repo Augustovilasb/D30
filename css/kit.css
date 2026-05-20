@@ -1945,6 +1945,24 @@ nav.nav--floating {
 }
 [data-theme="dark"] .dtdrop-opt.active { background: #fff !important; color: #111 !important; }
 
+/* User menu — override the dark d30 shadow in light theme */
+.user-menu {
+  background: #fff !important;
+  border-color: rgba(0,0,0,0.08) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.10) !important;
+}
+[data-theme="dark"] .user-menu {
+  background: #1c1c1c !important;
+  border-color: rgba(255,255,255,0.1) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.45) !important;
+  color: #f0f0f0 !important;
+}
+[data-theme="dark"] .user-menu-item { color: #ccc !important; }
+[data-theme="dark"] .user-menu-item:hover { background: rgba(255,255,255,0.07) !important; }
+[data-theme="dark"] .user-menu-info { color: #666 !important; }
+[data-theme="dark"] .user-menu-info strong { color: #f0f0f0 !important; }
+[data-theme="dark"] .user-menu-divider { background: rgba(255,255,255,0.08) !important; }
+
 /* Ghost "Entrar" button with inline lock icon */
 .nav-cta.ghost {
   display: inline-flex;
@@ -4899,58 +4917,20 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
 .ranking-val.top3-val { color: var(--text); }
 
 /* ══════════════════════════════════════
-   MOBILE BOTTOM NAV (hidden by default, shown via media query)
-══════════════════════════════════════ */
-.mobile-nav { display: none !important; }
-
-/* ══════════════════════════════════════
    RESPONSIVE — mobile (≤ 768px)
 ══════════════════════════════════════ */
 @media (max-width: 768px) {
   /* Nav */
   nav { padding: 0 12px !important; height: 52px !important; }
-  .nav-slot--center { display: none !important; }
+  .nav-slot--app { display: none !important; }
   .nav-slot--right .nav-cta span { display: none; }
   .nav-cta--signup { display: none !important; }
   .user-chip-name { display: none !important; }
+  /* Logged-out center links: reduce font so 3 links fit */
+  .nav-slot--center .nav-links { gap: 0; }
+  .nav-slot--center .nav-link { font-size: 12px !important; padding: 5px 10px !important; }
 
-  /* Mobile bottom tab bar */
-  .mobile-nav {
-    display: flex !important;
-    position: fixed !important;
-    bottom: 0 !important; left: 0 !important; right: 0 !important;
-    height: 60px;
-    background: #ffffff;
-    border-top: 1px solid rgba(0,0,0,0.1);
-    z-index: 999;
-    padding: 0 4px;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-    box-shadow: 0 -1px 0 rgba(0,0,0,0.06);
-  }
-  .mobile-nav-btn {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-    background: none;
-    border: none;
-    padding: 6px 2px;
-    font-size: 9px;
-    font-weight: 600;
-    color: #999;
-    font-family: 'Inter', sans-serif;
-    letter-spacing: 0.2px;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    transition: color .15s;
-  }
-  .mobile-nav-btn svg { opacity: 0.4; transition: opacity .15s; }
-  .mobile-nav-btn.active { color: #111; }
-  .mobile-nav-btn.active svg { opacity: 1; }
-
-  /* Pages — extra bottom padding for fixed bottom nav */
+  /* Pages — space for fixed bottom nav (60px) */
   .page { padding-bottom: 72px !important; }
   .pub-profile  { padding: 32px 16px 88px !important; gap: 24px !important; }
   .settings-wrap { padding: 32px 16px 88px !important; }
@@ -4991,17 +4971,20 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
   .ranking-row  { gap: 10px; padding: 10px 12px; }
 
   /* Forum */
-  .topics-pane    { display: none !important; }
-  .forum-card     { padding: 14px !important; }
+  .forum-card     { padding: 0 !important; border-radius: 12px !important; }
+  .topics-pane    { max-height: none !important; border-right: none !important; width: 100% !important; }
+  .thread-pane    { max-height: none !important; width: 100% !important; }
+  .forum-split    { flex-direction: column !important; min-height: unset !important; }
+  .forum-back-btn {
+    background: none; border: none; font-size: 13px; font-weight: 600;
+    color: var(--muted); cursor: pointer; padding: 0; margin-right: auto;
+    font-family: 'Inter', sans-serif;
+  }
 
   /* Modals */
   .modal-box { margin: 16px !important; max-width: calc(100vw - 32px) !important; }
 }
 
-/* ── dark mode — mobile nav ── */
-[data-theme="dark"] .mobile-nav { background: #0d0d0d !important; border-top-color: rgba(255,255,255,0.08) !important; box-shadow: 0 -1px 0 rgba(255,255,255,0.04) !important; }
-[data-theme="dark"] .mobile-nav-btn { color: #555 !important; }
-[data-theme="dark"] .mobile-nav-btn.active { color: #f0f0f0 !important; }
 
 /* ── dark mode for ranking ── */
 [data-theme="dark"] .rank-badge--1 { background: #451a0333; color: #fbbf24; border-color: #92400e; }

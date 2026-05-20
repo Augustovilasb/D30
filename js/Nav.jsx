@@ -99,7 +99,7 @@ function Nav({ page, onNavigate, user, onSignIn, onSignOut, indicCount, onNaviga
         <div className="nav-slot nav-slot--left">
           <Logo onClick={() => goAnchor('top')} />
         </div>
-        <div className="nav-slot nav-slot--center">
+        <div className={'nav-slot nav-slot--center' + (user ? ' nav-slot--app' : '')}>
           <div className="nav-links">
             {user ? (
               <React.Fragment>
@@ -170,40 +170,63 @@ function UserChip({ user, onSignOut, indicCount, onNavigateProfile, onNavigate }
 }
 
 function MobileNav({ page, onNavigate }) {
+  const [isMobile, setIsMobile] = React.useState(() => window.innerWidth <= 768);
+  React.useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', check, { passive: true });
+    return () => window.removeEventListener('resize', check);
+  }, []);
+  if (!isMobile) return null;
+
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const navBg    = isDark ? '#0d0d0d' : '#ffffff';
+  const navBorder= isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)';
+  const colActive= isDark ? '#f0f0f0' : '#111111';
+  const colInact = isDark ? '#555555' : '#999999';
+
   const tabs = [
-    {
-      id: 'forum', label: 'Fórum',
-      icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-    },
-    {
-      id: 'roadmap', label: 'Road',
-      icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg>
-    },
-    {
-      id: 'palestras', label: 'Talks',
-      icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-    },
-    {
-      id: 'tracker', label: 'Tracker',
-      icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-    },
-    {
-      id: 'ranking', label: 'Ranking',
-      icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-    },
-    {
-      id: 'profile', label: 'Perfil',
-      icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-    },
+    { id: 'forum',     label: 'Fórum',
+      icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> },
+    { id: 'roadmap',   label: 'Road',
+      icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg> },
+    { id: 'palestras', label: 'Talks',
+      icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg> },
+    { id: 'tracker',   label: 'Tracker',
+      icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> },
+    { id: 'ranking',   label: 'Ranking',
+      icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> },
+    { id: 'profile',   label: 'Perfil',
+      icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> },
   ];
+
   return (
-    <div className="mobile-nav">
-      {tabs.map(t => (
-        <button key={t.id} className={'mobile-nav-btn' + (page === t.id ? ' active' : '')} onClick={() => onNavigate(t.id)}>
-          {t.icon}
-          <span>{t.label}</span>
-        </button>
-      ))}
+    <div style={{
+      position: 'fixed', bottom: 0, left: 0, right: 0,
+      height: 60, display: 'flex', alignItems: 'stretch',
+      background: navBg, borderTop: `1px solid ${navBorder}`,
+      zIndex: 9000, paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+      boxSizing: 'border-box',
+    }}>
+      {tabs.map(t => {
+        const active = page === t.id;
+        return (
+          <button key={t.id}
+            onClick={() => onNavigate(t.id)}
+            style={{
+              flex: 1, display: 'flex', flexDirection: 'column',
+              alignItems: 'center', justifyContent: 'center', gap: 3,
+              background: 'none', border: 'none', padding: '6px 2px',
+              fontSize: 9, fontWeight: 600, color: active ? colActive : colInact,
+              fontFamily: "'Inter', sans-serif", cursor: 'pointer',
+              WebkitTapHighlightColor: 'transparent',
+              opacity: active ? 1 : 0.7,
+            }}
+          >
+            <span style={{ opacity: active ? 1 : 0.5 }}>{t.icon}</span>
+            <span>{t.label}</span>
+          </button>
+        );
+      })}
     </div>
   );
 }
