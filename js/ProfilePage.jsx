@@ -202,7 +202,9 @@ function SharePopup({ url, onClose }) {
 }
 
 function ProfilePage({ user, onSignOut, onNavigate }) {
-  const [showShare, setShowShare] = React.useState(false);
+  const [showShare,      setShowShare]      = React.useState(false);
+  const [forumCount,     setForumCount]     = React.useState(null);
+  const [palestrasCount, setPalestrasCount] = React.useState(null);
 
   const profileUrl = user.username
     ? `${window.location.origin}/perfil/${user.username}`
@@ -211,8 +213,6 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
   const openShare = () => setShowShare(v => !v);
 
   const sessions  = React.useMemo(() => window.Data.load(), []);
-  const earned    = React.useMemo(() => window.Badges.getEarned(), []);
-  const earnedSet = React.useMemo(() => new Set(earned.map(b => b.slug)), [earned]);
 
   const totalSecs  = sessions.reduce((a, s) => a + (s.duration || 0), 0);
   const totalHours = (totalSecs / 3600).toFixed(1);
@@ -226,14 +226,16 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
   const doneCourses  = typeof COURSES !== 'undefined' && COURSES ? COURSES.filter(c => rmDone.has(c.id)).length : rmDone.size;
   const rmPct        = totalCourses > 0 ? Math.round(doneCourses / totalCourses * 100) : 0;
 
-  const earnedBadges = React.useMemo(() => {
-    const list = window.Badges.DEFS.filter(b => {
-      if (b.type === 'founding_member') return user.is_founding_member === true;
-      return earnedSet.has(b.slug);
-    });
-    list.sort((a, b) => (a.type === 'founding_member' ? -1 : b.type === 'founding_member' ? 1 : 0));
-    return list;
-  }, [earnedSet, user]);
+  React.useEffect(() => {
+    if (!window.sb || !user.id) return;
+    Promise.all([
+      window.sb.from('forum_activity').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('type', 'topic'),
+      window.sb.from('palestra_attendance').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
+    ]).then(([{ count: fc }, { count: pc }]) => {
+      setForumCount(fc || 0);
+      setPalestrasCount(pc || 0);
+    }).catch(() => { setForumCount(0); setPalestrasCount(0); });
+  }, [user.id]);
 
   return (
     <div className="page active fade-in">
@@ -251,6 +253,12 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
           <div className="pub-hero-body">
             <div className="pub-hero-top">
               <h1 className="pub-name">{user.name}</h1>
+              {user.is_founding_member && (
+                <span className="pub-pioneer-badge">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  PIONEIRO
+                </span>
+              )}
               {user.username && <span className="pub-username">@{user.username}</span>}
             </div>
             {user.profession && <p className="pub-profession">{user.profession}</p>}
@@ -294,9 +302,8 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
           <StatCard iconSlug="consistente"      value={sessions.length}     label="sessões"      color="#6366f1" />
           <StatCard iconSlug="primeira_chama"   value={streak}              label="streak atual" color="#f97316" />
           <StatCard iconSlug="lendario"         value={bestStreak}          label="recorde"      color="#ef4444" />
-          {earnedBadges.length > 0 && (
-            <StatCard iconSlug="palestrante_fiel" value={earnedBadges.length} label="badges" color="#a855f7" />
-          )}
+          <StatCard iconSlug="palestrante_fiel" value={palestrasCount === null ? '—' : palestrasCount} label="palestras" color="#8b5cf6" />
+          <StatCard iconSlug="primeira_sessao"  value={forumCount === null ? '—' : forumCount}         label="tópicos"   color="#06b6d4" />
           {totalCourses > 0 && (
             <StatCard iconSlug="dedicado" value={`${doneCourses}/${totalCourses}`} label="cursos" color="#22c55e" />
           )}
@@ -313,24 +320,6 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
                 <div key={i} style={{ width: 11, height: 11, borderRadius: 3, background: c, flexShrink: 0 }} />
               ))}
               <span>Mais</span>
-            </div>
-          </div>
-        )}
-
-        {/* ── Badges conquistadas (só as earned, sem as locked) ── */}
-        {earnedBadges.length > 0 && (
-          <div className="pub-section">
-            <p className="pub-section-label">Badges conquistadas</p>
-            <div className="pub-badges-earned">
-              {earnedBadges.map(b => (
-                <div key={b.slug} className="pub-badge-earned" title={b.name}
-                  style={b.type === 'founding_member' ? { borderColor: '#f59e0b55', background: '#fef3c718' } : {}}>
-                  <div className="pub-badge-earned-icon">
-                    <BadgeIcon slug={b.slug} color={b.color} size={22} />
-                  </div>
-                  <span className="pub-badge-earned-name">{b.name}</span>
-                </div>
-              ))}
             </div>
           </div>
         )}
