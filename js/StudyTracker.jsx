@@ -50,13 +50,37 @@ function BadgeToast({ badge, onDone }) {
 }
 
 /* ── AI Analysis ── */
+const AI_LAST_KEY = type => `d30_ai_last_${type}`;
+const MIN_DAILY_SECS = 30 * 60; // 30 minutos
+
 function AiAnalysis({ sessions, type, apiKey }) {
   const [text,    setText]    = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const [error,   setError]   = React.useState('');
 
+  const today = new Date().toISOString().split('T')[0];
+
+  const todayStudiedSecs = React.useMemo(() =>
+    sessions.filter(s => s.date === today).reduce((a, s) => a + (s.duration || 0), 0),
+    [sessions, today]
+  );
+
+  const alreadyUsedToday = React.useMemo(() => {
+    try { return localStorage.getItem(AI_LAST_KEY(type)) === today; } catch { return false; }
+  }, [type, today]);
+
   const minSessions = type === 'daily' ? 2 : type === 'weekly' ? 7 : 15;
-  const canAnalyze  = sessions.length >= minSessions;
+  const hasEnoughSessions = sessions.length >= minSessions;
+  const hasEnoughTime     = todayStudiedSecs >= MIN_DAILY_SECS;
+  const canAnalyze        = hasEnoughSessions && hasEnoughTime && !alreadyUsedToday;
+
+  const blockReason = !hasEnoughTime
+    ? `Estude pelo menos 30 min hoje (${Math.round(todayStudiedSecs / 60)}min registrados).`
+    : alreadyUsedToday
+    ? 'Você já gerou essa análise hoje. Volte amanhã.'
+    : !hasEnoughSessions
+    ? `Mínimo de ${minSessions} sessões necessárias.`
+    : null;
 
   const buildPrompt = () => {
     if (type === 'daily') {
@@ -80,6 +104,7 @@ Seja específico: mencione o delta de tempo e rendimento, identifique diferença
   const run = async () => {
     if (!apiKey) { setError('Configure sua API key da Anthropic no perfil.'); return; }
     setLoading(true); setText(''); setError('');
+    try { localStorage.setItem(AI_LAST_KEY(type), today); } catch {}
     try {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -122,7 +147,6 @@ Seja específico: mencione o delta de tempo e rendimento, identifique diferença
   };
 
   const labels = { daily: 'Análise do dia', weekly: 'Análise da semana', monthly: 'Análise do mês' };
-  const mins   = { daily: 2, weekly: 7, monthly: 15 };
 
   return (
     <div className="trk-ai-block">
@@ -133,14 +157,11 @@ Seja específico: mencione o delta de tempo e rendimento, identifique diferença
           data-cursor="hover"
           onClick={run}
           disabled={loading || !canAnalyze}
-          title={!canAnalyze ? `Mínimo ${mins[type]} sessões` : ''}
         >
-          {loading ? 'Analisando...' : 'Gerar análise'}
+          {loading ? 'Analisando...' : alreadyUsedToday ? 'Usado hoje ✓' : 'Gerar análise'}
         </button>
       </div>
-      {!canAnalyze && (
-        <p className="trk-ai-warn">Mínimo de {mins[type]} sessões para análise {labels[type].toLowerCase()}.</p>
-      )}
+      {blockReason && <p className="trk-ai-warn">{blockReason}</p>}
       {error && <p className="trk-ai-error">{error}</p>}
       {text && (
         <div className="trk-ai-text">
