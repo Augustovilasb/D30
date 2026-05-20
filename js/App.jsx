@@ -139,8 +139,8 @@ function App() {
     prevUserRef.current = user;
   }, [user]);
 
-  const signOut = () => {
-    try { window.sb.auth.signOut(); } catch {}
+  const signOut = async () => {
+    try { await window.Auth.signOut(); } catch {}
     setUser(null);
     pushToast('info', 'Até a próxima.');
   };
