@@ -4935,6 +4935,7 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
     height: auto !important;
     min-height: 100svh !important;
     overflow: visible !important;
+    scroll-snap-align: none !important;
   }
 
   /* Hero section mobile */
@@ -4971,7 +4972,7 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
   .about-features { padding: 1.5rem 1rem !important; }
   .folders-layout { flex-direction: column !important; gap: 0.75rem !important; height: auto !important; }
   .folders-nav { flex-direction: row !important; flex-wrap: wrap !important; width: 100% !important; gap: 4px !important; justify-content: center !important; }
-  .folders-nav-item { padding: 6px 10px !important; }
+  .folders-nav-item { padding: 6px 10px !important; justify-content: center !important; }
   .folders-nav-num { display: none !important; }
   .folders-nav-title { font-size: 12px !important; }
   /* Stack: apenas o card ativo é visível, sem altura fixa */
