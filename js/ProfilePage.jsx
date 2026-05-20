@@ -254,10 +254,19 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
             <div className="pub-hero-name-row">
               <h1 className="pub-name">{user.name}</h1>
               {user.is_founding_member && (
-                <span className="pub-pioneer-badge">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                  PIONEIRO
-                </span>
+                <div className="pub-pioneer-badge">
+                  <svg width="30" height="34" viewBox="0 0 30 34" fill="none" style={{ color: 'var(--text)' }}>
+                    {/* Hexagon outline */}
+                    <path d="M15 1L29 9V25L15 33L1 25V9Z" stroke="currentColor" strokeWidth="1.5"/>
+                    {/* Inner faint ring */}
+                    <path d="M15 5.5L24 10.5V23.5L15 28.5L6 23.5V10.5Z" stroke="currentColor" strokeWidth="0.5" strokeOpacity="0.35"/>
+                    {/* Hammer head */}
+                    <rect x="7" y="10" width="13" height="5" rx="1" fill="currentColor"/>
+                    {/* Hammer handle */}
+                    <rect x="12.5" y="15" width="3" height="8" rx="1" fill="currentColor"/>
+                  </svg>
+                  <span className="pub-pioneer-label">PIONEIRO</span>
+                </div>
               )}
             </div>
             {user.username  && <span className="pub-username">@{user.username}</span>}
