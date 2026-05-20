@@ -255,7 +255,7 @@ function SettingsPage({ user, onSignOut, onNavigate }) {
               <button
                 data-cursor="hover"
                 onClick={() => { setShowDeleteForm(true); setDeleteInput(''); setDeleteMsg(''); }}
-                style={{ padding: '7px 14px', borderRadius: 7, border: '1px solid #ef444433', background: 'transparent', color: '#ef4444', fontSize: 12, fontWeight: 600, fontFamily: "'Inter', sans-serif", cursor: 'none', transition: 'background .15s', textAlign: 'left' }}
+                style={{ padding: '7px 14px', borderRadius: 7, border: '1px solid #ef444433', background: 'transparent', color: '#ef4444', fontSize: 12, fontWeight: 600, fontFamily: "'Inter', sans-serif", cursor: 'none', alignSelf: 'flex-start', transition: 'background .15s' }}
               >
                 Excluir conta
               </button>

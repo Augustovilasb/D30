@@ -4635,6 +4635,7 @@ nav.nav--floating .user-menu-info strong{ color: var(--text); }
   border: 1px solid var(--border2); background: transparent;
   font-size: 11px; font-weight: 600; color: var(--muted);
   cursor: none; white-space: nowrap; flex-shrink: 0;
+  align-self: flex-start;
   transition: border-color .15s, color .15s;
 }
 .settings-key-toggle:hover { border-color: var(--border); color: var(--text); }
@@ -4644,7 +4645,8 @@ nav.nav--floating .user-menu-info strong{ color: var(--text); }
   padding: 7px 18px; border-radius: 8px;
   background: var(--text); border: none; color: var(--bg);
   font-size: 12px; font-weight: 700; font-family: 'Inter', sans-serif;
-  cursor: none; transition: opacity .15s, transform .1s;
+  cursor: none; align-self: flex-start;
+  transition: opacity .15s, transform .1s;
 }
 .settings-save-btn:hover { opacity: 0.88; }
 .settings-save-btn:active { transform: scale(0.98); }
@@ -4655,8 +4657,8 @@ nav.nav--floating .user-menu-info strong{ color: var(--text); }
   border: 1px solid var(--border2); background: transparent;
   color: var(--muted); font-size: 12px; font-weight: 600;
   font-family: 'Inter', sans-serif; cursor: none;
+  align-self: flex-start;
   transition: background .15s, color .15s;
-  text-align: left;
 }
 .settings-signout-btn:hover { background: var(--bg2); color: var(--text); }
 
@@ -4920,9 +4922,16 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
   .pub-stat-item   { min-width: 80px; padding: 12px 14px; }
   .pub-stat-sep    { display: none; }
 
-  /* Settings grid → single column */
+  /* Settings */
+  .settings-wrap { padding: 32px 16px 80px !important; gap: 28px !important; }
+  .settings-title { font-size: 18px !important; }
   .settings-grid { grid-template-columns: 1fr !important; }
   .settings-field--full { grid-column: 1 !important; }
+  .settings-key-row { flex-direction: row; }
+  .settings-key-row .settings-input { min-width: 0; }
+  .settings-toggle-row { gap: 12px; }
+  .settings-toggle-row > div { min-width: 0; flex: 1; }
+  .settings-section { gap: 12px !important; }
 
   /* Tracker */
   .trk-shell      { padding: 16px 14px 80px !important; }
