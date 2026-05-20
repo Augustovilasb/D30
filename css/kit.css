@@ -867,6 +867,7 @@ nav.nav--floating {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: 1.5rem;
   height: 100%;
   animation: panelIn .22s ease;
 }
