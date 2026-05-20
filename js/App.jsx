@@ -1,13 +1,13 @@
 /* App.jsx — entry. Wires together Nav, pages, modals, toasts, cursor. */
 
-const PROTECTED = ['forum', 'roadmap', 'palestras', 'profile', 'tracker', 'settings'];
+const PROTECTED = ['forum', 'roadmap', 'palestras', 'profile', 'tracker', 'settings', 'ranking'];
 
 async function buildUserObj(supabaseUser) {
   try {
     const profile = await window.Auth.getProfile(supabaseUser.id);
     const name = profile?.full_name || supabaseUser.user_metadata?.full_name || supabaseUser.email.split('@')[0];
     const initials = name.trim().split(/\s+/).map(s => s[0]).slice(0,2).join('').toUpperCase();
-    return { id: supabaseUser.id, email: supabaseUser.email, name, initials, username: profile?.username || '', color: '#6d5ce6', avatar_url: profile?.avatar_url || null, bio: profile?.bio || null, profession: profile?.profession || null, github_url: profile?.github_url || null, linkedin_url: profile?.linkedin_url || null, twitter_url: profile?.twitter_url || null, website_url: profile?.website_url || null };
+    return { id: supabaseUser.id, email: supabaseUser.email, name, initials, username: profile?.username || '', color: '#6d5ce6', avatar_url: profile?.avatar_url || null, bio: profile?.bio || null, profession: profile?.profession || null, github_url: profile?.github_url || null, linkedin_url: profile?.linkedin_url || null, instagram_url: profile?.instagram_url || null, twitter_url: profile?.twitter_url || null, website_url: profile?.website_url || null, is_founding_member: profile?.is_founding_member || false };
   } catch {
     const name = supabaseUser.user_metadata?.full_name || supabaseUser.email.split('@')[0];
     const initials = name.trim().split(/\s+/).map(s => s[0]).slice(0,2).join('').toUpperCase();
@@ -16,7 +16,6 @@ async function buildUserObj(supabaseUser) {
 }
 
 function App() {
-  // Preloader plays once per session. Skip on subsequent reloads within the tab.
   const [indicCount, setIndicCount] = React.useState(() => {
     try { return JSON.parse(localStorage.getItem('d30_indicacoes') || '[]').length; } catch { return 0; }
   });
@@ -29,28 +28,30 @@ function App() {
     try { sessionStorage.setItem('d30-pre-played', '1'); } catch {}
   };
 
-  // Initialize page from URL hash; fall back to 'home' for protected routes.
+  /* Detect /perfil/:username path — public profile, no auth needed */
+  const publicUsername = React.useMemo(() => {
+    const m = window.location.pathname.match(/^\/perfil\/([^/\s]+)$/);
+    return m ? m[1] : null;
+  }, []);
+
   const [page, setPage] = React.useState(() => {
+    if (publicUsername) return 'public-profile';
     const hash = window.location.hash.replace('#', '') || 'home';
     return PROTECTED.includes(hash) ? 'home' : hash;
   });
   const [fading, setFading] = React.useState(false);
-  const [user, setUser] = React.useState(null);
-  const [modal, setModal] = React.useState(null);   // 'login' | 'signup' | 'newPost' | null
+  const [user,   setUser]   = React.useState(null);
+  const [modal,  setModal]  = React.useState(null);
   const [toasts, pushToast] = useToasts();
 
-  // Stamp the current page into the history entry on first load.
   React.useEffect(() => {
+    if (publicUsername) return; // don't mess with URL for public profile
     window.history.replaceState({ page }, '', page === 'home' ? '#' : '#' + page);
   }, []);
 
   const navigate = (p) => {
-    // 'about' is an anchor section inside HomePage — map it to home.
     const target = p === 'about' ? 'home' : p;
-    if (PROTECTED.includes(target) && !user) {
-      setModal('login');
-      return;
-    }
+    if (PROTECTED.includes(target) && !user) { setModal('login'); return; }
     window.history.pushState({ page: target }, '', target === 'home' ? '#' : '#' + target);
     setFading(true);
     setTimeout(function () {
@@ -61,7 +62,6 @@ function App() {
     }, 160);
   };
 
-  // Keep the URL in sync when the user hits browser back / forward.
   React.useEffect(() => {
     const onPop = (e) => {
       const p = (e.state && e.state.page) || window.location.hash.replace('#', '') || 'home';
@@ -76,7 +76,6 @@ function App() {
     return () => window.removeEventListener('popstate', onPop);
   }, [user]);
 
-  // If the user logs out while on a protected page, kick them home.
   React.useEffect(() => {
     if (!user && PROTECTED.includes(page)) {
       setPage('home');
@@ -85,12 +84,21 @@ function App() {
   }, [user, page]);
 
   React.useEffect(() => {
-    const { data } = window.Auth.onAuthChange(async (supabaseUser) => {
-      if (supabaseUser) {
-        const u = await buildUserObj(supabaseUser);
-        setUser(u);
-      } else {
+    const { data } = window.Auth.onAuthChange(async (event, supabaseUser) => {
+      if (event === 'SIGNED_OUT') {
         setUser(null);
+        return;
+      }
+      // TOKEN_REFRESHED = renovação silenciosa do JWT — não rebusca o perfil
+      if (event === 'TOKEN_REFRESHED') return;
+
+      if (supabaseUser) {
+        // Se o usuário já está carregado com o mesmo ID, não sobrescreve
+        setUser(prev => {
+          if (prev?.id === supabaseUser.id) return prev;
+          buildUserObj(supabaseUser).then(u => setUser(u));
+          return prev;
+        });
       }
     });
     return () => data?.subscription?.unsubscribe();
@@ -98,16 +106,40 @@ function App() {
 
   const signIn = (u) => setUser(u);
 
-  // Redireciona para o fórum assim que o login é confirmado
+  /* Só redireciona pro fórum quando o usuário efetivamente faz login
+     (transição null → user), não quando o Supabase re-emite o auth state */
+  const prevUserRef = React.useRef(undefined);
   React.useEffect(() => {
-    if (user) navigate('forum');
+    if (!publicUsername && user && prevUserRef.current === null) {
+      navigate('forum');
+    }
+    prevUserRef.current = user;
   }, [user]);
+
   const signOut = () => { setUser(null); pushToast('info', 'Até a próxima.'); };
 
   const openModal = (which) => {
     if (which === 'newPost' && !user) { setModal('login'); return; }
     setModal(which);
   };
+
+  /* Public profile — minimal shell, no preloader, no protected nav */
+  if (publicUsername && page === 'public-profile') {
+    return (
+      <React.Fragment>
+        <div className="kit-shell">
+          <CustomCursor />
+          <Nav page="home" onNavigate={navigate} onNavigateTo={navigate} user={user} onSignIn={(which) => setModal(which)} onSignOut={signOut} indicCount={0} onNavigateProfile={() => navigate('profile')} />
+          <div className="page-shell">
+            <PublicProfilePage username={publicUsername} onSignIn={user ? null : (which) => setModal(which)} />
+          </div>
+          <LoginModal  open={modal === 'login'}  onClose={() => setModal(null)} onSignIn={signIn} onSwitch={setModal} toast={pushToast} />
+          <SignupModal open={modal === 'signup'} onClose={() => setModal(null)} onSignIn={signIn} onSwitch={setModal} toast={pushToast} />
+          <ToastStack toasts={toasts} />
+        </div>
+      </React.Fragment>
+    );
+  }
 
   return (
     <React.Fragment>
@@ -124,7 +156,8 @@ function App() {
           {page === 'palestras' && user && <PalestrasPage toast={pushToast} user={user} onIndicCountChange={setIndicCount} />}
           {page === 'profile'   && user && <ProfilePage   user={user} onSignOut={signOut} onNavigate={navigate} />}
           {page === 'tracker'   && user && <StudyTracker  user={user} />}
-          {page === 'settings'  && user && <SettingsPage user={user} onUpdate={(u) => setUser(u)} onSignOut={signOut} onNavigate={navigate} />}
+          {page === 'settings'  && user && <SettingsPage  user={user} onUpdate={(u) => setUser(u)} onSignOut={signOut} onNavigate={navigate} />}
+          {page === 'ranking'   && user && <RankingPage   user={user} />}
         </div>
 
         <LoginModal   open={modal === 'login'}   onClose={() => setModal(null)} onSignIn={signIn} onSwitch={setModal} toast={pushToast} />

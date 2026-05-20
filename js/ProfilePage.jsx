@@ -45,7 +45,123 @@ function WebIcon() {
   );
 }
 
-/* Simple read-only activity heatmap — last 16 weeks */
+/* Stat card com ícone SVG */
+function StatCard({ iconSlug, value, label, color }) {
+  return (
+    <div className="pub-stat-card">
+      <div className="pub-stat-card-icon" style={{ color: color || 'var(--muted)' }}>
+        <BadgeIcon slug={iconSlug} color={color || 'var(--muted)'} size={18} />
+      </div>
+      <span className="pub-stat-card-val">{value}</span>
+      <span className="pub-stat-card-lbl">{label}</span>
+    </div>
+  );
+}
+
+/* GitHub card — busca dados da API pública */
+function GitHubCard({ githubUrl }) {
+  const [gh,    setGh]    = React.useState(null);
+  const [repos, setRepos] = React.useState([]);
+  const [err,   setErr]   = React.useState(false);
+
+  const username = React.useMemo(() => {
+    const m = (githubUrl || '').match(/github\.com\/([^/\s?#]+)/);
+    return m ? m[1] : null;
+  }, [githubUrl]);
+
+  React.useEffect(() => {
+    if (!username) return;
+    Promise.all([
+      fetch(`https://api.github.com/users/${username}`).then(r => r.json()),
+      fetch(`https://api.github.com/users/${username}/repos?sort=stars&per_page=4&type=owner`).then(r => r.json()),
+    ]).then(([user, repoList]) => {
+      if (user.message) { setErr(true); return; }
+      setGh(user);
+      setRepos(Array.isArray(repoList) ? repoList.filter(r => !r.fork).slice(0, 3) : []);
+    }).catch(() => setErr(true));
+  }, [username]);
+
+  if (!username) return null;
+  if (err) return null;
+  if (!gh) return (
+    <div className="pub-gh-card pub-gh-card--loading">
+      <div className="pub-gh-header">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style={{ color: 'var(--muted)' }}>
+          <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+        </svg>
+        <span style={{ fontSize: 13, color: 'var(--muted)' }}>Carregando GitHub…</span>
+      </div>
+    </div>
+  );
+
+  const LANG_COLORS = { JavaScript:'#f1e05a', TypeScript:'#3178c6', Python:'#3572A5', Java:'#b07219', Go:'#00ADD8', Rust:'#dea584', 'C++':'#f34b7d', CSS:'#563d7c', HTML:'#e34c26', PHP:'#4F5D95', Ruby:'#701516', Swift:'#fa7343', Kotlin:'#A97BFF', Dart:'#00B4AB', 'C#':'#178600' };
+
+  return (
+    <div className="pub-gh-card">
+      <div className="pub-gh-header">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style={{ color: 'var(--text)', flexShrink: 0 }}>
+          <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+        </svg>
+        <a href={githubUrl} target="_blank" rel="noopener noreferrer" className="pub-gh-username">@{username}</a>
+        {gh.location && <span className="pub-gh-location">· {gh.location}</span>}
+      </div>
+
+      <div className="pub-gh-stats">
+        <div className="pub-gh-stat">
+          <span className="pub-gh-stat-val">{gh.public_repos}</span>
+          <span className="pub-gh-stat-lbl">repositórios</span>
+        </div>
+        <div className="pub-gh-stat-sep" />
+        <div className="pub-gh-stat">
+          <span className="pub-gh-stat-val">{gh.followers}</span>
+          <span className="pub-gh-stat-lbl">seguidores</span>
+        </div>
+        <div className="pub-gh-stat-sep" />
+        <div className="pub-gh-stat">
+          <span className="pub-gh-stat-val">{gh.following}</span>
+          <span className="pub-gh-stat-lbl">seguindo</span>
+        </div>
+      </div>
+
+      {repos.length > 0 && (
+        <div className="pub-gh-repos">
+          {repos.map(r => (
+            <a key={r.id} href={r.html_url} target="_blank" rel="noopener noreferrer" className="pub-gh-repo" data-cursor="hover">
+              <div className="pub-gh-repo-top">
+                <span className="pub-gh-repo-name">{r.name}</span>
+                <div className="pub-gh-repo-meta">
+                  {r.language && (
+                    <span className="pub-gh-repo-lang">
+                      <span className="pub-gh-lang-dot" style={{ background: LANG_COLORS[r.language] || '#888' }} />
+                      {r.language}
+                    </span>
+                  )}
+                  {r.stargazers_count > 0 && (
+                    <span className="pub-gh-repo-stars">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                      {r.stargazers_count}
+                    </span>
+                  )}
+                </div>
+              </div>
+              {r.description && <p className="pub-gh-repo-desc">{r.description}</p>}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function InstagramIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+    </svg>
+  );
+}
+
+/* Read-only activity heatmap — full-width, 16 weeks */
 function ActivityGrid({ sessions }) {
   const sessMap = React.useMemo(() => {
     const m = {};
@@ -98,7 +214,97 @@ function ActivityGrid({ sessions }) {
   );
 }
 
+function SharePopup({ url, onClose }) {
+  const [copied, setCopied] = React.useState(false);
+
+  React.useEffect(() => {
+    const close = (e) => {
+      if (!e.target.closest('.pub-share-popup-wrap')) onClose();
+    };
+    document.addEventListener('click', close);
+    return () => document.removeEventListener('click', close);
+  }, []);
+
+  const copy = () => {
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => { setCopied(false); onClose(); }, 1800);
+    });
+  };
+
+  const text = encodeURIComponent('Veja meu perfil no D30 👇');
+  const enc  = encodeURIComponent(url);
+
+  const options = [
+    {
+      label: copied ? 'Copiado ✓' : 'Copiar link',
+      icon: '<rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="1.8" fill="none"/>',
+      action: copy,
+      href: null,
+    },
+    {
+      label: 'WhatsApp',
+      icon: '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" stroke="currentColor" stroke-width="1.8" fill="none"/>',
+      href: `https://wa.me/?text=${text}%20${enc}`,
+    },
+    {
+      label: 'Twitter / X',
+      icon: '<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.259 5.631 5.905-5.631zm-1.161 17.52h1.833L7.084 4.126H5.117z" fill="currentColor"/>',
+      href: `https://twitter.com/intent/tweet?url=${enc}&text=${text}`,
+    },
+    {
+      label: 'LinkedIn',
+      icon: '<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" stroke="currentColor" stroke-width="1.8" fill="none"/><rect x="2" y="9" width="4" height="12" stroke="currentColor" stroke-width="1.8" fill="none"/><circle cx="4" cy="4" r="2" stroke="currentColor" stroke-width="1.8" fill="none"/>',
+      href: `https://www.linkedin.com/sharing/share-offsite/?url=${enc}`,
+    },
+    {
+      label: 'Instagram',
+      icon: '<rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" stroke="currentColor" stroke-width="1.8" fill="none"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="currentColor" stroke-width="2"/>',
+      action: () => {
+        navigator.clipboard.writeText(url).then(() => {
+          window.open('https://www.instagram.com/', '_blank');
+          setCopied(true);
+          setTimeout(() => { setCopied(false); onClose(); }, 2000);
+        });
+      },
+      href: null,
+      hint: 'Abre o Instagram com o link copiado',
+    },
+  ];
+
+  return (
+    <div className="pub-share-popup">
+      <p className="pub-share-popup-url">{url}</p>
+      {options.map((opt, i) => {
+        const inner = (
+          <React.Fragment>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }} dangerouslySetInnerHTML={{ __html: opt.icon }} />
+            <span>{opt.label}</span>
+          </React.Fragment>
+        );
+        const el = opt.href ? (
+          <a key={i} href={opt.href} target="_blank" rel="noopener noreferrer" className="pub-share-option" data-cursor="hover">{inner}</a>
+        ) : (
+          <button key={i} className={'pub-share-option' + (opt.hint ? ' has-hint' : '')} data-cursor="hover" onClick={opt.action}>
+            {inner}
+            {opt.hint && <span className="pub-share-hint">{opt.hint}</span>}
+          </button>
+        );
+        return el;
+      })}
+    </div>
+  );
+}
+
 function ProfilePage({ user, onSignOut, onNavigate }) {
+  const [showShare, setShowShare] = React.useState(false);
+
+  const profileUrl = user.username
+    ? `${window.location.origin}/perfil/${user.username}`
+    : null;
+
+  const openShare = () => setShowShare(v => !v);
+
   const sessions  = React.useMemo(() => window.Data.load(), []);
   const earned    = React.useMemo(() => window.Badges.getEarned(), []);
   const earnedSet = React.useMemo(() => new Set(earned.map(b => b.slug)), [earned]);
@@ -120,13 +326,9 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
       if (b.type === 'founding_member') return user.is_founding_member === true;
       return earnedSet.has(b.slug);
     });
-    // fundador always first if earned
     list.sort((a, b) => (a.type === 'founding_member' ? -1 : b.type === 'founding_member' ? 1 : 0));
     return list;
   }, [earnedSet, user]);
-  const lockedBadges = React.useMemo(() =>
-    window.Badges.DEFS.filter(b => !earnedBadges.find(e => e.slug === b.slug)),
-  [earnedBadges]);
 
   return (
     <div className="page active fade-in">
@@ -148,58 +350,57 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
             </div>
             {user.profession && <p className="pub-profession">{user.profession}</p>}
             {user.bio && <p className="pub-bio">{user.bio}</p>}
-
             <div className="pub-socials">
-              {user.github_url   && <a href={user.github_url}   target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><GithubIcon /><span>GitHub</span></a>}
-              {user.linkedin_url && <a href={user.linkedin_url} target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><LinkedinIcon /><span>LinkedIn</span></a>}
-              {user.twitter_url  && <a href={user.twitter_url}  target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><TwitterIcon /><span>Twitter</span></a>}
-              {user.website_url  && <a href={user.website_url}  target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><WebIcon /><span>Site</span></a>}
+              {user.github_url    && <a href={user.github_url}    target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><GithubIcon /><span>GitHub</span></a>}
+              {user.linkedin_url  && <a href={user.linkedin_url}  target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><LinkedinIcon /><span>LinkedIn</span></a>}
+              {user.instagram_url && <a href={user.instagram_url} target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><InstagramIcon /><span>Instagram</span></a>}
+              {user.twitter_url   && <a href={user.twitter_url}   target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><TwitterIcon /><span>Twitter</span></a>}
+              {user.website_url   && <a href={user.website_url}   target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><WebIcon /><span>Site</span></a>}
             </div>
           </div>
 
-          <button className="pub-edit-btn" data-cursor="hover" onClick={() => onNavigate('settings')}>
-            Editar perfil
-          </button>
+          <div className="pub-hero-actions pub-share-popup-wrap">
+            <button className="pub-edit-btn"  data-cursor="hover" onClick={() => onNavigate('settings')}>Editar perfil</button>
+            <button className="pub-share-btn" data-cursor="hover" onClick={openShare} title="Compartilhar perfil">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+              </svg>
+            </button>
+            {showShare && (
+              profileUrl
+                ? <SharePopup url={profileUrl} onClose={() => setShowShare(false)} />
+                : <div className="pub-share-popup">
+                    <p style={{ fontSize: 13, color: 'var(--muted)', margin: '4px 8px 8px', lineHeight: 1.5 }}>
+                      Defina um <strong>username</strong> nas configurações para ter um link de perfil compartilhável.
+                    </p>
+                    <button className="pub-share-option" data-cursor="hover" onClick={() => { setShowShare(false); onNavigate('settings'); }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                      <span>Ir para Configurações</span>
+                    </button>
+                  </div>
+            )}
+          </div>
         </div>
 
-        {/* ── Stats strip ── */}
-        <div className="pub-stats-strip">
-          <div className="pub-stat-item">
-            <span className="pub-stat-val">{totalHours}h</span>
-            <span className="pub-stat-lbl">estudadas</span>
-          </div>
-          <div className="pub-stat-sep" />
-          <div className="pub-stat-item">
-            <span className="pub-stat-val">{sessions.length}</span>
-            <span className="pub-stat-lbl">sessões</span>
-          </div>
-          <div className="pub-stat-sep" />
-          <div className="pub-stat-item">
-            <span className="pub-stat-val">{streak}</span>
-            <span className="pub-stat-lbl">streak atual</span>
-          </div>
-          <div className="pub-stat-sep" />
-          <div className="pub-stat-item">
-            <span className="pub-stat-val">{bestStreak}</span>
-            <span className="pub-stat-lbl">recorde</span>
-          </div>
-          <div className="pub-stat-sep" />
-          <div className="pub-stat-item">
-            <span className="pub-stat-val">{earnedBadges.length}</span>
-            <span className="pub-stat-lbl">badges</span>
-          </div>
+        {/* ── Stats com ícones SVG ── */}
+        <div className="pub-stats-row">
+          <StatCard iconSlug="primeiros_passos" value={`${totalHours}h`}   label="estudadas"    color="#3b82f6" />
+          <StatCard iconSlug="consistente"      value={sessions.length}     label="sessões"      color="#6366f1" />
+          <StatCard iconSlug="primeira_chama"   value={streak}              label="streak atual" color="#f97316" />
+          <StatCard iconSlug="lendario"         value={bestStreak}          label="recorde"      color="#ef4444" />
+          {earnedBadges.length > 0 && (
+            <StatCard iconSlug="palestrante_fiel" value={earnedBadges.length} label="badges" color="#a855f7" />
+          )}
           {totalCourses > 0 && (
-            <React.Fragment>
-              <div className="pub-stat-sep" />
-              <div className="pub-stat-item">
-                <span className="pub-stat-val">{doneCourses}/{totalCourses}</span>
-                <span className="pub-stat-lbl">cursos</span>
-              </div>
-            </React.Fragment>
+            <StatCard iconSlug="dedicado" value={`${doneCourses}/${totalCourses}`} label="cursos" color="#22c55e" />
           )}
         </div>
 
-        {/* ── Activity ── */}
+        {/* ── GitHub card ── */}
+        {user.github_url && <GitHubCard githubUrl={user.github_url} />}
+
+        {/* ── Atividade full-width ── */}
         {sessions.length > 0 && (
           <div className="pub-section">
             <p className="pub-section-label">Atividade — últimas 16 semanas</p>
@@ -207,21 +408,21 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
             <div className="pub-activity-legend">
               <span>Menos</span>
               {['var(--bg3)', '#bbf7d0', '#4ade80', '#16a34a', '#15803d'].map((c, i) => (
-                <div key={i} style={{ width: 10, height: 10, borderRadius: 2, background: c, flexShrink: 0 }} />
+                <div key={i} style={{ width: 11, height: 11, borderRadius: 3, background: c, flexShrink: 0 }} />
               ))}
               <span>Mais</span>
             </div>
           </div>
         )}
 
-        {/* ── Badges conquistadas ── */}
+        {/* ── Badges conquistadas (só as earned, sem as locked) ── */}
         {earnedBadges.length > 0 && (
           <div className="pub-section">
             <p className="pub-section-label">Badges conquistadas</p>
             <div className="pub-badges-earned">
               {earnedBadges.map(b => (
                 <div key={b.slug} className="pub-badge-earned" title={b.name}
-                  style={b.type === 'founding_member' ? { borderColor: '#f59e0b44', background: '#fef3c720' } : {}}>
+                  style={b.type === 'founding_member' ? { borderColor: '#f59e0b55', background: '#fef3c718' } : {}}>
                   <div className="pub-badge-earned-icon">
                     <BadgeIcon slug={b.slug} color={b.color} size={22} />
                   </div>
@@ -229,15 +430,6 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
                 </div>
               ))}
             </div>
-            {lockedBadges.length > 0 && (
-              <div className="pub-badges-locked">
-                {lockedBadges.map(b => (
-                  <div key={b.slug} className="pub-badge-locked" title={b.name}>
-                    <BadgeIcon slug={b.slug} color="currentColor" size={16} />
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
         )}
 

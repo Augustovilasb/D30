@@ -7,10 +7,11 @@ function SettingsPage({ user, onUpdate, onSignOut, onNavigate }) {
     bio:          user.bio         || '',
     profession:   user.profession  || '',
     avatar_url:   user.avatar_url  || '',
-    github_url:   user.github_url  || '',
-    linkedin_url: user.linkedin_url || '',
-    twitter_url:  user.twitter_url  || '',
-    website_url:  user.website_url  || '',
+    github_url:    user.github_url    || '',
+    linkedin_url:  user.linkedin_url  || '',
+    instagram_url: user.instagram_url || '',
+    twitter_url:   user.twitter_url   || '',
+    website_url:   user.website_url   || '',
   });
   const [aiKey,       setAiKey]       = React.useState(() => { try { return localStorage.getItem('d30_ai_key') || ''; } catch { return ''; } });
   const [showKey,     setShowKey]     = React.useState(false);
@@ -27,21 +28,25 @@ function SettingsPage({ user, onUpdate, onSignOut, onNavigate }) {
     setSaving(true); setError('');
     try {
       if (window.sb && user.id) {
-        await window.sb.from('profiles').update({
-          full_name:    form.full_name.trim(),
-          username:     form.username.trim(),
-          bio:          form.bio.trim(),
-          profession:   form.profession.trim(),
-          avatar_url:   form.avatar_url.trim() || null,
-          github_url:   form.github_url.trim()   || null,
-          linkedin_url: form.linkedin_url.trim()  || null,
-          twitter_url:  form.twitter_url.trim()   || null,
-          website_url:  form.website_url.trim()   || null,
+        const { error: dbErr } = await window.sb.from('profiles').update({
+          full_name:     form.full_name.trim(),
+          username:      form.username.trim(),
+          bio:           form.bio.trim(),
+          profession:    form.profession.trim(),
+          avatar_url:    form.avatar_url.trim()    || null,
+          github_url:    form.github_url.trim()    || null,
+          linkedin_url:  form.linkedin_url.trim()  || null,
+          instagram_url: form.instagram_url.trim() || null,
+          twitter_url:   form.twitter_url.trim()   || null,
+          website_url:   form.website_url.trim()   || null,
         }).eq('id', user.id);
+        if (dbErr) throw new Error(
+          dbErr.code === '23505' ? 'Esse username já está em uso.' : dbErr.message
+        );
       }
       try { localStorage.setItem('d30_ai_key', aiKey.trim()); } catch {}
       const initials = form.full_name.trim().split(/\s+/).map(s => s[0]).slice(0,2).join('').toUpperCase() || user.initials;
-      onUpdate({ ...user, name: form.full_name.trim(), username: form.username.trim(), bio: form.bio.trim() || null, profession: form.profession.trim() || null, avatar_url: form.avatar_url.trim() || null, github_url: form.github_url.trim() || null, linkedin_url: form.linkedin_url.trim() || null, twitter_url: form.twitter_url.trim() || null, website_url: form.website_url.trim() || null, initials });
+      onUpdate({ ...user, name: form.full_name.trim(), username: form.username.trim(), bio: form.bio.trim() || null, profession: form.profession.trim() || null, avatar_url: form.avatar_url.trim() || null, github_url: form.github_url.trim() || null, linkedin_url: form.linkedin_url.trim() || null, instagram_url: form.instagram_url.trim() || null, twitter_url: form.twitter_url.trim() || null, website_url: form.website_url.trim() || null, initials });
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     } catch (err) {
@@ -127,11 +132,23 @@ function SettingsPage({ user, onUpdate, onSignOut, onNavigate }) {
           <div className="settings-grid">
             <div className="settings-field">
               <label className="settings-label">GitHub</label>
-              <input className="settings-input" type="url" placeholder="https://github.com/..." value={form.github_url} onChange={e => set('github_url', e.target.value)} />
+              <div className="settings-key-row">
+                <input className="settings-input" type="url" placeholder="https://github.com/..." value={form.github_url} onChange={e => set('github_url', e.target.value)} />
+                {form.github_url.trim() && (
+                  <button className="settings-key-toggle" data-cursor="hover" onClick={importFromGithub} disabled={ghImporting}>
+                    {ghImporting ? '…' : ghImported ? 'Importado ✓' : 'Importar'}
+                  </button>
+                )}
+              </div>
+              <p className="settings-hint">Importa nome, foto e bio do seu perfil público do GitHub</p>
             </div>
             <div className="settings-field">
               <label className="settings-label">LinkedIn</label>
               <input className="settings-input" type="url" placeholder="https://linkedin.com/in/..." value={form.linkedin_url} onChange={e => set('linkedin_url', e.target.value)} />
+            </div>
+            <div className="settings-field">
+              <label className="settings-label">Instagram</label>
+              <input className="settings-input" type="url" placeholder="https://instagram.com/..." value={form.instagram_url} onChange={e => set('instagram_url', e.target.value)} />
             </div>
             <div className="settings-field">
               <label className="settings-label">Twitter / X</label>

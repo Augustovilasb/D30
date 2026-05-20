@@ -106,6 +106,7 @@ function Nav({ page, onNavigate, user, onSignIn, onSignOut, indicCount, onNaviga
               <button className={'nav-link' + (page === 'roadmap'   ? ' active' : '')} data-cursor="hover" onClick={() => onNavigate('roadmap')}>Roadmap</button>
               <button className={'nav-link' + (page === 'palestras' ? ' active' : '')} data-cursor="hover" onClick={() => onNavigate('palestras')}>Palestras</button>
               <button className={'nav-link' + (page === 'tracker'   ? ' active' : '')} data-cursor="hover" onClick={() => (onNavigateTo || onNavigate)('tracker')}>Tracker</button>
+              <button className={'nav-link' + (page === 'ranking'   ? ' active' : '')} data-cursor="hover" onClick={() => (onNavigateTo || onNavigate)('ranking')}>Ranking</button>
               <button className={'nav-link' + (page === 'profile'   ? ' active' : '')} data-cursor="hover" onClick={() => (onNavigateTo || onNavigate)('profile')}>Perfil</button>
             </React.Fragment>
           ) : (

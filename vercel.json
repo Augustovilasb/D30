@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/perfil/:username", "destination": "/html/website/index.html" },
     { "source": "/(.*)", "destination": "/html/website/$1" }
   ]
 }

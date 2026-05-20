@@ -75,8 +75,8 @@ const Auth = {
   },
 
   onAuthChange(callback) {
-    return window.sb.auth.onAuthStateChange((_event, session) => {
-      callback(session?.user ?? null);
+    return window.sb.auth.onAuthStateChange((event, session) => {
+      callback(event, session?.user ?? null);
     });
   }
 };
