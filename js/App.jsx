@@ -1,6 +1,6 @@
 /* App.jsx — entry. Wires together Nav, pages, modals, toasts, cursor. */
 
-const PROTECTED = ['forum', 'roadmap', 'palestras', 'profile', 'tracker', 'settings', 'ranking'];
+const PROTECTED = ['forum', 'roadmap', 'palestras', 'profile', 'tracker', 'settings', 'edit-profile', 'ranking'];
 
 async function buildUserObj(supabaseUser) {
   let profile = null;
@@ -179,7 +179,8 @@ function App() {
           {page === 'palestras' && user && <PalestrasPage toast={pushToast} user={user} onIndicCountChange={setIndicCount} />}
           {page === 'profile'   && user && <ProfilePage   user={user} onSignOut={signOut} onNavigate={navigate} />}
           {page === 'tracker'   && user && <StudyTracker  user={user} />}
-          {page === 'settings'  && user && <SettingsPage  user={user} onUpdate={(u) => setUser(u)} onSignOut={signOut} onNavigate={navigate} />}
+          {page === 'settings'     && user && <SettingsPage     user={user} onSignOut={signOut} onNavigate={navigate} />}
+          {page === 'edit-profile' && user && <EditProfilePage  user={user} onUpdate={(u) => setUser(u)} onNavigate={navigate} />}
           {page === 'ranking'   && user && <RankingPage   user={user} />}
         </div>
 

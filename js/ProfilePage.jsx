@@ -279,7 +279,7 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
 
           <div className="pub-hero-side pub-share-popup-wrap">
             <div className="pub-hero-actions">
-              <button className="pub-edit-btn"  data-cursor="hover" onClick={() => onNavigate('settings')}>Editar perfil</button>
+              <button className="pub-edit-btn"  data-cursor="hover" onClick={() => onNavigate('edit-profile')}>Editar perfil</button>
               <button className="pub-share-btn" data-cursor="hover" onClick={openShare} title="Compartilhar perfil">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
