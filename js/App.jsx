@@ -1,6 +1,6 @@
 /* App.jsx — entry. Wires together Nav, pages, modals, toasts, cursor. */
 
-const PROTECTED = ['forum', 'roadmap', 'palestras', 'profile'];
+const PROTECTED = ['forum', 'roadmap', 'palestras', 'profile', 'tracker'];
 
 function App() {
   // Preloader plays once per session. Skip on subsequent reloads within the tab.
@@ -97,7 +97,8 @@ function App() {
           {page === 'forum'     && user && <ForumPage     user={user} onSignIn={(which) => setModal(which)} toast={pushToast} />}
           {page === 'roadmap'   && user && <RoadmapPage />}
           {page === 'palestras' && user && <PalestrasPage toast={pushToast} user={user} onIndicCountChange={setIndicCount} />}
-          {page === 'profile'   && user && <ProfilePage user={user} onSignOut={signOut} onNavigate={navigate} />}
+          {page === 'profile'   && user && <ProfilePage   user={user} onSignOut={signOut} onNavigate={navigate} />}
+          {page === 'tracker'   && user && <StudyTracker  user={user} />}
         </div>
 
         <LoginModal   open={modal === 'login'}   onClose={() => setModal(null)} onSignIn={signIn} onSwitch={setModal} toast={pushToast} />
