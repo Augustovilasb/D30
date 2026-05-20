@@ -2065,6 +2065,14 @@ nav.nav--floating {
   gap: 8px;
 }
 
+nav.nav--app.nav--floating {
+  max-width: 800px;
+}
+
+nav.nav--app.nav--floating .nav-link {
+  padding: 6px 10px !important;
+}
+
 /* Text + control recolouring while floating — stays black/white */
 nav.nav--floating .nav-logo { color: #fff !important; }
 nav.nav--floating .nav-logo span { color: #fff !important; }

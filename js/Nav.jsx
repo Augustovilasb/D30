@@ -94,7 +94,7 @@ function Nav({ page, onNavigate, user, onSignIn, onSignOut, indicCount, onNaviga
   }, []);
 
   return (
-    <nav className={floating ? 'nav--floating' : ''}>
+    <nav className={[floating ? 'nav--floating' : '', user ? 'nav--app' : ''].filter(Boolean).join(' ')}>
       <div className="nav-slot nav-slot--left">
         <Logo onClick={() => goAnchor('top')} />
       </div>
@@ -103,10 +103,10 @@ function Nav({ page, onNavigate, user, onSignIn, onSignOut, indicCount, onNaviga
           {user ? (
             <React.Fragment>
               <button className={'nav-link' + (page === 'forum'     ? ' active' : '')} data-cursor="hover" onClick={() => onNavigate('forum')}>Fórum</button>
-              <button className={'nav-link' + (page === 'roadmap'   ? ' active' : '')} data-cursor="hover" onClick={() => onNavigate('roadmap')}>Road Map</button>
+              <button className={'nav-link' + (page === 'roadmap'   ? ' active' : '')} data-cursor="hover" onClick={() => onNavigate('roadmap')}>Roadmap</button>
               <button className={'nav-link' + (page === 'palestras' ? ' active' : '')} data-cursor="hover" onClick={() => onNavigate('palestras')}>Palestras</button>
               <button className={'nav-link' + (page === 'tracker'   ? ' active' : '')} data-cursor="hover" onClick={() => (onNavigateTo || onNavigate)('tracker')}>Tracker</button>
-              <button className={'nav-link' + (page === 'profile'   ? ' active' : '')} data-cursor="hover" onClick={() => (onNavigateTo || onNavigate)('profile')}>Meu Perfil</button>
+              <button className={'nav-link' + (page === 'profile'   ? ' active' : '')} data-cursor="hover" onClick={() => (onNavigateTo || onNavigate)('profile')}>Perfil</button>
             </React.Fragment>
           ) : (
             <React.Fragment>

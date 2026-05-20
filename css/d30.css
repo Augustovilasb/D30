@@ -73,6 +73,7 @@ nav {
   cursor: none; border: none; background: none;
   transition: color .2s, background .2s;
   font-family: 'Inter', sans-serif;
+  white-space: nowrap;
 }
 .nav-link:hover { color: var(--text); background: rgba(255,255,255,0.05); }
 .nav-link.active { color: var(--text); background: rgba(255,255,255,0.07); }
