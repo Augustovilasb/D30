@@ -4446,7 +4446,9 @@ nav.nav--floating .user-menu-info strong{ color: var(--text); }
 .pub-pioneer-label { font-size: 7px; font-weight: 800; letter-spacing: 2.5px; color: #999; line-height: 1; }
 .pub-profession { font-size: 13px; font-weight: 600; color: var(--muted); margin: 0; }
 .pub-bio { font-size: 13px; color: var(--muted2); margin: 0; line-height: 1.5; }
-.pub-hero-actions-row { display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 6px; }
+.pub-hero-actions-row { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: 6px; }
+.pub-actions-primary  { display: flex; flex-direction: row; align-items: center; gap: 8px; flex-wrap: wrap; position: relative; }
+.pub-actions-socials  { display: flex; flex-direction: row; align-items: center; gap: 8px; flex-wrap: wrap; }
 .pub-socials { display: flex; flex-direction: row; flex-wrap: wrap; gap: 6px; align-items: center; }
 .pub-social {
   display: inline-flex; align-items: center; gap: 6px;
