@@ -208,6 +208,13 @@ function TrackerDashboard({ onStartTimer, onDemoLoad }) {
     };
   }, [sessions, prev]);
 
+  const highlightDates = React.useMemo(() => {
+    if (!activeFilter) return null;
+    const s = new Set();
+    ranged.filter(r => r[activeFilter.field] === activeFilter.value).forEach(r => s.add(r.date));
+    return s;
+  }, [ranged, activeFilter]);
+
   const setFilter = (field, value) => {
     setActiveFilter(f => (f?.field === field && f?.value === value) ? null : { field, value });
   };
@@ -268,27 +275,6 @@ function TrackerDashboard({ onStartTimer, onDemoLoad }) {
     };
   }, [sessions, dark, activeFilter]);
 
-  /* hours by type */
-  const hoursByTypeCfg = React.useMemo(() => {
-    const data = TYPES.map(t => +((sessions.filter(s => s.studyType === t).reduce((a, s) => a + (s.duration || 0), 0) / 3600).toFixed(1)));
-    return {
-      type: 'bar',
-      data: {
-        labels: TYPES,
-        datasets: [{ data, backgroundColor: TYPES.map(t => activeFilter?.value === t ? accent : 'rgba(16,185,129,0.6)'), borderRadius: 6, borderSkipped: false }],
-      },
-      options: {
-        indexAxis: 'y',
-        responsive: true,
-        plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.raw}h` } } },
-        scales: {
-          x: { ticks: { color: tick, font: { size: 11 } }, grid: { color: grid } },
-          y: { ticks: { color: tick, font: { size: 12 } }, grid: { display: false } },
-        },
-        onClick: (_e, els) => { if (els.length) setFilter('studyType', TYPES[els[0].index]); },
-      },
-    };
-  }, [sessions, dark, activeFilter]);
 
   /* radar */
   const radarCfg = React.useMemo(() => ({
@@ -333,7 +319,11 @@ function TrackerDashboard({ onStartTimer, onDemoLoad }) {
   if (!allSessions.length) {
     return (
       <div className="trk-empty">
-        <div className="trk-empty-icon">📊</div>
+        <div className="trk-empty-icon">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3 3v18h18" /><path d="M7 16v-5" /><path d="M11 16V8" /><path d="M15 16v-2" /><path d="M19 16v-9" />
+        </svg>
+      </div>
         <p className="trk-empty-title">Nenhuma sessão ainda</p>
         <p className="trk-empty-sub">Registre sua primeira sessão para ver o dashboard.</p>
         <button className="trk-start-btn" data-cursor="hover" onClick={onStartTimer}>Iniciar Sessão</button>
@@ -364,12 +354,28 @@ function TrackerDashboard({ onStartTimer, onDemoLoad }) {
         </button>
       </div>
 
+      {/* Dual-month heatmap — above stats */}
+      {(() => {
+        const CalComp = window.HeatCalendar;
+        if (!CalComp) return null;
+        return (
+          <div className="trk-dashboard-cal">
+            {activeFilter && (
+              <p className="trk-cal-filter-hint">
+                Dias com <strong>{activeFilter.value}</strong> destacados — clique em um dia para ver o detalhe
+              </p>
+            )}
+            <CalComp sessions={ranged} highlightDates={highlightDates} />
+          </div>
+        );
+      })()}
+
       {/* KPI */}
       <div className="trk-kpi-row">
         <KpiCard label="Horas no período"    value={fmtH(kpis.total) + 'h'}                        trend={kpis.trend} />
         <KpiCard label="Sessões"             value={kpis.count}                                      sub={`média ${fmtH(kpis.avgSecs)}h`} />
         <KpiCard label="Alto rendimento"     value={kpis.count ? Math.round(kpis.high / kpis.count * 100) + '%' : '—'} sub={`${kpis.high} sessões`} />
-        <KpiCard label="Streak atual"        value={kpis.streak + ' 🔥'}                             sub={`melhor: ${kpis.best} dias`} />
+        <KpiCard label="Streak atual"        value={kpis.streak + ' dias'}                            sub={`recorde: ${kpis.best} dias`} />
         <KpiCard label="Total acumulado"     value={fmtH(kpis.allH) + 'h'}                          sub="histórico completo" />
       </div>
 
@@ -390,23 +396,11 @@ function TrackerDashboard({ onStartTimer, onDemoLoad }) {
         </div>
 
         <div className="trk-chart-card">
-          <div className="trk-chart-head">
-            <p className="trk-chart-title">Horas por tipo de estudo</p>
-            {activeFilter?.field === 'studyType' && <span className="trk-chart-badge">filtrado ✕</span>}
-          </div>
-          <ChartCanvas cfg={hoursByTypeCfg} />
-          <p className="trk-chart-hint">Clique para filtrar</p>
-        </div>
-
-        <div className="trk-chart-card">
           <p className="trk-chart-title">Perfil geral</p>
           <ChartCanvas cfg={radarCfg} />
         </div>
 
-        <ImpactChart sessions={sessions} field="sleep"     labels={['Dormi muito bem','Dormi ok','Dormi pouco','Não dormi direito']} title="Impacto do sono"         onFilter={setFilter} activeVal={activeFilter?.field==='sleep'     ? activeFilter.value : null} dark={dark} height={280} />
-        <ImpactChart sessions={sessions} field="nutrition" labels={['Me alimentei bem','Normal','Me alimentei mal']}                 title="Impacto da alimentação"  onFilter={setFilter} activeVal={activeFilter?.field==='nutrition' ? activeFilter.value : null} dark={dark} height={280} />
-        <ImpactChart sessions={sessions} field="hydration" labels={['Bebi bastante','Normal','Bebi pouco']}                          title="Impacto da hidratação"   onFilter={setFilter} activeVal={activeFilter?.field==='hydration' ? activeFilter.value : null} dark={dark} height={280} />
-        <ImpactChart sessions={sessions} field="activity"  labels={['Me exercitei','Caminhei','Fiquei parado']}                      title="Impacto da atividade"    onFilter={setFilter} activeVal={activeFilter?.field==='activity'  ? activeFilter.value : null} dark={dark} height={280} />
+        <ImpactChart sessions={sessions} field="sleep" labels={['Dormi muito bem','Dormi ok','Dormi pouco','Não dormi direito']} title="Impacto do sono no rendimento" onFilter={setFilter} activeVal={activeFilter?.field==='sleep' ? activeFilter.value : null} dark={dark} height={280} />
       </div>
 
       {sessions.length === 0 && (
@@ -415,6 +409,8 @@ function TrackerDashboard({ onStartTimer, onDemoLoad }) {
           <button className="trk-link" data-cursor="hover" onClick={() => setActiveFilter(null)}>Limpar filtro</button>
         </p>
       )}
+
+
     </div>
   );
 }

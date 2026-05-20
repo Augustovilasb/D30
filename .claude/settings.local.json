@@ -8,7 +8,9 @@
       "Bash(git commit -m ' *)",
       "Bash(dir \"C:/Meus projetos/D30/D30 Design System\" /b)",
       "WebSearch",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(Select-String -Path \"C:\\\\Meus projetos\\\\D30\\\\D30 Design System\\\\js\\\\TrackerDashboard.jsx\",\"C:\\\\Meus projetos\\\\D30\\\\D30 Design System\\\\js\\\\StudyTracker.jsx\" -Pattern '[📊📅📆🗓✨⏱⏹⏸▶💬⛔🔍⚡🎯🏆📈🔥⭐🎨🚀💡]')",
+      "Bash(Select-Object LineNumber, Line)"
     ]
   }
 }
