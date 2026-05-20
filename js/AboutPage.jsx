@@ -29,13 +29,11 @@ function AugustoSection() {
         <p className="founder-eyebrow">Fundador</p>
         <h2 className="founder-name">Augusto<br/>Vilas Boas.</h2>
         <p className="founder-role">Dev em formação</p>
-      </div>
-      <div className="founder-col founder-col--bio">
         <p className="founder-bio">
           Documentando a transição de carreira do zero.
           Porque ninguém deveria fazer esse caminho completamente sozinho.
         </p>
-        <div className="founder-social-row">
+        <div className="founder-social-col">
           <SocialLink kind="instagram" label="Instagram" href="https://www.instagram.com/dev.aos30/"          handle="@dev.aos30" />
           <SocialLink kind="linkedin"  label="LinkedIn"  href="https://www.linkedin.com/in/augustovilasboas/" handle="augustovilasboas" />
           <SocialLink kind="github"    label="GitHub"    href="https://github.com/Augustovilasb"              handle="Augustovilasb" />
