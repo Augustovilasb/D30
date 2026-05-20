@@ -46,8 +46,19 @@ function FpDots() {
 
 function HomePage({ onNavigate, onSignIn }) {
   React.useEffect(() => {
-    document.documentElement.classList.add('fp-active');
-    return () => document.documentElement.classList.remove('fp-active');
+    const check = () => {
+      if (window.innerWidth > 768) {
+        document.documentElement.classList.add('fp-active');
+      } else {
+        document.documentElement.classList.remove('fp-active');
+      }
+    };
+    check();
+    window.addEventListener('resize', check);
+    return () => {
+      document.documentElement.classList.remove('fp-active');
+      window.removeEventListener('resize', check);
+    };
   }, []);
 
   return (
