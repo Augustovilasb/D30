@@ -4940,7 +4940,8 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
   /* Hero section mobile */
   .fp-section .home-hero { min-height: 100svh !important; height: auto !important; }
   .home-hero { padding: 0 !important; }
-  .hero-inner { padding: 5.5rem 1.2rem 3rem !important; }
+  .hero-inner { padding: 5.5rem 1.2rem 3rem !important; text-align: center !important; }
+  .hero-eyebrow { justify-content: center !important; }
   .hero-manifest-lead {
     font-size: clamp(30px, 9vw, 46px) !important;
     letter-spacing: -1.5px !important;
@@ -4948,11 +4949,12 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
   }
   .hero-sub-row {
     flex-direction: column !important;
-    align-items: flex-start !important;
+    align-items: center !important;
     gap: 1.5rem !important;
     margin-bottom: 2rem !important;
+    text-align: center !important;
   }
-  .hero-manifest-sub { max-width: 100% !important; font-size: 15px !important; }
+  .hero-manifest-sub { max-width: 100% !important; font-size: 15px !important; text-align: center !important; }
   .hero-stats {
     border-left: none !important;
     padding-left: 0 !important;
