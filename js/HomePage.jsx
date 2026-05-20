@@ -288,7 +288,7 @@ function AboutWithFeatures() {
           }
 
           return (
-            <div key={f.num} className="folder-card" style={style} onClick={i > selected ? () => go(i) : undefined}>
+            <div key={f.num} className={'folder-card' + (i === selected ? ' folder-card--active' : '')} style={style} onClick={i > selected ? () => go(i) : undefined}>
               <div className="folder-card-header">
                 {!f.isStory && <span className="folder-card-num">{f.num}</span>}
                 <span className="folder-card-title">{f.title}</span>

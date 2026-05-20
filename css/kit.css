@@ -4930,13 +4930,64 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
   .nav-slot--center .nav-links { gap: 0; }
   .nav-slot--center .nav-link { font-size: 12px !important; padding: 5px 10px !important; }
 
-  /* Pages — space for fixed bottom nav (60px) */
+  /* Pages — space for fixed bottom nav */
   .page { padding-bottom: 72px !important; }
   .pub-profile  { padding: 32px 16px 88px !important; gap: 24px !important; }
   .settings-wrap { padding: 32px 16px 88px !important; }
   .ranking-wrap  { padding: 32px 16px 88px !important; gap: 20px !important; }
 
-  /* Hero */
+  /* ── HOMEPAGE FULLPAGE — mobile: seções fluem normalmente ── */
+  .fp-section {
+    height: auto !important;
+    min-height: 100svh !important;
+    overflow: visible !important;
+  }
+
+  /* Hero section mobile */
+  .fp-section .home-hero { min-height: 100svh !important; height: auto !important; }
+  .home-hero { padding: 0 !important; }
+  .hero-inner { padding: 5.5rem 1.2rem 3rem !important; }
+  .hero-manifest-lead {
+    font-size: clamp(30px, 9vw, 46px) !important;
+    letter-spacing: -1.5px !important;
+    margin-bottom: 1.5rem !important;
+  }
+  .hero-sub-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 1.5rem !important;
+    margin-bottom: 2rem !important;
+  }
+  .hero-manifest-sub { max-width: 100% !important; font-size: 15px !important; }
+  .hero-stats {
+    border-left: none !important;
+    padding-left: 0 !important;
+    border-top: 1px solid rgba(0,0,0,0.08) !important;
+    padding-top: 1rem !important;
+    width: 100% !important;
+  }
+  [data-theme="dark"] .hero-stats { border-top-color: rgba(255,255,255,0.1) !important; }
+  .hero-actions { width: 100% !important; }
+
+  /* About/folders section mobile */
+  .fp-section .about-features { padding: 3rem 1rem 2rem !important; align-items: flex-start !important; }
+  .about-features { padding: 1.5rem 1rem !important; }
+  .folders-layout { flex-direction: column !important; gap: 0.75rem !important; height: auto !important; }
+  .folders-nav { flex-direction: row !important; flex-wrap: wrap !important; width: 100% !important; gap: 4px !important; }
+  .folders-nav-item { padding: 6px 10px !important; }
+  .folders-nav-num { display: none !important; }
+  .folders-nav-title { font-size: 12px !important; }
+  /* Stack: apenas o card ativo é visível, sem altura fixa */
+  .folders-stack { height: auto !important; min-height: unset !important; position: relative !important; }
+  .folder-card { display: none !important; position: relative !important; inset: auto !important; height: auto !important; transform: none !important; }
+  .folder-card--active { display: flex !important; }
+  .folder-card-body { max-height: 50vh !important; overflow-y: auto !important; }
+
+  /* Founder section */
+  .founder-section { grid-template-columns: 1fr !important; padding: 2rem 1rem !important; gap: 2rem !important; text-align: left !important; }
+  .founder-col--photo { display: none !important; }
+
+  /* Profile hero */
   .pub-hero { flex-wrap: wrap; gap: 16px; }
   .pub-edit-btn { position: static !important; margin-left: auto; }
 

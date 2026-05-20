@@ -114,17 +114,19 @@
       goTo(getCurrent() + (e.deltaY > 0 ? 1 : -1));
     }, { passive: false });
 
-    var touchY = 0;
-    window.addEventListener('touchstart', function(e) {
-      touchY = e.touches[0].clientY;
-    }, { passive: true });
-    window.addEventListener('touchend', function(e) {
-      refresh();
-      if (!sections.length || locked) return;
-      if (e.target.closest('.folders-stack')) return;
-      var dy = touchY - e.changedTouches[0].clientY;
-      if (Math.abs(dy) > 40) goTo(getCurrent() + (dy > 0 ? 1 : -1));
-    }, { passive: true });
+    /* Touch fullpage only on desktop — mobile scrolls naturally */
+    if (window.innerWidth > 768) {
+      var touchY = 0;
+      window.addEventListener('touchstart', function(e) {
+        touchY = e.touches[0].clientY;
+      }, { passive: true });
+      window.addEventListener('touchend', function(e) {
+        refresh();
+        if (!sections.length || locked) return;
+        var dy = touchY - e.changedTouches[0].clientY;
+        if (Math.abs(dy) > 40) goTo(getCurrent() + (dy > 0 ? 1 : -1));
+      }, { passive: true });
+    }
 
     new MutationObserver(refresh).observe(document.body, { childList: true, subtree: true });
   }
