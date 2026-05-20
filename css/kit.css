@@ -156,30 +156,44 @@ body[data-cursor-mode="ghost"] *::after { cursor: none !important; }
 /* ── Founder section (fp-founder) ── */
 .founder-section {
   width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto 1fr;
-  grid-template-areas: "id btns" "bio photo";
-  align-items: start;
   max-width: 980px;
   margin: 0 auto;
   padding: 3rem 2.5rem;
-  gap: 1.2rem 4rem;
-}
-
-.founder-col {
   display: flex;
   flex-direction: column;
+  gap: 1.5rem;
 }
 
-.founder-col--id   { grid-area: id;   gap: 0.3rem; }
-.founder-col--btns { grid-area: btns; flex-direction: row; flex-wrap: wrap; gap: 6px; align-items: flex-start; align-self: end; padding-bottom: 4px; }
-.founder-col--bio  { grid-area: bio; }
-.founder-col--photo { grid-area: photo; align-items: center; align-self: stretch; justify-content: center; }
+.founder-top {
+  display: flex;
+  align-items: flex-end;
+  gap: 3rem;
+}
 
-.founder-col--btns .social-link { padding: 5px 10px; font-size: 11px; border-radius: 7px; gap: 5px; }
-.founder-col--btns .social-link .social-handle { display: none; }
-.founder-col--btns .social-link svg { width: 12px; height: 12px; }
+.founder-top-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.founder-top-right {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex-shrink: 0;
+  padding-bottom: 6px;
+}
+
+.founder-top-right .social-link { padding: 5px 10px; font-size: 11px; border-radius: 7px; gap: 5px; }
+.founder-top-right .social-link .social-handle { display: none; }
+.founder-top-right .social-link svg { width: 12px; height: 12px; }
+
+.founder-bottom {
+  display: flex;
+  align-items: stretch;
+  gap: 3rem;
+}
 
 .founder-eyebrow {
   font-size: 10px;
@@ -217,11 +231,12 @@ body[data-cursor-mode="ghost"] *::after { cursor: none !important; }
 }
 
 .founder-bio {
+  flex: 1;
   font-size: clamp(15px, 1.3vw, 18px);
   font-weight: 400;
   line-height: 1.75;
   color: var(--muted);
-  margin: 0 0 1.2rem;
+  margin: 0;
 }
 
 .founder-social-row {
@@ -254,14 +269,12 @@ body[data-cursor-mode="ghost"] *::after { cursor: none !important; }
 }
 
 .founder-photo {
-  width: 100%;
-  max-width: 380px;
-  aspect-ratio: 3 / 4;
+  flex: 1;
+  min-height: 260px;
   border-radius: 20px;
   overflow: hidden;
   background: var(--bg3);
   border: 1px solid var(--border);
-  justify-self: center;
 }
 .founder-photo img {
   width: 100%;
@@ -272,14 +285,11 @@ body[data-cursor-mode="ghost"] *::after { cursor: none !important; }
 }
 
 @media (max-width: 860px) {
-  .founder-section {
-    grid-template-columns: 1fr;
-    grid-template-areas: "id" "btns" "bio" "photo";
-    padding: 2rem 1.5rem;
-    gap: 1rem;
-  }
-  .founder-col--btns { align-self: auto; }
-  .founder-photo { width: min(240px, 55vw); }
+  .founder-section { padding: 2rem 1.5rem; gap: 1rem; }
+  .founder-top { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+  .founder-top-right { flex-direction: column; }
+  .founder-bottom { flex-direction: column; gap: 1.2rem; }
+  .founder-photo { min-height: 220px; flex: none; width: 100%; }
 }
 
 .fp-section .about-hero {
@@ -5002,7 +5012,11 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
   .folder-card-body { max-height: none !important; overflow-y: visible !important; }
 
   /* Founder section */
-  .founder-section { grid-template-columns: 1fr !important; padding: 2rem 1rem !important; gap: 2rem !important; text-align: left !important; }
+  .founder-section { padding: 2rem 1rem !important; gap: 1rem !important; }
+  .founder-top { flex-direction: column !important; align-items: flex-start !important; gap: 0.8rem !important; }
+  .founder-top-right { flex-direction: row !important; flex-wrap: wrap !important; }
+  .founder-bottom { flex-direction: column !important; gap: 1rem !important; }
+  .founder-photo { flex: none !important; width: 100% !important; min-height: 200px !important; }
 
   /* Profile hero */
   .pub-hero { gap: 14px !important; }
