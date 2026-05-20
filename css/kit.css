@@ -158,11 +158,13 @@ body[data-cursor-mode="ghost"] *::after { cursor: none !important; }
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  align-items: center;
-  max-width: 1000px;
+  grid-template-rows: auto 1fr;
+  grid-template-areas: "id btns" "bio photo";
+  align-items: start;
+  max-width: 980px;
   margin: 0 auto;
-  padding: 3rem 3rem;
-  gap: 4rem;
+  padding: 3rem 2.5rem;
+  gap: 1.2rem 4rem;
 }
 
 .founder-col {
@@ -170,16 +172,14 @@ body[data-cursor-mode="ghost"] *::after { cursor: none !important; }
   flex-direction: column;
 }
 
-.founder-col--id { gap: 0.4rem; }
+.founder-col--id   { grid-area: id;   gap: 0.3rem; }
+.founder-col--btns { grid-area: btns; flex-direction: row; flex-wrap: wrap; gap: 6px; align-items: flex-start; align-self: end; padding-bottom: 4px; }
+.founder-col--bio  { grid-area: bio; }
+.founder-col--photo { grid-area: photo; align-items: center; align-self: stretch; justify-content: center; }
 
-.founder-col--bio {
-  gap: 0;
-  justify-content: center;
-}
-
-.founder-col--photo {
-  align-items: center;
-}
+.founder-col--btns .social-link { padding: 5px 10px; font-size: 11px; border-radius: 7px; gap: 5px; }
+.founder-col--btns .social-link .social-handle { display: none; }
+.founder-col--btns .social-link svg { width: 12px; height: 12px; }
 
 .founder-eyebrow {
   font-size: 10px;
@@ -200,10 +200,10 @@ body[data-cursor-mode="ghost"] *::after { cursor: none !important; }
 }
 
 .founder-name {
-  font-size: clamp(36px, 4vw, 54px);
+  font-size: clamp(28px, 3vw, 42px);
   font-weight: 800;
-  letter-spacing: -2px;
-  line-height: 1;
+  letter-spacing: -1.5px;
+  line-height: 1.05;
   color: var(--text);
   margin: 0;
 }
@@ -274,10 +274,12 @@ body[data-cursor-mode="ghost"] *::after { cursor: none !important; }
 @media (max-width: 860px) {
   .founder-section {
     grid-template-columns: 1fr;
+    grid-template-areas: "id" "btns" "bio" "photo";
     padding: 2rem 1.5rem;
-    gap: 2rem;
+    gap: 1rem;
   }
-  .founder-photo { width: min(260px, 60vw); }
+  .founder-col--btns { align-self: auto; }
+  .founder-photo { width: min(240px, 55vw); }
 }
 
 .fp-section .about-hero {
@@ -748,6 +750,7 @@ nav.nav--floating {
 .folders-nav-item {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   padding: 9px 12px;
   border-radius: 8px;
@@ -4988,7 +4991,7 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
   .fp-section .about-features { padding: 3rem 1rem 2rem !important; align-items: flex-start !important; }
   .about-features { padding: 1.5rem 1rem !important; }
   .folders-layout { flex-direction: column !important; gap: 0.75rem !important; height: auto !important; }
-  .folders-nav { flex-direction: row !important; flex-wrap: wrap !important; width: 100% !important; gap: 4px !important; }
+  .folders-nav { flex-direction: row !important; flex-wrap: wrap !important; width: 100% !important; gap: 4px !important; justify-content: center !important; }
   .folders-nav-item { padding: 6px 10px !important; }
   .folders-nav-num { display: none !important; }
   .folders-nav-title { font-size: 12px !important; }
