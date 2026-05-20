@@ -159,25 +159,24 @@ body[data-cursor-mode="ghost"] *::after { cursor: none !important; }
 
 /* ── Founder section (fp-founder) ── */
 .founder-section {
-  height: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  align-items: center;
+  grid-template-columns: auto 1fr 1fr;
+  grid-template-rows: auto auto;
+  grid-template-areas: "id bio photo" "btns bio photo";
+  align-items: start;
   max-width: 1400px;
   width: 100%;
   margin: 0 auto;
   padding: 0 5rem;
-  gap: 5rem;
+  column-gap: 5rem;
+  row-gap: 1.5rem;
 }
 
-.founder-col {
-  display: flex;
-  flex-direction: column;
-}
-
-.founder-col--id   { gap: 0.3rem; }
-.founder-col--bio  {}
-.founder-col--photo { align-items: center; align-self: stretch; justify-content: center; }
+.founder-col { display: flex; flex-direction: column; }
+.founder-col--id   { grid-area: id;   gap: 0.3rem; }
+.founder-col--btns { grid-area: btns; gap: 8px; }
+.founder-col--bio  { grid-area: bio;  align-self: center; }
+.founder-col--photo { grid-area: photo; align-items: center; align-self: stretch; justify-content: center; }
 
 .founder-eyebrow {
   font-size: 10px;
@@ -269,12 +268,7 @@ body[data-cursor-mode="ghost"] *::after { cursor: none !important; }
 }
 
 @media (max-width: 860px) {
-  .founder-section { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; padding: 2rem 2rem; gap: 2rem; }
-  .founder-col--bio { grid-column: 1 / -1; align-items: flex-start; }
-}
-@media (max-width: 600px) {
-  .founder-section { grid-template-columns: 1fr; padding: 2rem 1.2rem; gap: 1.5rem; }
-  .founder-photo { width: min(200px, 60vw); }
+  .founder-section { padding: 2rem 1.5rem; column-gap: 3rem; }
 }
 
 .fp-section .about-hero {
@@ -4981,9 +4975,17 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
   .folder-card--active { display: flex !important; }
   .folder-card-body { max-height: none !important; overflow-y: visible !important; }
 
-  /* Founder section */
-  .founder-section { grid-template-columns: 1fr !important; padding: 2rem 1rem !important; gap: 1.5rem !important; }
-  .founder-photo { width: min(180px, 55vw) !important; }
+  /* Founder section — mobile 2x2 grid */
+  .founder-section {
+    grid-template-columns: 1fr 1fr !important;
+    grid-template-rows: auto auto !important;
+    grid-template-areas: "id btns" "bio photo" !important;
+    padding: 2rem 1rem !important;
+    column-gap: 1rem !important;
+    row-gap: 1.5rem !important;
+  }
+  .founder-col--btns { align-self: center !important; align-items: flex-end !important; }
+  .founder-photo { width: 100% !important; aspect-ratio: 1/1 !important; border-radius: 50% !important; }
 
   /* Profile hero */
   .pub-hero { flex-wrap: wrap; gap: 12px !important; align-items: flex-start !important; }
