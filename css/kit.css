@@ -4987,8 +4987,14 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
   .founder-section { grid-template-columns: 1fr !important; padding: 2rem 1rem !important; gap: 2rem !important; text-align: left !important; }
 
   /* Profile hero */
-  .pub-hero { flex-wrap: wrap; gap: 16px; }
-  .pub-edit-btn { position: static !important; margin-left: auto; }
+  .pub-hero { flex-wrap: wrap; gap: 12px !important; align-items: flex-start !important; }
+  .pub-hero-side { width: 100% !important; flex-direction: row !important; flex-wrap: wrap !important; align-items: center !important; justify-content: flex-start !important; gap: 8px !important; }
+  .pub-hero-actions { justify-content: flex-start !important; }
+  .pub-socials { flex-direction: row !important; flex-wrap: wrap !important; align-items: center !important; justify-content: flex-start !important; }
+  .pub-edit-btn { margin-left: 0 !important; }
+
+  /* Notification panel — fixed, full-width on mobile so it doesn't get clipped */
+  .notif-panel { position: fixed !important; top: 56px !important; left: 8px !important; right: 8px !important; width: auto !important; border-radius: 16px !important; }
 
   /* Stats strip — stack on mobile */
   .pub-stats-strip { flex-wrap: wrap; }

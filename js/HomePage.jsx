@@ -226,6 +226,7 @@ function AboutWithFeatures() {
     if (!el) return;
 
     const onWheel = (e) => {
+      if (window.innerWidth <= 768) return;
       if (lockedRef.current) { e.stopPropagation(); e.preventDefault(); return; }
       const down = e.deltaY > 0;
       if (down && selected < FEATURES.length - 1) {
@@ -235,9 +236,12 @@ function AboutWithFeatures() {
       }
     };
 
-    const onTouchStart = (e) => { touchYRef.current = e.touches[0].clientY; };
+    const onTouchStart = (e) => {
+      if (window.innerWidth <= 768) return;
+      touchYRef.current = e.touches[0].clientY;
+    };
     const onTouchEnd = (e) => {
-      if (touchYRef.current === null || lockedRef.current) return;
+      if (window.innerWidth <= 768 || touchYRef.current === null || lockedRef.current) return;
       const dy = touchYRef.current - e.changedTouches[0].clientY;
       touchYRef.current = null;
       if (Math.abs(dy) < 40) return;
