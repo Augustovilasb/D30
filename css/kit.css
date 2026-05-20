@@ -2746,6 +2746,35 @@ nav.nav--floating .user-menu-info strong{ color: var(--text); }
 }
 
 /* Sign out */
+.profile-key-toggle {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border2);
+  background: var(--bg3);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: none;
+  white-space: nowrap;
+  transition: background .2s;
+}
+.profile-key-toggle:hover { background: var(--bg4); }
+
+.profile-key-save {
+  padding: 9px 20px;
+  border-radius: 10px;
+  border: none;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  cursor: none;
+  transition: opacity .2s;
+}
+.profile-key-save:hover { opacity: 0.8; }
+
 .profile-signout-btn {
   padding: 11px 24px;
   border-radius: 10px;
