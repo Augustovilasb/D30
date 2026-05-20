@@ -28,7 +28,7 @@ function SettingsPage({ user, onUpdate, onSignOut, onNavigate }) {
     setSaving(true); setError('');
     try {
       if (window.sb && user.id) {
-        const { error: dbErr } = await window.sb.from('profiles').upsert({
+        const { data: upsertData, error: dbErr } = await window.sb.from('profiles').upsert({
           id:            user.id,
           full_name:     form.full_name.trim(),
           username:      form.username.trim(),
@@ -40,7 +40,8 @@ function SettingsPage({ user, onUpdate, onSignOut, onNavigate }) {
           instagram_url: form.instagram_url.trim() || null,
           twitter_url:   form.twitter_url.trim()   || null,
           website_url:   form.website_url.trim()   || null,
-        }, { onConflict: 'id' });
+        }, { onConflict: 'id' }).select();
+        console.log('[D30] upsert data:', upsertData, '| error:', dbErr);
         if (dbErr) throw new Error(
           dbErr.code === '23505' ? 'Esse username já está em uso.' : dbErr.message
         );
