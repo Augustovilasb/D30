@@ -14,7 +14,8 @@
       "Bash(Get-Content \"C:\\\\Meus projetos\\\\D30\\\\D30 Design System\\\\css\\\\kit.css\")",
       "Bash(Measure-Object -Line)",
       "Bash(git push *)",
-      "Bash(git stash *)"
+      "Bash(git stash *)",
+      "Bash(git checkout *)"
     ]
   }
 }
