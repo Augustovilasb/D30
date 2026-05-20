@@ -48,12 +48,13 @@ function App() {
   const [page, setPage] = React.useState(() => {
     if (publicUsername) return 'public-profile';
     const hash = window.location.hash.replace('#', '') || 'home';
-    return PROTECTED.includes(hash) ? 'home' : hash;
+    return hash; // não força home aqui — authReady cuida disso
   });
-  const [fading, setFading] = React.useState(false);
-  const [user,   setUser]   = React.useState(null);
-  const [modal,  setModal]  = React.useState(null);
-  const [toasts, pushToast] = useToasts();
+  const [fading,    setFading]    = React.useState(false);
+  const [user,      setUser]      = React.useState(null);
+  const [authReady, setAuthReady] = React.useState(false);
+  const [modal,     setModal]     = React.useState(null);
+  const [toasts,    pushToast]    = useToasts();
 
   React.useEffect(() => {
     if (publicUsername) return; // don't mess with URL for public profile
@@ -87,29 +88,38 @@ function App() {
     return () => window.removeEventListener('popstate', onPop);
   }, [user]);
 
+  /* Só redireciona para home depois que o auth resolveu (evita piscar durante refresh) */
   React.useEffect(() => {
+    if (!authReady) return;
     if (!user && PROTECTED.includes(page)) {
       setPage('home');
       window.history.replaceState({ page: 'home' }, '', '#');
     }
-  }, [user, page]);
+  }, [user, page, authReady]);
+
+  /* Marca auth como resolvido quando o usuário carregar */
+  React.useEffect(() => {
+    if (user) setAuthReady(true);
+  }, [user]);
 
   React.useEffect(() => {
     const { data } = window.Auth.onAuthChange(async (event, supabaseUser) => {
       if (event === 'SIGNED_OUT') {
         setUser(null);
+        setAuthReady(true);
         return;
       }
-      // TOKEN_REFRESHED = renovação silenciosa do JWT — não rebusca o perfil
       if (event === 'TOKEN_REFRESHED') return;
 
       if (supabaseUser) {
-        // Se o usuário já está carregado com o mesmo ID, não sobrescreve
         setUser(prev => {
           if (prev?.id === supabaseUser.id) return prev;
           buildUserObj(supabaseUser).then(u => setUser(u));
           return prev;
         });
+      } else {
+        // INITIAL_SESSION sem usuário — confirmado que não está logado
+        setAuthReady(true);
       }
     });
     return () => data?.subscription?.unsubscribe();
