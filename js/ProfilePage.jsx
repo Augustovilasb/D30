@@ -251,35 +251,39 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
           </div>
 
           <div className="pub-hero-body">
-            <div className="pub-hero-name-row">
-              <h1 className="pub-name">{user.name}</h1>
-              {user.is_founding_member && (
-                <div className="pub-pioneer-badge">
-                  <svg width="34" height="38" viewBox="0 0 34 38" fill="none" style={{ color: '#999' }}>
-                    {/* Hexagon outer */}
-                    <path d="M17 1.5L32.5 10V28L17 36.5L1.5 28V10Z" stroke="currentColor" strokeWidth="1.5"/>
-                    {/* Hexagon inner (decorative) */}
-                    <path d="M17 6L28 12.5V25.5L17 32L6 25.5V12.5Z" stroke="currentColor" strokeWidth="0.6" strokeOpacity="0.4"/>
-                    {/* Hammer — diagonal, like being swung */}
-                    <g transform="rotate(-38, 17, 19)">
-                      {/* Head */}
-                      <rect x="9" y="12" width="14" height="5.5" rx="1.5" fill="currentColor"/>
-                      {/* Handle */}
-                      <rect x="14" y="17.5" width="3.5" height="9" rx="1.5" fill="currentColor"/>
-                    </g>
-                  </svg>
-                  <span className="pub-pioneer-label">PIONEIRO</span>
-                </div>
-              )}
-            </div>
-            {user.username  && <span className="pub-username">@{user.username}</span>}
-            {user.profession && <p className="pub-profession">{user.profession}</p>}
-            {user.bio        && <p className="pub-bio">{user.bio}</p>}
-          </div>
+            <h1 className="pub-name">{user.name}</h1>
 
-          <div className="pub-hero-side pub-share-popup-wrap">
-            <div className="pub-hero-actions">
-              <button className="pub-edit-btn"  data-cursor="hover" onClick={() => onNavigate('edit-profile')}>Editar perfil</button>
+            {(user.is_founding_member || user.username || user.profession) && (
+              <div className="pub-identity-row">
+                {user.is_founding_member && (
+                  <div className="pub-pioneer-badge">
+                    <svg width="30" height="34" viewBox="0 0 34 38" fill="none" style={{ color: '#999' }}>
+                      <path d="M17 1.5L32.5 10V28L17 36.5L1.5 28V10Z" stroke="currentColor" strokeWidth="1.5"/>
+                      <path d="M17 6L28 12.5V25.5L17 32L6 25.5V12.5Z" stroke="currentColor" strokeWidth="0.6" strokeOpacity="0.4"/>
+                      <g transform="rotate(-38, 17, 19)">
+                        <rect x="9" y="12" width="14" height="5.5" rx="1.5" fill="currentColor"/>
+                        <rect x="14" y="17.5" width="3.5" height="9" rx="1.5" fill="currentColor"/>
+                      </g>
+                    </svg>
+                    <span className="pub-pioneer-label">PIONEIRO</span>
+                  </div>
+                )}
+                <div className="pub-identity-text">
+                  {user.username  && <span className="pub-username">@{user.username}</span>}
+                  {user.profession && <span className="pub-profession">{user.profession}</span>}
+                </div>
+              </div>
+            )}
+
+            {user.bio && <p className="pub-bio">{user.bio}</p>}
+
+            <div className="pub-hero-actions-row pub-share-popup-wrap">
+              <button className="pub-edit-btn" data-cursor="hover" onClick={() => onNavigate('edit-profile')}>Editar perfil</button>
+              {user.github_url    && <a href={user.github_url}    target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><GithubIcon /><span>GitHub</span></a>}
+              {user.linkedin_url  && <a href={user.linkedin_url}  target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><LinkedinIcon /><span>LinkedIn</span></a>}
+              {user.instagram_url && <a href={user.instagram_url} target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><InstagramIcon /><span>Instagram</span></a>}
+              {user.twitter_url   && <a href={user.twitter_url}   target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><TwitterIcon /><span>Twitter</span></a>}
+              {user.website_url   && <a href={user.website_url}   target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><WebIcon /><span>Site</span></a>}
               <button className="pub-share-btn" data-cursor="hover" onClick={openShare} title="Compartilhar perfil">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
@@ -299,13 +303,6 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
                       </button>
                     </div>
               )}
-            </div>
-            <div className="pub-socials">
-              {user.github_url    && <a href={user.github_url}    target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><GithubIcon /><span>GitHub</span></a>}
-              {user.linkedin_url  && <a href={user.linkedin_url}  target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><LinkedinIcon /><span>LinkedIn</span></a>}
-              {user.instagram_url && <a href={user.instagram_url} target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><InstagramIcon /><span>Instagram</span></a>}
-              {user.twitter_url   && <a href={user.twitter_url}   target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><TwitterIcon /><span>Twitter</span></a>}
-              {user.website_url   && <a href={user.website_url}   target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><WebIcon /><span>Site</span></a>}
             </div>
           </div>
         </div>

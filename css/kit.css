@@ -156,14 +156,13 @@ body[data-cursor-mode="ghost"] *::after { cursor: none !important; }
 /* ── Founder section (fp-founder) ── */
 .founder-section {
   width: 100%;
-  height: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   align-items: center;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 5rem;
-  gap: 5rem;
+  padding: 0 4rem;
+  gap: 4rem;
 }
 
 .founder-col {
@@ -4438,16 +4437,17 @@ nav.nav--floating .user-menu-info strong{ color: var(--text); }
   color: #fff;
   letter-spacing: -1px;
 }
-.pub-hero-body { flex: 1; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
-.pub-hero-name-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pub-hero-body { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .pub-name { font-size: 26px; font-weight: 800; color: var(--text); margin: 0; line-height: 1.1; letter-spacing: -0.5px; }
+.pub-identity-row { display: flex; align-items: center; gap: 10px; }
+.pub-identity-text { display: flex; flex-direction: column; gap: 2px; }
 .pub-username { font-size: 13px; font-weight: 600; color: var(--muted); }
 .pub-pioneer-badge { display: inline-flex; flex-direction: column; align-items: center; gap: 2px; flex-shrink: 0; }
 .pub-pioneer-label { font-size: 7px; font-weight: 800; letter-spacing: 2.5px; color: #999; line-height: 1; }
 .pub-profession { font-size: 13px; font-weight: 600; color: var(--muted); margin: 0; }
 .pub-bio { font-size: 13px; color: var(--muted2); margin: 0; line-height: 1.5; }
-.pub-hero-side { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; flex-shrink: 0; }
-.pub-socials { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+.pub-hero-actions-row { display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 6px; }
+.pub-socials { display: flex; flex-direction: row; flex-wrap: wrap; gap: 6px; align-items: center; }
 .pub-social {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 5px 12px; border-radius: 20px;
@@ -4987,11 +4987,10 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
   .founder-section { grid-template-columns: 1fr !important; padding: 2rem 1rem !important; gap: 2rem !important; text-align: left !important; }
 
   /* Profile hero */
-  .pub-hero { flex-wrap: wrap; gap: 12px !important; align-items: flex-start !important; }
-  .pub-hero-side { width: 100% !important; flex-direction: row !important; flex-wrap: wrap !important; align-items: center !important; justify-content: flex-start !important; gap: 8px !important; }
-  .pub-hero-actions { justify-content: flex-start !important; }
-  .pub-socials { flex-direction: row !important; flex-wrap: wrap !important; align-items: center !important; justify-content: flex-start !important; }
-  .pub-edit-btn { margin-left: 0 !important; }
+  .pub-hero { gap: 14px !important; }
+  .pub-avatar-wrap { width: 72px !important; height: 72px !important; }
+  .pub-avatar-init { width: 72px !important; height: 72px !important; font-size: 22px !important; }
+  .pub-name { font-size: 20px !important; }
 
   /* Notification panel — fixed, full-width on mobile so it doesn't get clipped */
   .notif-panel { position: fixed !important; top: 56px !important; left: 8px !important; right: 8px !important; width: auto !important; border-radius: 16px !important; }
