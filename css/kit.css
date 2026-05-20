@@ -695,7 +695,7 @@ nav.nav--floating {
 .about-features {
   width: 100%;
   display: flex !important;
-  flex-direction: column;
+  flex-direction: column !important;
   align-items: center;
   justify-content: center;
   padding: 2rem 3rem !important;
