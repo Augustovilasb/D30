@@ -4424,8 +4424,8 @@ nav.nav--floating .user-menu-info strong{ color: var(--text); }
 .pub-hero-name-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .pub-name { font-size: 26px; font-weight: 800; color: var(--text); margin: 0; line-height: 1.1; letter-spacing: -0.5px; }
 .pub-username { font-size: 13px; font-weight: 600; color: var(--muted); }
-.pub-pioneer-badge { display: inline-flex; flex-direction: column; align-items: center; gap: 2px; flex-shrink: 0; color: var(--text); }
-.pub-pioneer-label { font-size: 7px; font-weight: 800; letter-spacing: 2.5px; color: var(--text); line-height: 1; }
+.pub-pioneer-badge { display: inline-flex; flex-direction: column; align-items: center; gap: 2px; flex-shrink: 0; }
+.pub-pioneer-label { font-size: 7px; font-weight: 800; letter-spacing: 2.5px; color: #999; line-height: 1; }
 .pub-profession { font-size: 13px; font-weight: 600; color: var(--muted); margin: 0; }
 .pub-bio { font-size: 13px; color: var(--muted2); margin: 0; line-height: 1.5; }
 .pub-hero-side { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; flex-shrink: 0; }

@@ -255,15 +255,18 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
               <h1 className="pub-name">{user.name}</h1>
               {user.is_founding_member && (
                 <div className="pub-pioneer-badge">
-                  <svg width="30" height="34" viewBox="0 0 30 34" fill="none" style={{ color: 'var(--text)' }}>
-                    {/* Hexagon outline */}
-                    <path d="M15 1L29 9V25L15 33L1 25V9Z" stroke="currentColor" strokeWidth="1.5"/>
-                    {/* Inner faint ring */}
-                    <path d="M15 5.5L24 10.5V23.5L15 28.5L6 23.5V10.5Z" stroke="currentColor" strokeWidth="0.5" strokeOpacity="0.35"/>
-                    {/* Hammer head */}
-                    <rect x="7" y="10" width="13" height="5" rx="1" fill="currentColor"/>
-                    {/* Hammer handle */}
-                    <rect x="12.5" y="15" width="3" height="8" rx="1" fill="currentColor"/>
+                  <svg width="34" height="38" viewBox="0 0 34 38" fill="none" style={{ color: '#999' }}>
+                    {/* Hexagon outer */}
+                    <path d="M17 1.5L32.5 10V28L17 36.5L1.5 28V10Z" stroke="currentColor" strokeWidth="1.5"/>
+                    {/* Hexagon inner (decorative) */}
+                    <path d="M17 6L28 12.5V25.5L17 32L6 25.5V12.5Z" stroke="currentColor" strokeWidth="0.6" strokeOpacity="0.4"/>
+                    {/* Hammer — diagonal, like being swung */}
+                    <g transform="rotate(-38, 17, 19)">
+                      {/* Head */}
+                      <rect x="9" y="12" width="14" height="5.5" rx="1.5" fill="currentColor"/>
+                      {/* Handle */}
+                      <rect x="14" y="17.5" width="3.5" height="9" rx="1.5" fill="currentColor"/>
+                    </g>
                   </svg>
                   <span className="pub-pioneer-label">PIONEIRO</span>
                 </div>
