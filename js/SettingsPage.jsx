@@ -18,8 +18,6 @@ function SettingsPage({ user, onUpdate, onSignOut, onNavigate }) {
   const [saving,      setSaving]      = React.useState(false);
   const [saved,       setSaved]       = React.useState(false);
   const [error,       setError]       = React.useState('');
-  const [ghImporting, setGhImporting] = React.useState(false);
-  const [ghImported,  setGhImported]  = React.useState(false);
 
   const set = (field, val) => setForm(f => ({ ...f, [field]: val }));
 
@@ -63,29 +61,6 @@ function SettingsPage({ user, onUpdate, onSignOut, onNavigate }) {
     } catch (err) {
       setError(err.message || 'Erro ao salvar.');
     } finally { setSaving(false); }
-  };
-
-  const importFromGithub = async () => {
-    const url = form.github_url.trim();
-    const match = url.match(/github\.com\/([^/\s?#]+)/);
-    if (!match) { setError('URL do GitHub inválida.'); return; }
-    const username = match[1];
-    setGhImporting(true); setError('');
-    try {
-      const res = await fetch(`https://api.github.com/users/${encodeURIComponent(username)}`);
-      if (!res.ok) throw new Error('Usuário não encontrado no GitHub.');
-      const gh = await res.json();
-      setForm(f => ({
-        ...f,
-        full_name:  f.full_name  || gh.name  || f.full_name,
-        avatar_url: f.avatar_url || gh.avatar_url || f.avatar_url,
-        bio:        f.bio        || gh.bio   || f.bio,
-      }));
-      setGhImported(true);
-      setTimeout(() => setGhImported(false), 3000);
-    } catch (err) {
-      setError(err.message || 'Erro ao importar do GitHub.');
-    } finally { setGhImporting(false); }
   };
 
   const previewInitials = form.full_name.trim().split(/\s+/).map(s => s[0]).slice(0,2).join('').toUpperCase() || user.initials;
@@ -143,15 +118,7 @@ function SettingsPage({ user, onUpdate, onSignOut, onNavigate }) {
           <div className="settings-grid">
             <div className="settings-field">
               <label className="settings-label" htmlFor="s-github">GitHub</label>
-              <div className="settings-key-row">
-                <input id="s-github" name="github_url" className="settings-input" type="url" placeholder="https://github.com/..." value={form.github_url} onChange={e => set('github_url', e.target.value)} />
-                {form.github_url.trim() && (
-                  <button className="settings-key-toggle" data-cursor="hover" onClick={importFromGithub} disabled={ghImporting}>
-                    {ghImporting ? '…' : ghImported ? 'Importado ✓' : 'Importar'}
-                  </button>
-                )}
-              </div>
-              <p className="settings-hint">Importa nome, foto e bio do seu perfil público do GitHub</p>
+              <input id="s-github" name="github_url" className="settings-input" type="url" placeholder="https://github.com/..." value={form.github_url} onChange={e => set('github_url', e.target.value)} />
             </div>
             <div className="settings-field">
               <label className="settings-label" htmlFor="s-linkedin">LinkedIn</label>
