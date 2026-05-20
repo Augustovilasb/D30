@@ -695,9 +695,20 @@ nav.nav--floating {
 .about-features {
   width: 100%;
   display: flex !important;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 2rem 3rem !important;
+}
+
+.folders-heading {
+  display: none;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted2);
+  margin: 0 0 0.75rem;
 }
 
 .folders-layout {
@@ -4928,7 +4939,7 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
   /* ── HOMEPAGE FULLPAGE — mobile: seções fluem normalmente ── */
   .fp-section {
     height: auto !important;
-    min-height: 100svh !important;
+    min-height: auto !important;
     overflow: visible !important;
     scroll-snap-align: none !important;
   }
@@ -4963,8 +4974,9 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
   .hero-actions .btn-primary, .hero-actions .btn-ghost { width: 100% !important; text-align: center !important; }
 
   /* About/folders section mobile */
-  .fp-section .about-features { padding: 3rem 1rem 2rem !important; align-items: flex-start !important; }
-  .about-features { padding: 1.5rem 1rem !important; }
+  .fp-section .about-features { padding: 1.5rem 1rem 1rem !important; align-items: flex-start !important; }
+  .about-features { padding: 1rem !important; }
+  .folders-heading { display: block !important; }
   .folders-layout { flex-direction: column !important; gap: 0.75rem !important; height: auto !important; }
   .folders-nav { display: none !important; }
   /* Stack: apenas o card ativo é visível, sem altura fixa */

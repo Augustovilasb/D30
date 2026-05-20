@@ -272,6 +272,7 @@ function AboutWithFeatures() {
 
   return (
     <section className="about-features">
+      <p className="folders-heading">O que você vai encontrar aqui</p>
       <div className="folders-layout">
         <div className="folders-nav">
           {FEATURES.map((f, i) => (
