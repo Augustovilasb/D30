@@ -4990,12 +4990,12 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
   .founder-section {
     grid-template-columns: 1fr 1fr !important;
     grid-template-rows: auto auto !important;
-    grid-template-areas: "id btns" "bio photo" !important;
+    grid-template-areas: "id photo" "bio btns" !important;
     padding: 2rem 1rem !important;
     column-gap: 1rem !important;
     row-gap: 1.5rem !important;
   }
-  .founder-col--btns { align-self: center !important; align-items: flex-end !important; }
+  .founder-col--btns { align-self: start !important; align-items: flex-start !important; }
   .founder-photo { width: 100% !important; aspect-ratio: 1/1 !important; border-radius: 50% !important; }
   .founder-photo img { object-position: center 35% !important; }
 
