@@ -6,7 +6,9 @@
       "PowerShell(Select-String -Path \"C:\\\\Users\\\\User\\\\Desktop\\\\D30 Design System\\\\reference\\\\d30-v3-single-file.html\" -Pattern 'href=|src=' | Select-Object -First 10 | ForEach-Object { $_.Line.Trim\\(\\) })",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "Bash(dir \"C:/Meus projetos/D30/D30 Design System\" /b)"
+      "Bash(dir \"C:/Meus projetos/D30/D30 Design System\" /b)",
+      "WebSearch",
+      "WebFetch(domain:github.com)"
     ]
   }
 }

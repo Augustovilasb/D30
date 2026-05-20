@@ -1,5 +1,6 @@
-/* StudyTracker.jsx — timer, formulário, dashboard integrados */
+/* StudyTracker.jsx */
 
+/* ─── Helpers ─── */
 function getPeriod(date) {
   const h = date.getHours();
   if (h >= 5  && h < 12) return 'Manhã';
@@ -7,54 +8,12 @@ function getPeriod(date) {
   if (h >= 18 && h < 24) return 'Noite';
   return 'Madrugada';
 }
-
 function formatTime(secs) {
   const h = Math.floor(secs / 3600);
   const m = Math.floor((secs % 3600) / 60);
   const s = secs % 60;
   return [h, m, s].map(v => String(v).padStart(2, '0')).join(':');
 }
-
-function PillGroup({ label, options, value, onChange }) {
-  return (
-    <div className="trk-pill-group">
-      <span className="trk-pill-label">{label}</span>
-      <div className="trk-pill-options">
-        {options.map(opt => (
-          <button key={opt} type="button" data-cursor="hover"
-            className={'trk-pill' + (value === opt ? ' active' : '')}
-            onClick={() => onChange(opt)}>
-            {opt}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ── Badge toast ── */
-function BadgeToast({ badge, onDone }) {
-  React.useEffect(() => {
-    const t = setTimeout(onDone, 4000);
-    return () => clearTimeout(t);
-  }, []);
-  return (
-    <div className="trk-badge-toast">
-      <span className="trk-badge-toast-icon">{badge.icon}</span>
-      <div>
-        <p className="trk-badge-toast-title">Badge desbloqueada!</p>
-        <p className="trk-badge-toast-name">{badge.name}</p>
-      </div>
-    </div>
-  );
-}
-
-/* ── AI Analysis ── */
-const AI_LAST_KEY    = type => `d30_ai_last_${type}`;
-const AI_TEXT_KEY    = type => `d30_ai_text_${type}`;
-const MIN_DAILY_SECS = 30 * 60;
-
-/* helpers */
 function perfScore(s)   { return ({ 'Rendeu muito': 100, 'Médio': 50, 'Não rendeu': 0 })[s.performance] ?? 50; }
 function energyScore(s) { return ({ 'Disposto': 100, 'Neutro': 50, 'Cansado': 0 })[s.energy] ?? 50; }
 function avg(arr)       { return arr.length ? +(arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(1) : 0; }
@@ -78,13 +37,51 @@ function computeMetrics(sessions) {
     const g = sessions.filter(s => s.sleep === sl);
     return { sono: sl, rendimento: avg(g.map(perfScore)), sessoes: g.length };
   }).filter(s => s.sessoes > 0);
-  const streak      = window.Data.getCurrentStreak();
-  const bestStreak  = window.Data.getBestStreak();
-  const days        = [...new Set(sessions.map(s => s.date))].length;
+  const streak     = window.Data.getCurrentStreak();
+  const bestStreak = window.Data.getBestStreak();
+  const days       = [...new Set(sessions.map(s => s.date))].length;
   return { totalMins, avgPerf, avgEnergy, highPerf, byPeriod, byType, sleepImpact, streak, bestStreak, days, total: sessions.length };
 }
 
-/* markdown renderer */
+/* ─── AI history ─── */
+const AI_HISTORY_KEY = 'd30_ai_history';
+const AI_LAST_KEY    = type => `d30_ai_last_${type}`;
+const AI_TEXT_KEY    = type => `d30_ai_text_${type}`;
+const MIN_DAILY_SECS = 30 * 60;
+
+function loadAiHistory() {
+  try { return JSON.parse(localStorage.getItem(AI_HISTORY_KEY) || '[]'); } catch { return []; }
+}
+function saveToAiHistory(entry) {
+  try {
+    const h = loadAiHistory();
+    h.unshift(entry);
+    localStorage.setItem(AI_HISTORY_KEY, JSON.stringify(h.slice(0, 120)));
+  } catch {}
+}
+
+/* ─── Question definitions ─── */
+const PRE_QUESTIONS = [
+  { key: 'sleep',     label: 'Como foi seu sono?',        options: ['Dormi muito bem','Dormi ok','Dormi pouco','Não dormi direito'] },
+  { key: 'hydration', label: 'Hidratação hoje?',          options: ['Bebi bastante','Normal','Bebi pouco'] },
+  { key: 'nutrition', label: 'Alimentação hoje?',         options: ['Me alimentei bem','Normal','Me alimentei mal'] },
+  { key: 'activity',  label: 'Atividade física hoje?',    options: ['Me exercitei','Caminhei','Fiquei parado'] },
+  { key: 'caffeine',  label: 'Tomou cafeína?',            options: ['Sim, café/energético','Não tomei'] },
+  { key: 'energy',    label: 'Nível de energia agora?',   options: ['Disposto','Neutro','Cansado'] },
+  { key: 'mood',      label: 'Como está o humor?',        options: ['Motivado','Neutro','Ansioso'] },
+  { key: 'period',    label: 'Qual turno é esse estudo?', options: ['Manhã','Tarde','Noite','Madrugada'] },
+];
+
+const POST_QUESTIONS = [
+  { key: 'subject',        label: 'O que você estudou?',  type: 'text', placeholder: 'Ex: React Hooks, Spring Boot…' },
+  { key: 'studyType',      label: 'Como foi o estudo?',   options: ['Vídeo','Leitura','Prática/Código','Exercícios'] },
+  { key: 'performance',    label: 'Como rendeu?',         options: ['Rendeu muito','Médio','Não rendeu'] },
+  { key: 'focus',          label: 'Nível de foco?',       options: ['Focado','Distraído'] },
+  { key: 'subjectFeeling', label: 'Curtiu o assunto?',    options: ['Amei','Ok','Não curti'] },
+  { key: 'goalStatus',     label: 'Bateu a meta do dia?', options: ['Bateu','Parcialmente','Sem meta','Não bateu'] },
+];
+
+/* ─── Markdown renderer ─── */
 function MdRenderer({ text, loading }) {
   const lines = text.split('\n');
   const elements = [];
@@ -150,11 +147,13 @@ function MdRenderer({ text, loading }) {
   );
 }
 
-function AiAnalysis({ sessions, type, apiKey }) {
+/* ─── AiAnalysis ─── */
+function AiAnalysis({ sessions, type, apiKey, autoRun }) {
   const [text,    setText]    = React.useState(() => { try { return localStorage.getItem(AI_TEXT_KEY(type)) || ''; } catch { return ''; } });
   const [loading, setLoading] = React.useState(false);
   const [error,   setError]   = React.useState('');
-  const accRef = React.useRef('');
+  const accRef    = React.useRef('');
+  const autoRanRef = React.useRef(false);
 
   const today = new Date().toISOString().split('T')[0];
 
@@ -182,175 +181,90 @@ function AiAnalysis({ sessions, type, apiKey }) {
   const canAnalyze    = hasWeekOfData && hasEnoughTime && !alreadyUsedToday;
 
   const blockReason = !hasWeekOfData
-    ? `⛔ ${daysRegistered} dia${daysRegistered !== 1 ? 's' : ''} de dados (mínimo 7). Sessões: ${sessions.length}.`
+    ? `⛔ ${daysRegistered} dia${daysRegistered !== 1 ? 's' : ''} de dados (mínimo 7).`
     : !hasEnoughTime
-    ? `⛔ Hoje: ${Math.round(todayStudiedSecs / 60)}min estudados (mínimo 30min).`
+    ? `⛔ Hoje: ${Math.round(todayStudiedSecs / 60)}min (mínimo 30min).`
     : alreadyUsedToday
     ? '✓ Análise já gerada hoje. Volte amanhã.'
     : null;
 
   const buildPrompt = () => {
     const fmt = (d) => new Date(d).toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' });
-
     if (type === 'daily') {
       const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-      const todayS    = sessions.filter(s => s.date === today);
-      const yestS     = sessions.filter(s => s.date === yesterday);
-      const weekS     = sessions.filter(s => s.date >= new Date(Date.now() - 7*86400000).toISOString().split('T')[0]);
-      const mHoje     = computeMetrics(todayS);
-      const mOntem    = computeMetrics(yestS);
-      const mSemana   = computeMetrics(weekS);
-      const deltaMins = mHoje.totalMins - (mOntem.totalMins || 0);
-      const deltaPerf = mHoje.avgPerf   - (mOntem.avgPerf   || 0);
-
-      return `Você é um coach de performance para devs em formação. Analise os dados abaixo e gere um relatório diário em português com markdown.
+      const todayS  = sessions.filter(s => s.date === today);
+      const yestS   = sessions.filter(s => s.date === yesterday);
+      const weekS   = sessions.filter(s => s.date >= new Date(Date.now() - 7*86400000).toISOString().split('T')[0]);
+      const mHoje   = computeMetrics(todayS);
+      const mOntem  = computeMetrics(yestS);
+      const mSemana = computeMetrics(weekS);
+      return `Você é um coach de performance para devs em formação. Analise os dados e gere um relatório diário em português com markdown.
 
 MÉTRICAS DE HOJE (${fmt(today)}):
 - Tempo total: ${mHoje.totalMins}min | Sessões: ${mHoje.total}
-- Score de rendimento médio: ${mHoje.avgPerf}/100 | Score de energia: ${mHoje.avgEnergy}/100
-- % sessões de alto rendimento: ${mHoje.highPerf}%
+- Score rendimento: ${mHoje.avgPerf}/100 | Score energia: ${mHoje.avgEnergy}/100
 - Distribuição por turno: ${JSON.stringify(mHoje.byPeriod)}
-- Impacto do sono hoje: ${JSON.stringify(todayS.map(s => ({ sono: s.sleep, rend: s.performance })))}
 - Estado físico hoje: sono=${todayS[0]?.sleep}, hidratação=${todayS[0]?.hydration}, alimentação=${todayS[0]?.nutrition}, atividade=${todayS[0]?.activity}
 
-MÉTRICAS DE ONTEM (${fmt(yesterday)}):
-- Tempo total: ${mOntem.totalMins || 0}min | Score rendimento: ${mOntem.avgPerf || 'sem dados'}/100
-- Estado físico: sono=${yestS[0]?.sleep || 'sem dados'}, hidratação=${yestS[0]?.hydration || 'sem dados'}, alimentação=${yestS[0]?.nutrition || 'sem dados'}
+MÉTRICAS DE ONTEM:
+- Tempo: ${mOntem.totalMins || 0}min | Rendimento: ${mOntem.avgPerf || 'sem dados'}/100
 
-DELTAS:
-- Tempo: ${deltaMins > 0 ? '+' : ''}${deltaMins}min vs ontem
-- Rendimento: ${deltaPerf > 0 ? '+' : ''}${deltaPerf.toFixed(0)} pontos vs ontem
+MÉDIA DA SEMANA: ${mSemana.totalMins ? Math.round(mSemana.totalMins / 7) : 0}min/dia | ${mSemana.avgPerf}/100
 
-MÉDIA DA SEMANA (referência):
-- Tempo médio/dia: ${mSemana.totalMins ? Math.round(mSemana.totalMins / 7) : 0}min | Rendimento médio: ${mSemana.avgPerf}/100
-
-FORMATO OBRIGATÓRIO (use exatamente esses headers):
+FORMATO OBRIGATÓRIO:
 ## 📊 Desempenho de Hoje
-[compare hoje com ontem com números exatos, mencione os deltas]
-
 ## 🔍 O que influenciou
-[correlacione especificamente os dados físicos com o rendimento. Ex: "Você dormiu X hoje vs Y ontem — isso explica a queda/melhora de Z pontos"]
-
 ## ⚡ Padrão identificado
-[compare com a média da semana, diga se está acima/abaixo]
-
 ## 🎯 Ação para amanhã
-[1 ação específica e concreta baseada nos dados, não genérica]
 
-Seja cirúrgico. Use **negrito** nos números importantes. Máximo 4 linhas por seção.`;
+Use **negrito** nos números. Máximo 4 linhas por seção.`;
     }
-
     if (type === 'weekly') {
-      const weekS   = sessions.filter(s => s.date >= new Date(Date.now() - 7*86400000).toISOString().split('T')[0]);
-      const prevS   = sessions.filter(s => {
-        const d = new Date(s.date); const now = Date.now();
-        return d >= new Date(now - 14*86400000) && d < new Date(now - 7*86400000);
-      });
+      const weekS  = sessions.filter(s => s.date >= new Date(Date.now() - 7*86400000).toISOString().split('T')[0]);
+      const prevS  = sessions.filter(s => { const d = new Date(s.date); const now = Date.now(); return d >= new Date(now - 14*86400000) && d < new Date(now - 7*86400000); });
       const mW  = computeMetrics(weekS);
       const mP  = computeMetrics(prevS);
       const byDay = [...new Set(weekS.map(s => s.date))].sort().map(d => {
         const g = weekS.filter(s => s.date === d);
         return { dia: fmt(d), mins: Math.round(g.reduce((a,s)=>a+(s.duration||0),0)/60), rend: avg(g.map(perfScore)) };
       });
-      const bestDay  = byDay.reduce((best, d) => d.rend > (best?.rend||0) ? d : best, null);
-      const worstDay = byDay.reduce((worst, d) => d.rend < (worst?.rend||100) ? d : worst, null);
+      return `Coach de performance para devs. Relatório semanal em português com markdown.
 
-      return `Você é um coach de performance para devs em formação. Analise a semana e gere um relatório semanal em português com markdown.
+SEMANA ATUAL: ${mW.totalMins}min em ${mW.days} dias | ${mW.total} sessões | Rendimento: ${mW.avgPerf}/100
+Streak: ${mW.streak} dias | Por turno: ${JSON.stringify(mW.byPeriod)} | Sono: ${JSON.stringify(mW.sleepImpact)}
+Evolução diária: ${JSON.stringify(byDay)}
+SEMANA ANTERIOR: ${mP.totalMins || 0}min | ${mP.avgPerf || 0}/100
 
-SEMANA ATUAL (últimos 7 dias):
-- Total: ${mW.totalMins}min em ${mW.days} dias | ${mW.total} sessões
-- Rendimento médio: ${mW.avgPerf}/100 | Alto rendimento: ${mW.highPerf}% das sessões
-- Streak atual: ${mW.streak} dias | Melhor streak: ${mW.bestStreak} dias
-- Melhor dia: ${bestDay?.dia} (${bestDay?.rend}/100 rendimento, ${bestDay?.mins}min)
-- Pior dia: ${worstDay?.dia} (${worstDay?.rend}/100 rendimento, ${worstDay?.mins}min)
-- Por turno: ${JSON.stringify(mW.byPeriod)}
-- Por tipo: ${JSON.stringify(mW.byType)}
-- Impacto do sono: ${JSON.stringify(mW.sleepImpact)}
-- Evolução diária: ${JSON.stringify(byDay)}
-
-SEMANA ANTERIOR (referência):
-- Total: ${mP.totalMins || 0}min | Rendimento médio: ${mP.avgPerf || 0}/100
-
-DELTAS semana atual vs anterior:
-- Tempo: ${mW.totalMins - (mP.totalMins||0) > 0 ? '+' : ''}${mW.totalMins - (mP.totalMins||0)}min
-- Rendimento: ${(mW.avgPerf - (mP.avgPerf||0)) > 0 ? '+' : ''}${(mW.avgPerf - (mP.avgPerf||0)).toFixed(0)} pontos
-
-FORMATO OBRIGATÓRIO:
+FORMATO:
 ## 📊 Resumo da Semana
-[números principais: total de horas, rendimento médio, comparação com semana anterior com delta]
-
 ## 🏆 Melhor e Pior Momento
-[melhor dia com dados, pior dia com dados, por que a diferença]
-
 ## 🔍 Correlações da Semana
-[relate sono/alimentação/atividade com os dias de melhor e pior rendimento, use dados reais]
-
 ## ⚡ Seu Perfil Esta Semana
-[melhor turno identificado com dados, melhor tipo de estudo, padrão físico que mais impactou]
-
 ## 🎯 Foco para a Próxima Semana
-[2 ajustes específicos baseados nos dados, não genéricos]
 
-Use **negrito** nos números importantes. Máximo 4 linhas por seção.`;
+Use **negrito** nos números. Máximo 5 linhas por seção.`;
     }
+    const mM = computeMetrics(sessions.filter(s => s.date >= new Date(Date.now() - 30*86400000).toISOString().split('T')[0]));
+    const mP = computeMetrics(sessions.filter(s => { const d = new Date(s.date); const now = Date.now(); return d >= new Date(now - 60*86400000) && d < new Date(now - 30*86400000); }));
+    return `Coach de performance para devs. Relatório mensal em português com markdown.
 
-    /* monthly */
-    const monthS  = sessions.filter(s => s.date >= new Date(Date.now() - 30*86400000).toISOString().split('T')[0]);
-    const prevS   = sessions.filter(s => {
-      const d = new Date(s.date); const now = Date.now();
-      return d >= new Date(now - 60*86400000) && d < new Date(now - 30*86400000);
-    });
-    const mM  = computeMetrics(monthS);
-    const mP  = computeMetrics(prevS);
-    const bestPeriod = mM.byPeriod?.reduce((b,p) => p.rendimento > (b?.rendimento||0) ? p : b, null);
-    const bestType   = mM.byType?.reduce((b,t) => t.rendimento > (b?.rendimento||0) ? t : b, null);
-    const bestSleep  = mM.sleepImpact?.reduce((b,s) => s.rendimento > (b?.rendimento||0) ? s : b, null);
+MÊS ATUAL: ${mM.totalMins}min (${(mM.totalMins/60).toFixed(1)}h) em ${mM.days} dias | Rendimento: ${mM.avgPerf}/100
+Streak: ${mM.streak} | Por turno: ${JSON.stringify(mM.byPeriod)} | Por tipo: ${JSON.stringify(mM.byType)} | Sono: ${JSON.stringify(mM.sleepImpact)}
+MÊS ANTERIOR: ${mP.totalMins||0}min | ${mP.avgPerf||0}/100
 
-    return `Você é um coach de performance para devs em formação. Analise o mês e gere um relatório mensal completo em português com markdown.
-
-MÉTRICAS DO MÊS (últimos 30 dias):
-- Total: ${mM.totalMins}min (${(mM.totalMins/60).toFixed(1)}h) em ${mM.days} dias ativos | ${mM.total} sessões
-- Rendimento médio: ${mM.avgPerf}/100 | Alto rendimento: ${mM.highPerf}% das sessões
-- Streak atual: ${mM.streak} dias | Melhor streak: ${mM.bestStreak} dias
-- Melhor turno: ${bestPeriod?.period} (${bestPeriod?.rendimento}/100, ${bestPeriod?.horas}h)
-- Melhor tipo de estudo: ${bestType?.tipo} (${bestType?.rendimento}/100)
-- Melhor condição de sono: ${bestSleep?.sono} (${bestSleep?.rendimento}/100)
-- Por turno: ${JSON.stringify(mM.byPeriod)}
-- Por tipo: ${JSON.stringify(mM.byType)}
-- Impacto do sono: ${JSON.stringify(mM.sleepImpact)}
-
-MÊS ANTERIOR (referência):
-- Total: ${(mP.totalMins||0)}min | Rendimento: ${mP.avgPerf||0}/100 | Dias ativos: ${mP.days||0}
-
-DELTAS mês atual vs anterior:
-- Horas: ${((mM.totalMins-(mP.totalMins||0))/60) > 0 ? '+' : ''}${((mM.totalMins-(mP.totalMins||0))/60).toFixed(1)}h
-- Rendimento: ${(mM.avgPerf-(mP.avgPerf||0)) > 0 ? '+' : ''}${(mM.avgPerf-(mP.avgPerf||0)).toFixed(0)} pontos
-- Dias ativos: ${(mM.days||0)-(mP.days||0) > 0 ? '+' : ''}${(mM.days||0)-(mP.days||0)} dias
-
-FORMATO OBRIGATÓRIO:
+FORMATO:
 ## 📊 Visão Geral do Mês
-[números principais com comparação ao mês anterior, tendência geral]
-
 ## 🏆 Seu Perfil Ideal Identificado
-[condições em que você performa melhor: turno + tipo de estudo + sono + outros fatores físicos, tudo com dados]
-
 ## 🔍 Correlações do Mês
-[3 correlações causais identificadas nos dados: "quando X, seu rendimento foi Y% maior/menor que a média"]
-
 ## 📈 Evolução e Tendência
-[está evoluindo ou estagnando? compare com mês anterior, tendência do streak]
-
-## ⚡ O que Sabotar Você Este Mês
-[o padrão de comportamento que mais derrubou seu rendimento, com dados]
-
+## ⚡ O que Sabotou Você
 ## 🎯 Meta para o Próximo Mês
-[meta específica e mensurável baseada nos dados: "Se você replicar X, você pode atingir Y"]
 
-Use **negrito** nos números importantes. Máximo 5 linhas por seção.`;
+Use **negrito** nos números. Máximo 5 linhas por seção.`;
   };
 
-  const run = async () => {
-    if (!apiKey) { setError('Configure sua API key da Anthropic em Meu Perfil.'); return; }
+  const run = React.useCallback(async () => {
+    if (!apiKey) { setError('Configure sua API key em Meu Perfil.'); return; }
     setLoading(true); setText(''); setError(''); accRef.current = '';
     try { localStorage.setItem(AI_LAST_KEY(type), today); } catch {}
     try {
@@ -362,15 +276,10 @@ Use **negrito** nos números importantes. Máximo 5 linhas por seção.`;
           'anthropic-version': '2023-06-01',
           'anthropic-dangerous-direct-browser-access': 'true',
         },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 1200,
-          stream: true,
-          messages: [{ role: 'user', content: buildPrompt() }],
-        }),
+        body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1200, stream: true, messages: [{ role: 'user', content: buildPrompt() }] }),
       });
       if (!res.ok) throw new Error('Erro ' + res.status);
-      const reader  = res.body.getReader();
+      const reader = res.body.getReader();
       const decoder = new TextDecoder();
       while (true) {
         const { done, value } = await reader.read();
@@ -389,12 +298,20 @@ Use **negrito** nos números importantes. Máximo 5 linhas por seção.`;
         }
       }
       try { localStorage.setItem(AI_TEXT_KEY(type), accRef.current); } catch {}
+      saveToAiHistory({ id: Date.now().toString(), type, date: today, generatedAt: new Date().toISOString(), text: accRef.current });
     } catch (e) {
       try { localStorage.removeItem(AI_LAST_KEY(type)); } catch {}
-      setError('Não foi possível gerar a análise. Verifique sua API key em Meu Perfil.');
+      setError('Não foi possível gerar a análise. Verifique sua API key.');
     }
     setLoading(false);
-  };
+  }, [apiKey, type, sessions]);
+
+  React.useEffect(() => {
+    if (autoRun && canAnalyze && apiKey && !autoRanRef.current) {
+      autoRanRef.current = true;
+      run();
+    }
+  }, []);
 
   const LABELS = { daily: 'Análise do Dia', weekly: 'Análise da Semana', monthly: 'Análise do Mês' };
   const ICONS  = { daily: '📅', weekly: '📆', monthly: '🗓️' };
@@ -416,10 +333,8 @@ Use **negrito** nos números importantes. Máximo 5 linhas por seção.`;
       {loading && !text && (
         <div className="trk-ai-body">
           <div className="trk-ai-skeleton">
-            <div className="trk-ai-sk-line w70" />
-            <div className="trk-ai-sk-line w100" />
-            <div className="trk-ai-sk-line w85" />
-            <div className="trk-ai-sk-line w60" />
+            <div className="trk-ai-sk-line w70" /><div className="trk-ai-sk-line w100" />
+            <div className="trk-ai-sk-line w85" /><div className="trk-ai-sk-line w60" />
           </div>
         </div>
       )}
@@ -428,19 +343,189 @@ Use **negrito** nos números importantes. Máximo 5 linhas por seção.`;
   );
 }
 
-/* ── Tela idle ── */
-function TrackerIdle({ onStart }) {
+/* ─── AI History Tab ─── */
+function AiHistoryTab({ onOpenModal }) {
+  const [history, setHistory] = React.useState(() => loadAiHistory());
+  const [tick, setTick] = React.useState(0);
+
+  React.useEffect(() => {
+    setHistory(loadAiHistory());
+  }, [tick]);
+
+  React.useEffect(() => {
+    const id = setInterval(() => setTick(t => t + 1), 3000);
+    return () => clearInterval(id);
+  }, []);
+
+  const LABELS = { daily: 'Análise do Dia', weekly: 'Análise da Semana', monthly: 'Análise do Mês' };
+  const ICONS  = { daily: '📅', weekly: '📆', monthly: '🗓️' };
+  const TYPE_COLOR = { daily: '#6366f1', weekly: '#0ea5e9', monthly: '#10b981' };
+
+  if (!history.length) {
+    return (
+      <div className="trk-ai-history-empty">
+        <span className="trk-ai-history-empty-icon">📊</span>
+        <p className="trk-ai-history-empty-title">Nenhuma análise gerada ainda</p>
+        <p className="trk-ai-history-empty-sub">Estude por 7 dias e registre ao menos 30min para a análise ser gerada automaticamente após cada sessão.</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="trk-idle">
-      <div className="trk-idle-icon">⏱</div>
-      <h1 className="trk-idle-title">Pronto para estudar?</h1>
-      <p className="trk-idle-sub">Inicie a sessão e registre seu progresso.</p>
-      <button className="trk-start-btn" data-cursor="hover" onClick={onStart}>Iniciar Sessão</button>
+    <div className="trk-ai-history">
+      {history.map(entry => (
+        <div key={entry.id} className="trk-ai-hist-card" data-cursor="hover" onClick={() => onOpenModal({ title: `${ICONS[entry.type] || '📊'} ${LABELS[entry.type] || 'Análise'} — ${new Date(entry.generatedAt).toLocaleDateString('pt-BR')}`, text: entry.text })}>
+          <div className="trk-ai-hist-head">
+            <span className="trk-ai-hist-type" style={{ color: TYPE_COLOR[entry.type] || '#6366f1' }}>
+              {ICONS[entry.type] || '📊'} {LABELS[entry.type] || 'Análise'}
+            </span>
+            <span className="trk-ai-hist-date">{new Date(entry.generatedAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+          </div>
+          <p className="trk-ai-hist-preview">{entry.text.replace(/[#*\-_`]/g, '').trim().slice(0, 140)}…</p>
+        </div>
+      ))}
     </div>
   );
 }
 
-/* ── Timer ativo ── */
+/* ─── Badge toast ─── */
+function BadgeToast({ badge, onDone }) {
+  React.useEffect(() => { const t = setTimeout(onDone, 4000); return () => clearTimeout(t); }, []);
+  return (
+    <div className="trk-badge-toast">
+      <span className="trk-badge-toast-icon">{badge.icon}</span>
+      <div>
+        <p className="trk-badge-toast-title">Badge desbloqueada!</p>
+        <p className="trk-badge-toast-name">{badge.name}</p>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Question Panel ─── */
+function QuestionPanel({ questions, step, form, onAnswer, onTextAdvance, phase }) {
+  const done = step >= questions.length;
+
+  if (done && phase === 'pre') {
+    return (
+      <div className="trk-qpanel">
+        <div className="trk-qpanel-done">
+          <div className="trk-qpanel-done-check">✓</div>
+          <h3 className="trk-qpanel-done-title">Tudo anotado!</h3>
+          <p className="trk-qpanel-done-sub">Clique em <strong>Iniciar Timer</strong> para começar sua sessão.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (done && phase === 'post') {
+    return (
+      <div className="trk-qpanel">
+        <div className="trk-qpanel-done saving">
+          <div className="trk-qpanel-done-check">⏳</div>
+          <h3 className="trk-qpanel-done-title">Salvando sessão…</h3>
+        </div>
+      </div>
+    );
+  }
+
+  const q = questions[step];
+
+  return (
+    <div className="trk-qpanel">
+      <div className="trk-qpanel-progress">
+        {questions.map((_, i) => (
+          <div key={i} className={'trk-qpanel-dot' + (i < step ? ' done' : i === step ? ' active' : '')} />
+        ))}
+      </div>
+      <p className="trk-qpanel-counter">{step + 1} de {questions.length}</p>
+
+      <div key={`${phase}-${step}`} className="trk-qpanel-body">
+        <h3 className="trk-qpanel-question">{q.label}</h3>
+        {q.type === 'text' ? (
+          <div className="trk-qpanel-text-row">
+            <input
+              className="trk-input trk-qpanel-input"
+              type="text"
+              placeholder={q.placeholder}
+              value={form[q.key] || ''}
+              onChange={e => onAnswer(q.key, e.target.value, false)}
+              onKeyDown={e => { if (e.key === 'Enter' && (form[q.key] || '').trim()) onTextAdvance(); }}
+              autoFocus
+            />
+            <button className="trk-qpanel-next" data-cursor="hover"
+              disabled={!(form[q.key] || '').trim()}
+              onClick={onTextAdvance}>→</button>
+          </div>
+        ) : (
+          <div className="trk-qpanel-opts">
+            {q.options.map(opt => (
+              <button key={opt} data-cursor="hover"
+                className={'trk-qpanel-opt' + (form[q.key] === opt ? ' selected' : '')}
+                onClick={() => onAnswer(q.key, opt, true)}>
+                {opt}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ─── Session Running Panel ─── */
+function SessionRunningPanel({ preAnswers }) {
+  const items = PRE_QUESTIONS.map(q => ({ label: q.label, value: preAnswers[q.key] })).filter(i => i.value);
+  return (
+    <div className="trk-qpanel trk-qpanel--running">
+      <p className="trk-qpanel-running-title">Sessão em andamento</p>
+      <div className="trk-qpanel-running-items">
+        {items.map(item => (
+          <div key={item.label} className="trk-qpanel-running-item">
+            <span className="trk-qpanel-running-key">{item.label}</span>
+            <span className="trk-qpanel-running-val">{item.value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─── Idle screen ─── */
+function TrackerIdle({ preStep, onBeginPre, onStartTimer }) {
+  const preDone    = preStep >= PRE_QUESTIONS.length;
+  const preStarted = preStep >= 0;
+  return (
+    <div className="trk-idle">
+      <div className="trk-idle-icon">⏱</div>
+      <h1 className="trk-idle-title">Pronto para estudar?</h1>
+      <p className="trk-idle-sub">
+        {!preStarted
+          ? 'Responda algumas perguntas rápidas antes de começar.'
+          : preDone
+          ? 'Perguntas respondidas. Pode iniciar!'
+          : `Respondendo... ${preStep} de ${PRE_QUESTIONS.length}`}
+      </p>
+      {!preStarted && (
+        <button className="trk-start-btn" data-cursor="hover" onClick={onBeginPre}>
+          Iniciar Sessão →
+        </button>
+      )}
+      {preStarted && !preDone && (
+        <button className="trk-start-btn" disabled style={{ opacity: 0.35 }}>
+          Respondendo…
+        </button>
+      )}
+      {preDone && (
+        <button className="trk-start-btn trk-start-btn--ready" data-cursor="hover" onClick={onStartTimer}>
+          ▶ Iniciar Timer
+        </button>
+      )}
+    </div>
+  );
+}
+
+/* ─── Active timer ─── */
 function TrackerActive({ elapsed, paused, onPause, onResume, onEnd }) {
   return (
     <div className="trk-active">
@@ -457,68 +542,20 @@ function TrackerActive({ elapsed, paused, onPause, onResume, onEnd }) {
   );
 }
 
-/* ── Formulário ── */
-function TrackerForm({ elapsed, form, setField, isComplete, onSave, saving, onCancel }) {
+/* ─── Post-session time display ─── */
+function TrackerEnded({ elapsed }) {
   return (
-    <div className="trk-form-wrap">
-      <div className="trk-form-header">
-        <h2 className="trk-form-title">Como foi a sessão?</h2>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div className="trk-form-duration">
-            <span className="trk-form-duration-val">{formatTime(elapsed)}</span>
-            <span className="trk-form-duration-label">duração</span>
-          </div>
-          {onCancel && (
-            <button className="trk-form-close" data-cursor="hover" onClick={onCancel} title="Fechar">✕</button>
-          )}
-        </div>
-      </div>
-      <div className="trk-form-body">
-        <div className="trk-form-section">
-          <p className="trk-section-title">Sessão</p>
-          <div className="trk-field">
-            <label className="trk-field-label">O que você estudou?</label>
-            <input className="trk-input" type="text" placeholder="Ex: Spring Boot — injeção de dependência"
-              value={form.subject} onChange={e => setField('subject')(e.target.value)} maxLength={120} />
-          </div>
-          <PillGroup label="Tipo de estudo"    options={['Vídeo','Leitura','Prática/Código','Exercícios']} value={form.studyType}      onChange={setField('studyType')} />
-          <PillGroup label="Período"           options={['Manhã','Tarde','Noite','Madrugada']}             value={form.period}          onChange={setField('period')} />
-        </div>
-
-        <div className="trk-form-section">
-          <p className="trk-section-title">Estado Mental</p>
-          <PillGroup label="Nível de energia"       options={['Disposto','Neutro','Cansado']}                         value={form.energy}         onChange={setField('energy')} />
-          <PillGroup label="Rendimento percebido"   options={['Rendeu muito','Médio','Não rendeu']}                   value={form.performance}    onChange={setField('performance')} />
-          <PillGroup label="Humor"                  options={['Motivado','Neutro','Ansioso']}                         value={form.mood}           onChange={setField('mood')} />
-          <PillGroup label="Foco"                   options={['Focado','Distraído']}                                  value={form.focus}          onChange={setField('focus')} />
-          <PillGroup label="Gostou do assunto?"     options={['Amei','Ok','Não curti']}                               value={form.subjectFeeling} onChange={setField('subjectFeeling')} />
-          <PillGroup label="Meta do dia"            options={['Bateu','Parcialmente','Sem meta','Não bateu']}          value={form.goalStatus}     onChange={setField('goalStatus')} />
-        </div>
-
-        <div className="trk-form-section">
-          <p className="trk-section-title">Estado Físico</p>
-          <PillGroup label="Qualidade do sono"  options={['Dormi muito bem','Dormi ok','Dormi pouco','Não dormi direito']} value={form.sleep}      onChange={setField('sleep')} />
-          <PillGroup label="Hidratação"         options={['Bebi bastante','Normal','Bebi pouco']}                          value={form.hydration}  onChange={setField('hydration')} />
-          <PillGroup label="Alimentação"        options={['Me alimentei bem','Normal','Me alimentei mal']}                 value={form.nutrition}  onChange={setField('nutrition')} />
-          <PillGroup label="Atividade física"   options={['Me exercitei','Caminhei','Fiquei parado']}                      value={form.activity}   onChange={setField('activity')} />
-          <PillGroup label="Cafeína"            options={['Sim, café/energético','Não tomei']}                             value={form.caffeine}   onChange={setField('caffeine')} />
-        </div>
-
-        <button
-          className={'trk-save-btn' + (isComplete ? ' active' : '') + (saving ? ' saving' : '')}
-          data-cursor="hover"
-          disabled={!isComplete || saving}
-          onClick={isComplete && !saving ? onSave : undefined}
-        >
-          {saving ? 'Salvando...' : isComplete ? 'Salvar Sessão ✓' : 'Preencha todos os campos'}
-        </button>
-      </div>
+    <div className="trk-idle">
+      <div className="trk-idle-icon">⏹</div>
+      <h1 className="trk-idle-title">Sessão encerrada</h1>
+      <div className="trk-ended-time">{formatTime(elapsed)}</div>
+      <p className="trk-idle-sub">Responda as perguntas ao lado para salvar.</p>
     </div>
   );
 }
 
-/* ── Sucesso ── */
-function TrackerSuccess({ session, newBadges, onNew, onDashboard, apiKey }) {
+/* ─── Success ─── */
+function TrackerSuccess({ session, newBadges, onNew, onDashboard, onAnalises, apiKey }) {
   const allSessions = window.Data.load();
   const hrs  = Math.floor((session?.duration || 0) / 3600);
   const mins = Math.floor(((session?.duration || 0) % 3600) / 60);
@@ -529,7 +566,6 @@ function TrackerSuccess({ session, newBadges, onNew, onDashboard, apiKey }) {
       <div className="trk-success-icon">✓</div>
       <h2 className="trk-success-title">Sessão registrada!</h2>
       <p className="trk-success-sub">{label} de estudo salvos.</p>
-
       {newBadges.length > 0 && (
         <div className="trk-new-badges">
           <p className="trk-new-badges-label">Badges desbloqueadas</p>
@@ -541,29 +577,31 @@ function TrackerSuccess({ session, newBadges, onNew, onDashboard, apiKey }) {
           ))}
         </div>
       )}
-
-      <AiAnalysis sessions={allSessions} type="daily" apiKey={apiKey} />
-
+      <AiAnalysis sessions={allSessions} type="daily" apiKey={apiKey} autoRun />
       <div className="trk-success-actions">
         <button className="trk-btn" data-cursor="hover" onClick={onNew}>Nova Sessão</button>
-        <button className="trk-btn trk-btn--end" data-cursor="hover" onClick={onDashboard}>Ver Dashboard</button>
+        <button className="trk-btn trk-btn--ghost" data-cursor="hover" onClick={onDashboard}>Dashboard</button>
+        <button className="trk-btn trk-btn--ghost" data-cursor="hover" onClick={onAnalises}>Ver Análises</button>
       </div>
     </div>
   );
 }
 
-/* ── Calendário mensal de atividade ── */
+/* ─── Full Calendar ─── */
 const MONTH_NAMES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const DAY_NAMES   = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 
-function MonthlyCalendar({ sessions }) {
-  const now   = new Date();
+function FullCalendar({ sessions }) {
+  const now = new Date();
   const [year,  setYear]  = React.useState(now.getFullYear());
   const [month, setMonth] = React.useState(now.getMonth());
 
   const sessMap = React.useMemo(() => {
     const m = {};
-    sessions.forEach(s => { m[s.date] = (m[s.date] || 0) + (s.duration || 0); });
+    sessions.forEach(s => {
+      if (!m[s.date]) m[s.date] = [];
+      m[s.date].push(s);
+    });
     return m;
   }, [sessions]);
 
@@ -578,45 +616,50 @@ function MonthlyCalendar({ sessions }) {
 
   const todayStr = now.toISOString().split('T')[0];
 
-  function calColor(secs) {
-    if (!secs) return null;
-    const h = secs / 3600;
-    if (h < 1) return '#bbf7d0';
-    if (h < 2) return '#4ade80';
-    if (h < 4) return '#16a34a';
-    return '#15803d';
-  }
-
   const monthTotal = React.useMemo(() => {
+    const prefix = `${year}-${String(month+1).padStart(2,'0')}`;
     return Object.entries(sessMap)
-      .filter(([d]) => d.startsWith(`${year}-${String(month+1).padStart(2,'0')}`))
-      .reduce((a, [, s]) => a + s, 0);
+      .filter(([d]) => d.startsWith(prefix))
+      .reduce((a, [, arr]) => a + arr.reduce((b, s) => b + (s.duration||0), 0), 0);
   }, [sessMap, year, month]);
 
   return (
-    <div className="trk-month-cal">
-      <div className="trk-month-cal-head">
+    <div className="trk-full-cal">
+      <div className="trk-full-cal-head">
         <button className="trk-month-nav" data-cursor="hover" onClick={prevMonth}>‹</button>
-        <div className="trk-month-cal-title">
-          <span className="trk-month-name">{MONTH_NAMES[month]} {year}</span>
-          {monthTotal > 0 && <span className="trk-month-total">{Math.round(monthTotal/3600*10)/10}h estudadas</span>}
+        <div className="trk-full-cal-title">
+          <span className="trk-full-cal-name">{MONTH_NAMES[month]} {year}</span>
+          {monthTotal > 0 && <span className="trk-full-cal-total">{(monthTotal/3600).toFixed(1)}h estudadas</span>}
         </div>
         <button className="trk-month-nav" data-cursor="hover" onClick={nextMonth} disabled={isCurrentMonth}>›</button>
       </div>
-      <div className="trk-month-grid">
-        {DAY_NAMES.map(d => <div key={d} className="trk-month-day-name">{d}</div>)}
+      <div className="trk-full-cal-grid">
+        {DAY_NAMES.map(d => <div key={d} className="trk-full-cal-day-name">{d}</div>)}
         {cells.map((day, i) => {
-          if (!day) return <div key={i} className="trk-month-cell trk-month-cell--empty" />;
+          if (!day) return <div key={i} className="trk-full-cal-cell trk-full-cal-cell--empty" />;
           const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-          const secs  = sessMap[dateStr] || 0;
-          const bg    = calColor(secs);
+          const daySessions = sessMap[dateStr] || [];
           const isToday = dateStr === todayStr;
+          const totalMins = Math.round(daySessions.reduce((a, s) => a + (s.duration||0), 0) / 60);
+          const topPerf = daySessions.length
+            ? daySessions.reduce((best, s) => perfScore(s) > perfScore(best) ? s : best, daySessions[0]).performance
+            : null;
+          const perfColor = topPerf === 'Rendeu muito' ? '#10b981' : topPerf === 'Não rendeu' ? '#ef4444' : topPerf ? '#f59e0b' : null;
+          const firstSubj = daySessions[0]?.subject || '';
+
           return (
-            <div key={i} className={'trk-month-cell' + (isToday ? ' today' : '') + (secs ? ' has-study' : '')}
-              style={bg ? { background: bg } : {}}
-              title={secs ? `${Math.round(secs/60)}min` : ''}>
-              <span className="trk-month-day-num">{day}</span>
-              {secs > 0 && <span className="trk-month-mins">{Math.round(secs/60)}m</span>}
+            <div key={i} className={'trk-full-cal-cell' + (isToday ? ' today' : '') + (daySessions.length ? ' has-session' : '')}
+              style={perfColor ? { borderTop: `3px solid ${perfColor}` } : {}}>
+              <span className="trk-full-cal-day-num">{day}</span>
+              {daySessions.length > 0 && (
+                <React.Fragment>
+                  <span className="trk-full-cal-subj" title={firstSubj}>
+                    {firstSubj.length > 22 ? firstSubj.slice(0, 22) + '…' : firstSubj || '—'}
+                    {daySessions.length > 1 && <span className="trk-full-cal-more">+{daySessions.length - 1}</span>}
+                  </span>
+                  <span className="trk-full-cal-mins">{totalMins}min</span>
+                </React.Fragment>
+              )}
             </div>
           );
         })}
@@ -635,28 +678,21 @@ const EMPTY_FORM = {
 };
 
 function StudyTracker({ user }) {
-  const [tab,     setTab]     = React.useState('timer');
-  const [view,    setView]    = React.useState('idle');
-  const [elapsed, setElapsed] = React.useState(0);
-  const [saving,  setSaving]  = React.useState(false);
-  const [form,    setForm]    = React.useState(EMPTY_FORM);
+  const [tab,        setTab]        = React.useState('timer');
+  const [view,       setView]       = React.useState('idle');
+  const [preStep,    setPreStep]    = React.useState(-1);
+  const [postStep,   setPostStep]   = React.useState(0);
+  const [elapsed,    setElapsed]    = React.useState(0);
+  const [saving,     setSaving]     = React.useState(false);
+  const [form,       setForm]       = React.useState(EMPTY_FORM);
   const [lastSession, setLastSession] = React.useState(null);
   const [newBadges,   setNewBadges]   = React.useState([]);
   const [badgeQueue,  setBadgeQueue]  = React.useState([]);
   const [dataTick,    setDataTick]    = React.useState(0);
   const [aiModal,     setAiModal]     = React.useState(null);
 
-  const sessions = React.useMemo(() => window.Data.load(), [dataTick]);
+  const sessions  = React.useMemo(() => window.Data.load(), [dataTick]);
   const reloadData = React.useCallback(() => setDataTick(t => t + 1), []);
-
-  const aiCache = React.useMemo(() => {
-    const g = k => { try { return localStorage.getItem(k) || ''; } catch { return ''; } };
-    return {
-      daily:   { date: g('d30_ai_last_daily'),   text: g('d30_ai_text_daily')   },
-      weekly:  { date: g('d30_ai_last_weekly'),  text: g('d30_ai_text_weekly')  },
-      monthly: { date: g('d30_ai_last_monthly'), text: g('d30_ai_text_monthly') },
-    };
-  }, [dataTick]);
 
   const startRef   = React.useRef(null);
   const pausedRef  = React.useRef(0);
@@ -673,11 +709,12 @@ function StudyTracker({ user }) {
     setElapsed(Math.floor((Date.now() - startRef.current - pausedRef.current) / 1000));
   }, []);
 
-  const handleStart = () => {
+  const handleBeginPre = () => setPreStep(0);
+
+  const handleStartTimer = () => {
     startRef.current  = Date.now();
     pausedRef.current = 0;
     setElapsed(0);
-    setForm(f => ({ ...f, period: getPeriod(new Date()) }));
     tickRef.current = setInterval(tick, 1000);
     setView('running');
   };
@@ -696,70 +733,75 @@ function StudyTracker({ user }) {
 
   const handleEnd = () => {
     clearInterval(tickRef.current);
-    setView('form');
+    setPostStep(0);
+    setView('post');
   };
 
-  const handleSave = async () => {
+  const handleSave = async (formData) => {
     setSaving(true);
     const session = {
-      ...form,
+      ...formData,
       duration:  elapsed,
       date:      new Date(startRef.current).toISOString().split('T')[0],
       startedAt: new Date(startRef.current).toISOString(),
     };
     const saved = window.Data.saveSession(session);
     await window.Data.syncToSupabase(saved, user?.id);
-
     const earned = window.Badges.check();
     setNewBadges(earned);
     if (earned.length) setBadgeQueue(q => [...q, ...earned]);
-
     setLastSession(saved);
     setSaving(false);
     reloadData();
     setView('success');
   };
 
-  const isComplete = React.useMemo(() => Object.values(form).every(v => v !== ''), [form]);
-  const setField   = key => val => setForm(f => ({ ...f, [key]: val }));
+  const handlePreAnswer = (key, val, autoAdvance) => {
+    setForm(f => ({ ...f, [key]: val }));
+    if (autoAdvance) setPreStep(s => s + 1);
+  };
+
+  const handlePostAnswer = (key, val, autoAdvance) => {
+    const newForm = { ...form, [key]: val };
+    setForm(newForm);
+    if (autoAdvance) {
+      const nextStep = postStep + 1;
+      if (nextStep >= POST_QUESTIONS.length) {
+        handleSave(newForm);
+      } else {
+        setPostStep(nextStep);
+      }
+    }
+  };
+
+  const handleTextAdvance = (phase) => {
+    if (phase === 'pre') {
+      setPreStep(s => s + 1);
+    } else {
+      const nextStep = postStep + 1;
+      if (nextStep >= POST_QUESTIONS.length) {
+        handleSave(form);
+      } else {
+        setPostStep(nextStep);
+      }
+    }
+  };
+
+  const handleNew = () => {
+    setForm(EMPTY_FORM);
+    setElapsed(0);
+    setPreStep(-1);
+    setPostStep(0);
+    setView('idle');
+  };
 
   const isTimerActive = ['running', 'paused'].includes(view);
-  const handleCancelForm = () => setView('idle');
-
-  const sessionsBlock = sessions.length > 0 && (
-    <div className="trk-sessions-bottom">
-      <p className="trk-chart-title" style={{ marginBottom: 14 }}>Últimas sessões</p>
-      <div className="trk-sess-grid">
-        {sessions.slice(-12).reverse().map(s => {
-          const perfColor = s.performance === 'Rendeu muito' ? '#10b981'
-                          : s.performance === 'Não rendeu'   ? '#ef4444' : '#f59e0b';
-          const dateLabel = new Date(s.date + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
-          const hasAi = aiCache.daily.date === s.date && !!aiCache.daily.text;
-          return (
-            <div key={s.id} className="trk-sess-card">
-              <span className="trk-sess-subject">{s.subject || '—'}</span>
-              <span className="trk-sess-info">{dateLabel} · {Math.round((s.duration || 0) / 60)}min</span>
-              <span className="trk-sess-perf" style={{ color: perfColor }}>{s.performance || '—'}</span>
-              {hasAi ? (
-                <button className="trk-sess-ai-badge has" data-cursor="hover"
-                  onClick={() => setAiModal({ title: '📅 Análise — ' + dateLabel, text: aiCache.daily.text })}>
-                  ✨ Ver análise
-                </button>
-              ) : (
-                <span className="trk-sess-ai-badge missing">Sem análise</span>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
 
   return (
     <div className="page active fade-in">
       <div className="trk-wrap">
 
-        {/* Tab nav — oculto só enquanto o timer corre */}
+        {/* Tab nav */}
         {!isTimerActive && (
           <div className="trk-tabs">
             <button className={'trk-tab' + (tab === 'timer'     ? ' active' : '')} data-cursor="hover" onClick={() => setTab('timer')}>⏱ Timer</button>
@@ -771,39 +813,58 @@ function StudyTracker({ user }) {
         {/* Timer tab */}
         {tab === 'timer' && (
           <>
-            {/* Layout permanente: card esquerdo + calendário + sessões */}
-            <div className="trk-timer-home">
-              <div className="trk-timer-top">
+            {view === 'success' ? (
+              <TrackerSuccess
+                session={lastSession} newBadges={newBadges} apiKey={apiKey}
+                onNew={handleNew}
+                onDashboard={() => { setView('idle'); setTab('dashboard'); }}
+                onAnalises={() => { setView('idle'); setTab('analises'); }}
+              />
+            ) : (
+              <div className="trk-two-col">
+                {/* Left: timer states */}
                 <div className="trk-left-card">
-                  {view === 'idle' && <TrackerIdle onStart={handleStart} />}
+                  {(view === 'idle' || view === 'pre') && (
+                    <TrackerIdle preStep={preStep} onBeginPre={handleBeginPre} onStartTimer={handleStartTimer} />
+                  )}
                   {(view === 'running' || view === 'paused') && (
                     <TrackerActive elapsed={elapsed} paused={view === 'paused'}
                       onPause={handlePause} onResume={handleResume} onEnd={handleEnd} />
                   )}
-                  {view === 'success' && (
-                    <TrackerSuccess
-                      session={lastSession}
-                      newBadges={newBadges}
-                      apiKey={apiKey}
-                      onNew={() => { setForm(EMPTY_FORM); setElapsed(0); setView('idle'); }}
-                      onDashboard={() => { setView('idle'); setTab('dashboard'); }}
+                  {view === 'post' && <TrackerEnded elapsed={elapsed} />}
+                </div>
+
+                {/* Right: question panel or running summary */}
+                <div className="trk-right-panel">
+                  {(view === 'idle' || view === 'pre') && preStep < 0 && (
+                    <div className="trk-qpanel trk-qpanel--hint">
+                      <span className="trk-qpanel-hint-icon">💬</span>
+                      <p className="trk-qpanel-hint-text">Clique em <strong>Iniciar Sessão</strong> para responder algumas perguntas rápidas sobre seu estado antes de começar.</p>
+                    </div>
+                  )}
+                  {(view === 'idle' || view === 'pre') && preStep >= 0 && (
+                    <QuestionPanel
+                      questions={PRE_QUESTIONS} step={preStep} form={form}
+                      onAnswer={handlePreAnswer}
+                      onTextAdvance={() => handleTextAdvance('pre')}
+                      phase="pre"
+                    />
+                  )}
+                  {(view === 'running' || view === 'paused') && <SessionRunningPanel preAnswers={form} />}
+                  {view === 'post' && (
+                    <QuestionPanel
+                      questions={POST_QUESTIONS} step={postStep} form={form}
+                      onAnswer={handlePostAnswer}
+                      onTextAdvance={() => handleTextAdvance('post')}
+                      phase="post"
                     />
                   )}
                 </div>
-                <MonthlyCalendar sessions={sessions} />
-              </div>
-              {sessionsBlock}
-            </div>
-
-            {/* Formulário como modal */}
-            {view === 'form' && (
-              <div className="trk-form-overlay" onClick={handleCancelForm}>
-                <div className="trk-form-modal" onClick={e => e.stopPropagation()}>
-                  <TrackerForm elapsed={elapsed} form={form} setField={setField}
-                    isComplete={isComplete} onSave={handleSave} saving={saving} onCancel={handleCancelForm} />
-                </div>
               </div>
             )}
+
+            {/* Full-width calendar */}
+            {view !== 'success' && <FullCalendar sessions={sessions} />}
           </>
         )}
 
@@ -814,16 +875,14 @@ function StudyTracker({ user }) {
 
         {/* Análises tab */}
         {tab === 'analises' && (
-          <div className="trk-ai-section">
-            <AiAnalysis sessions={sessions} type="daily"   apiKey={apiKey} />
-            <AiAnalysis sessions={sessions} type="weekly"  apiKey={apiKey} />
-            <AiAnalysis sessions={sessions} type="monthly" apiKey={apiKey} />
+          <div>
+            <AiHistoryTab onOpenModal={setAiModal} />
           </div>
         )}
 
       </div>
 
-      {/* Modal de análise */}
+      {/* AI modal */}
       {aiModal && (
         <div className="trk-ai-modal-overlay" onClick={() => setAiModal(null)}>
           <div className="trk-ai-modal" onClick={e => e.stopPropagation()}>
