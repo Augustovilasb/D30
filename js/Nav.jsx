@@ -122,7 +122,7 @@ function Nav({ page, onNavigate, user, onSignIn, onSignOut, indicCount, onNaviga
           <ThemeToggle />
           {user && <NotificationsBell onNavigate={onNavigateTo || onNavigate} />}
           {user ? (
-            <UserChip user={user} onSignOut={onSignOut} indicCount={indicCount} onNavigateProfile={onNavigateProfile} />
+            <UserChip user={user} onSignOut={onSignOut} indicCount={indicCount} onNavigateProfile={onNavigateProfile} onNavigate={onNavigateTo || onNavigate} />
           ) : (
             <React.Fragment>
               <button className="nav-cta ghost" data-cursor="hover" onClick={() => onSignIn('login')}>
@@ -138,7 +138,7 @@ function Nav({ page, onNavigate, user, onSignIn, onSignOut, indicCount, onNaviga
   );
 }
 
-function UserChip({ user, onSignOut, indicCount, onNavigateProfile }) {
+function UserChip({ user, onSignOut, indicCount, onNavigateProfile, onNavigate }) {
   const [open, setOpen] = React.useState(false);
   React.useEffect(() => {
     const close = () => setOpen(false);
@@ -155,6 +155,9 @@ function UserChip({ user, onSignOut, indicCount, onNavigateProfile }) {
       <div className="user-chip-name">{user.name}</div>
       <div className="user-menu" onClick={(e) => e.stopPropagation()}>
         <div className="user-menu-info">Conectado como<br/><strong style={{ color: 'var(--text)' }}>{user.email}</strong></div>
+        <div className="user-menu-divider"></div>
+        <button className="user-menu-item" data-cursor="hover" onClick={() => { setOpen(false); onNavigateProfile && onNavigateProfile(); }}>Meu Perfil</button>
+        <button className="user-menu-item" data-cursor="hover" onClick={() => { setOpen(false); onNavigate && onNavigate('settings'); }}>Configurações</button>
         <div className="user-menu-divider"></div>
         <button className="user-menu-item danger" data-cursor="hover" onClick={onSignOut}>Sair</button>
       </div>

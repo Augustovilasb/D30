@@ -35,25 +35,38 @@ function Field({ label, error, hint, children }) {
 function LoginModal({ open, onClose, onSignIn, onSwitch, toast }) {
   const [email,    setEmail]    = React.useState('');
   const [password, setPassword] = React.useState('');
-  const [remember, setRemember] = React.useState(false);
   const [errors,   setErrors]   = React.useState({});
+  const [loading,  setLoading]  = React.useState(false);
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     const next = {};
     if (!email.includes('@')) next.email = 'Email inválido.';
-    if (password.length < 6) next.password = 'Senha curta demais.';
+    if (password.length < 6)  next.password = 'Senha curta demais.';
     setErrors(next);
-    if (Object.keys(next).length === 0) {
+    if (Object.keys(next).length) return;
+    setLoading(true);
+    try {
+      const data    = await window.Auth.signIn({ email, password });
+      const profile = await window.Auth.getProfile(data.user.id).catch(() => null);
+      const name    = profile?.full_name || data.user.user_metadata?.full_name || email.split('@')[0];
+      const initials = name.trim().split(/\s+/).map(s => s[0]).slice(0,2).join('').toUpperCase();
       onSignIn({
-        name: email.split('@')[0] || 'voce',
-        email,
-        initials: (email[0] || 'V').toUpperCase(),
-        color: '#6d5ce6',
+        id: data.user.id, email: data.user.email, name, initials,
+        username: profile?.username || '', color: '#6d5ce6',
+        avatar_url: profile?.avatar_url || null, bio: profile?.bio || null,
+        profession: profile?.profession || null,
+        github_url: profile?.github_url || null, linkedin_url: profile?.linkedin_url || null,
+        twitter_url: profile?.twitter_url || null, website_url: profile?.website_url || null,
       });
       toast('success', 'Bem-vindo de volta!');
       onClose();
-    }
+    } catch (err) {
+      const msg = err.message || '';
+      if (msg.toLowerCase().includes('invalid')) setErrors({ password: 'Email ou senha incorretos.' });
+      else if (msg.includes('confirmed'))        setErrors({ email: 'Confirme seu email antes de entrar.' });
+      else                                       setErrors({ password: 'Erro ao entrar. Tente novamente.' });
+    } finally { setLoading(false); }
   };
 
   return (
@@ -65,12 +78,10 @@ function LoginModal({ open, onClose, onSignIn, onSwitch, toast }) {
         <Field label="Senha" error={errors.password}>
           <input type="password" placeholder="••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
         </Field>
-        <label className="form-remember" data-cursor="hover">
-          <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
-          <span>Lembrar de mim</span>
-        </label>
         <div className="form-actions">
-          <button type="submit" className="btn-primary" data-cursor="hover">Entrar</button>
+          <button type="submit" className="btn-primary" data-cursor="hover" disabled={loading}>
+            {loading ? 'Entrando…' : 'Entrar'}
+          </button>
         </div>
         <p className="form-switch">Não tem conta? <a data-cursor="hover" onClick={() => onSwitch('signup')}>Criar conta grátis</a></p>
       </form>
@@ -79,29 +90,44 @@ function LoginModal({ open, onClose, onSignIn, onSwitch, toast }) {
 }
 
 function SignupModal({ open, onClose, onSignIn, onSwitch, toast }) {
-  const [name, setName] = React.useState('');
-  const [email, setEmail] = React.useState('');
+  const [name,     setName]     = React.useState('');
+  const [username, setUsername] = React.useState('');
+  const [email,    setEmail]    = React.useState('');
   const [password, setPassword] = React.useState('');
-  const [confirm, setConfirm] = React.useState('');
-  const [errors, setErrors] = React.useState({});
+  const [confirm,  setConfirm]  = React.useState('');
+  const [errors,   setErrors]   = React.useState({});
+  const [loading,  setLoading]  = React.useState(false);
 
   const strength = password.length >= 10 ? 3 : password.length >= 6 ? 2 : password.length > 0 ? 1 : 0;
   const strengthLabels = ['', 'Senha fraca.', 'Senha média.', 'Senha forte.'];
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     const next = {};
     if (!name.trim()) next.name = 'Manda seu nome aí.';
+    if (!username.trim() || !/^[a-z0-9_]{3,20}$/.test(username)) next.username = 'Só letras minúsculas, números e _ (3–20 chars).';
     if (!email.includes('@')) next.email = 'Email inválido.';
     if (password.length < 6) next.password = 'Mínimo 6 caracteres.';
     if (password !== confirm) next.confirm = 'As senhas não batem.';
     setErrors(next);
-    if (Object.keys(next).length === 0) {
-      const initials = name.trim().split(/\s+/).map(s => s[0]).slice(0,2).join('').toUpperCase();
-      onSignIn({ name: name.trim(), email, initials, color: '#6d5ce6' });
-      toast('success', 'Conta criada! Bem-vindo à D30.');
+    if (Object.keys(next).length) return;
+    setLoading(true);
+    try {
+      const data = await window.Auth.signUp({ email, password, fullName: name.trim(), username: username.trim() });
+      if (data.user && !data.user.identities?.length === 0) {
+        const initials = name.trim().split(/\s+/).map(s => s[0]).slice(0,2).join('').toUpperCase();
+        onSignIn({ id: data.user.id, email: data.user.email, name: name.trim(), username: username.trim(), initials, color: '#6d5ce6', avatar_url: null, bio: null, profession: null, github_url: null, linkedin_url: null, twitter_url: null, website_url: null });
+        toast('success', 'Conta criada! Bem-vindo à D30.');
+      } else {
+        toast('info', 'Conta criada! Confirme seu email para ativar.');
+      }
       onClose();
-    }
+    } catch (err) {
+      const msg = err.message || '';
+      if (msg.includes('already registered') || msg.includes('already been registered')) setErrors({ email: 'Este email já está cadastrado.' });
+      else if (msg.includes('username'))  setErrors({ username: 'Este username já está em uso.' });
+      else                                setErrors({ password: 'Erro ao criar conta. Tente novamente.' });
+    } finally { setLoading(false); }
   };
 
   return (
@@ -109,6 +135,9 @@ function SignupModal({ open, onClose, onSignIn, onSwitch, toast }) {
       <form onSubmit={submit} noValidate>
         <Field label="Nome" error={errors.name}>
           <input type="text" placeholder="Como te chamam?" value={name} onChange={(e) => setName(e.target.value)} />
+        </Field>
+        <Field label="Username" error={errors.username} hint="Só letras minúsculas, números e underscore.">
+          <input type="text" placeholder="seunome123" value={username} onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g,''))} />
         </Field>
         <Field label="Email" error={errors.email}>
           <input type="email" placeholder="voce@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -124,7 +153,9 @@ function SignupModal({ open, onClose, onSignIn, onSwitch, toast }) {
           <input type="password" placeholder="Repita a senha" value={confirm} onChange={(e) => setConfirm(e.target.value)} />
         </Field>
         <div className="form-actions">
-          <button type="submit" className="btn-primary" data-cursor="hover">Criar conta</button>
+          <button type="submit" className="btn-primary" data-cursor="hover" disabled={loading}>
+            {loading ? 'Criando conta…' : 'Criar conta'}
+          </button>
         </div>
         <p className="form-switch">Já tem conta? <a data-cursor="hover" onClick={() => onSwitch('login')}>Entrar</a></p>
       </form>

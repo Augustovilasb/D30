@@ -132,7 +132,22 @@ const Data = {
     } catch (e) {
       console.warn('[Data] Supabase sync failed:', e.message);
     }
-  }
+    Data.updateProfileStats(userId);
+  },
+
+  async updateProfileStats(userId) {
+    if (!userId || !window.sb) return;
+    try {
+      await window.sb.from('profiles').update({
+        total_hours:     Math.round(Data.getTotalSeconds() / 3600 * 10) / 10,
+        current_streak:  Data.getCurrentStreak(),
+        best_streak:     Data.getBestStreak(),
+        total_sessions:  Data.load().length,
+      }).eq('id', userId);
+    } catch (e) {
+      console.warn('[Data] profile stats update failed:', e.message);
+    }
+  },
 };
 
 window.Data = Data;

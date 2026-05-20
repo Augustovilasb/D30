@@ -10,7 +10,9 @@
       "WebSearch",
       "WebFetch(domain:github.com)",
       "Bash(Select-String -Path \"C:\\\\Meus projetos\\\\D30\\\\D30 Design System\\\\js\\\\TrackerDashboard.jsx\",\"C:\\\\Meus projetos\\\\D30\\\\D30 Design System\\\\js\\\\StudyTracker.jsx\" -Pattern '[📊📅📆🗓✨⏱⏹⏸▶💬⛔🔍⚡🎯🏆📈🔥⭐🎨🚀💡]')",
-      "Bash(Select-Object LineNumber, Line)"
+      "Bash(Select-Object LineNumber, Line)",
+      "Bash(Get-Content \"C:\\\\Meus projetos\\\\D30\\\\D30 Design System\\\\css\\\\kit.css\")",
+      "Bash(Measure-Object -Line)"
     ]
   }
 }

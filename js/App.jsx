@@ -1,6 +1,19 @@
 /* App.jsx — entry. Wires together Nav, pages, modals, toasts, cursor. */
 
-const PROTECTED = ['forum', 'roadmap', 'palestras', 'profile', 'tracker'];
+const PROTECTED = ['forum', 'roadmap', 'palestras', 'profile', 'tracker', 'settings'];
+
+async function buildUserObj(supabaseUser) {
+  try {
+    const profile = await window.Auth.getProfile(supabaseUser.id);
+    const name = profile?.full_name || supabaseUser.user_metadata?.full_name || supabaseUser.email.split('@')[0];
+    const initials = name.trim().split(/\s+/).map(s => s[0]).slice(0,2).join('').toUpperCase();
+    return { id: supabaseUser.id, email: supabaseUser.email, name, initials, username: profile?.username || '', color: '#6d5ce6', avatar_url: profile?.avatar_url || null, bio: profile?.bio || null, profession: profile?.profession || null, github_url: profile?.github_url || null, linkedin_url: profile?.linkedin_url || null, twitter_url: profile?.twitter_url || null, website_url: profile?.website_url || null };
+  } catch {
+    const name = supabaseUser.user_metadata?.full_name || supabaseUser.email.split('@')[0];
+    const initials = name.trim().split(/\s+/).map(s => s[0]).slice(0,2).join('').toUpperCase();
+    return { id: supabaseUser.id, email: supabaseUser.email, name, initials, username: '', color: '#6d5ce6', avatar_url: null };
+  }
+}
 
 function App() {
   // Preloader plays once per session. Skip on subsequent reloads within the tab.
@@ -71,6 +84,18 @@ function App() {
     }
   }, [user, page]);
 
+  React.useEffect(() => {
+    const { data } = window.Auth.onAuthChange(async (supabaseUser) => {
+      if (supabaseUser) {
+        const u = await buildUserObj(supabaseUser);
+        setUser(u);
+      } else {
+        setUser(null);
+      }
+    });
+    return () => data?.subscription?.unsubscribe();
+  }, []);
+
   const signIn = (u) => setUser(u);
 
   // Redireciona para o fórum assim que o login é confirmado
@@ -99,6 +124,7 @@ function App() {
           {page === 'palestras' && user && <PalestrasPage toast={pushToast} user={user} onIndicCountChange={setIndicCount} />}
           {page === 'profile'   && user && <ProfilePage   user={user} onSignOut={signOut} onNavigate={navigate} />}
           {page === 'tracker'   && user && <StudyTracker  user={user} />}
+          {page === 'settings'  && user && <SettingsPage user={user} onUpdate={(u) => setUser(u)} onSignOut={signOut} onNavigate={navigate} />}
         </div>
 
         <LoginModal   open={modal === 'login'}   onClose={() => setModal(null)} onSignIn={signIn} onSwitch={setModal} toast={pushToast} />
