@@ -28,7 +28,8 @@ function SettingsPage({ user, onUpdate, onSignOut, onNavigate }) {
     setSaving(true); setError('');
     try {
       if (window.sb && user.id) {
-        const { error: dbErr } = await window.sb.from('profiles').update({
+        const { error: dbErr } = await window.sb.from('profiles').upsert({
+          id:            user.id,
           full_name:     form.full_name.trim(),
           username:      form.username.trim(),
           bio:           form.bio.trim(),
@@ -39,12 +40,21 @@ function SettingsPage({ user, onUpdate, onSignOut, onNavigate }) {
           instagram_url: form.instagram_url.trim() || null,
           twitter_url:   form.twitter_url.trim()   || null,
           website_url:   form.website_url.trim()   || null,
-        }).eq('id', user.id);
+        }, { onConflict: 'id' });
         if (dbErr) throw new Error(
           dbErr.code === '23505' ? 'Esse username já está em uso.' : dbErr.message
         );
       }
       try { localStorage.setItem('d30_ai_key', aiKey.trim()); } catch {}
+      try {
+        localStorage.setItem('d30_profile_v2', JSON.stringify({
+          full_name: form.full_name.trim(), username: form.username.trim(),
+          bio: form.bio.trim() || null, profession: form.profession.trim() || null,
+          avatar_url: form.avatar_url.trim() || null, github_url: form.github_url.trim() || null,
+          linkedin_url: form.linkedin_url.trim() || null, instagram_url: form.instagram_url.trim() || null,
+          twitter_url: form.twitter_url.trim() || null, website_url: form.website_url.trim() || null,
+        }));
+      } catch {}
       const initials = form.full_name.trim().split(/\s+/).map(s => s[0]).slice(0,2).join('').toUpperCase() || user.initials;
       onUpdate({ ...user, name: form.full_name.trim(), username: form.username.trim(), bio: form.bio.trim() || null, profession: form.profession.trim() || null, avatar_url: form.avatar_url.trim() || null, github_url: form.github_url.trim() || null, linkedin_url: form.linkedin_url.trim() || null, instagram_url: form.instagram_url.trim() || null, twitter_url: form.twitter_url.trim() || null, website_url: form.website_url.trim() || null, initials });
       setSaved(true);

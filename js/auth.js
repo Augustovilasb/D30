@@ -48,8 +48,9 @@ const Auth = {
       .from('profiles')
       .select('*')
       .eq('id', userId)
-      .single();
-    if (error) throw error;
+      .maybeSingle();
+    if (error) { console.error('[D30] getProfile error:', error); throw error; }
+    if (!data)  { console.warn('[D30] getProfile: nenhuma linha encontrada para', userId); }
     return data;
   },
 
