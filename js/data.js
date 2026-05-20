@@ -69,6 +69,41 @@ const Data = {
     return best;
   },
 
+  seedDemo() {
+    const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+    const sessions = [];
+    for (let i = 8; i >= 0; i--) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      const date = d.toISOString().split('T')[0];
+      const count = i === 0 ? 1 : Math.random() > 0.25 ? (Math.random() > 0.5 ? 2 : 1) : 0;
+      for (let j = 0; j < count; j++) {
+        const goodDay = Math.random() > 0.4;
+        sessions.push({
+          id: crypto.randomUUID(),
+          date,
+          duration: Math.floor((i === 0 ? 35 + Math.random() * 40 : goodDay ? 45 + Math.random() * 75 : 20 + Math.random() * 40) * 60),
+          period:          pick(['Manhã','Tarde','Noite']),
+          subject:         pick(['Spring Boot — controllers REST','Git — rebase e merge','SQL — joins e índices','Java — generics','Docker — containers','Testes de API com Postman','Lógica de programação']),
+          studyType:       pick(['Vídeo','Prática/Código','Leitura','Exercícios']),
+          energy:          goodDay ? pick(['Disposto','Disposto','Neutro']) : pick(['Neutro','Cansado']),
+          performance:     goodDay ? pick(['Rendeu muito','Rendeu muito','Médio']) : pick(['Médio','Não rendeu']),
+          mood:            goodDay ? pick(['Motivado','Motivado','Neutro']) : pick(['Neutro','Ansioso']),
+          focus:           goodDay ? pick(['Focado','Focado']) : pick(['Focado','Distraído']),
+          subjectFeeling:  pick(['Amei','Ok','Ok','Não curti']),
+          goalStatus:      pick(['Bateu','Parcialmente','Bateu','Sem meta']),
+          sleep:           goodDay ? pick(['Dormi muito bem','Dormi ok']) : pick(['Dormi pouco','Não dormi direito','Dormi ok']),
+          hydration:       pick(['Bebi bastante','Normal','Normal','Bebi pouco']),
+          nutrition:       goodDay ? pick(['Me alimentei bem','Normal']) : pick(['Normal','Me alimentei mal']),
+          activity:        pick(['Me exercitei','Caminhei','Fiquei parado','Fiquei parado']),
+          caffeine:        pick(['Sim, café/energético','Não tomei']),
+          createdAt:       d.toISOString(),
+        });
+      }
+    }
+    try { localStorage.setItem(Data.KEY, JSON.stringify(sessions)); } catch {}
+    return sessions.length;
+  },
+
   async syncToSupabase(session, userId) {
     if (!userId || !window.sb) return;
     try {

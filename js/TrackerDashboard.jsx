@@ -167,12 +167,13 @@ function ImpactChart({ sessions, field, labels, title, onFilter, activeVal, dark
 }
 
 /* ── Main Dashboard ── */
-function TrackerDashboard({ onStartTimer }) {
+function TrackerDashboard({ onStartTimer, onDemoLoad }) {
   const dark = useDark();
   const [timeRange,    setTimeRange]    = React.useState(30);
-  const [activeFilter, setActiveFilter] = React.useState(null); // { field, value }
+  const [activeFilter, setActiveFilter] = React.useState(null);
+  const [seed,         setSeed]         = React.useState(0);
 
-  const allSessions = React.useMemo(() => window.Data.load(), []);
+  const allSessions = React.useMemo(() => window.Data.load(), [seed]);
 
   const ranged = React.useMemo(() => {
     if (!timeRange) return allSessions;
@@ -323,6 +324,12 @@ function TrackerDashboard({ onStartTimer }) {
     },
   }), [sessions, dark]);
 
+  const loadDemo = () => {
+    window.Data.seedDemo();
+    setSeed(s => s + 1);
+    onDemoLoad && onDemoLoad();
+  };
+
   if (!allSessions.length) {
     return (
       <div className="trk-empty">
@@ -330,6 +337,7 @@ function TrackerDashboard({ onStartTimer }) {
         <p className="trk-empty-title">Nenhuma sessão ainda</p>
         <p className="trk-empty-sub">Registre sua primeira sessão para ver o dashboard.</p>
         <button className="trk-start-btn" data-cursor="hover" onClick={onStartTimer}>Iniciar Sessão</button>
+        <button className="trk-demo-btn" data-cursor="hover" onClick={loadDemo}>Carregar dados de demo</button>
       </div>
     );
   }

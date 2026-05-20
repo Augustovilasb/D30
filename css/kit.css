@@ -3301,6 +3301,20 @@ nav.nav--floating .user-menu-info strong{ color: var(--text); }
 }
 .trk-chart-hint { font-size: 10px; color: var(--muted2); margin: 0; }
 
+.trk-demo-btn {
+  padding: 9px 20px;
+  border-radius: 10px;
+  border: 1px dashed var(--border2);
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: none;
+  transition: border-color .2s, color .2s;
+}
+.trk-demo-btn:hover { border-color: var(--text); color: var(--text); }
+
 .trk-no-results { font-size: 13px; color: var(--muted); text-align: center; padding: 24px 0; }
 .trk-link { background: none; border: none; color: #6366f1; font-size: 13px; font-weight: 600; cursor: none; font-family: 'Inter', sans-serif; }
 

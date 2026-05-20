@@ -546,14 +546,18 @@ const EMPTY_FORM = {
 };
 
 function StudyTracker({ user }) {
-  const [tab,     setTab]     = React.useState('timer');   // 'timer' | 'dashboard'
-  const [view,    setView]    = React.useState('idle');    // idle|running|paused|form|success
+  const [tab,     setTab]     = React.useState('timer');
+  const [view,    setView]    = React.useState('idle');
   const [elapsed, setElapsed] = React.useState(0);
   const [saving,  setSaving]  = React.useState(false);
   const [form,    setForm]    = React.useState(EMPTY_FORM);
   const [lastSession, setLastSession] = React.useState(null);
   const [newBadges,   setNewBadges]   = React.useState([]);
   const [badgeQueue,  setBadgeQueue]  = React.useState([]);
+  const [dataTick,    setDataTick]    = React.useState(0);
+
+  const sessions = React.useMemo(() => window.Data.load(), [dataTick]);
+  const reloadData = React.useCallback(() => setDataTick(t => t + 1), []);
 
   const startRef   = React.useRef(null);
   const pausedRef  = React.useRef(0);
@@ -613,6 +617,7 @@ function StudyTracker({ user }) {
 
     setLastSession(saved);
     setSaving(false);
+    reloadData();
     setView('success');
   };
 
@@ -660,13 +665,13 @@ function StudyTracker({ user }) {
         {/* Dashboard tab */}
         {tab === 'dashboard' && (
           <>
-            <TrackerDashboard onStartTimer={() => setTab('timer')} />
+            <TrackerDashboard onStartTimer={() => setTab('timer')} onDemoLoad={reloadData} />
             <RecentSessions />
             <div className="trk-ai-section">
               <p className="trk-section-title" style={{ marginBottom: 12 }}>Análise com IA</p>
-              <AiAnalysis sessions={window.Data.load()} type="daily"   apiKey={apiKey} />
-              <AiAnalysis sessions={window.Data.load()} type="weekly"  apiKey={apiKey} />
-              <AiAnalysis sessions={window.Data.load()} type="monthly" apiKey={apiKey} />
+              <AiAnalysis sessions={sessions} type="daily"   apiKey={apiKey} />
+              <AiAnalysis sessions={sessions} type="weekly"  apiKey={apiKey} />
+              <AiAnalysis sessions={sessions} type="monthly" apiKey={apiKey} />
             </div>
           </>
         )}
