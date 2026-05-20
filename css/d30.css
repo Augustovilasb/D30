@@ -42,14 +42,14 @@ body {
   transform: translate(-50%, -50%);
   will-change: transform;
 }
-.cursor-dot { width: 6px; height: 6px; background: var(--purple); transition: opacity .2s; }
+.cursor-dot { width: 6px; height: 6px; background: var(--purple); transition: opacity .15s; }
 .cursor-ring {
-  width: 36px; height: 36px;
+  width: 34px; height: 34px;
   border: 1.5px solid rgba(139,124,248,0.5);
-  transition: width .25s ease, height .25s ease, background .25s ease, border-color .25s ease, opacity .2s;
+  transition: width .1s, height .1s, background .1s, border-color .1s, opacity .15s;
 }
-.cursor-ring.hovering { width: 64px; height: 64px; background: rgba(139,124,248,0.15); border-color: var(--purple); }
-.cursor-ring.clicking { width: 28px; height: 28px; background: rgba(139,124,248,0.3); }
+.cursor-ring.hovering { width: 44px; height: 44px; background: rgba(139,124,248,0.12); border-color: var(--purple); }
+.cursor-ring.clicking { width: 26px; height: 26px; background: rgba(139,124,248,0.28); }
 @media (hover: none), (max-width: 768px) {
   body { cursor: auto; }
   .cursor-dot, .cursor-ring { display: none; }
@@ -60,8 +60,7 @@ nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 2rem; height: 56px;
-  background: rgba(8,8,8,0.85);
-  backdrop-filter: blur(20px);
+  background: rgba(8,8,8,0.97);
   border-bottom: 1px solid var(--border);
 }
 .nav-logo { font-size: 20px; font-weight: 900; letter-spacing: -1px; color: var(--text); cursor: none; }

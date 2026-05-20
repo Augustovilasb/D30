@@ -89,16 +89,17 @@ function MdRenderer({ text, loading }) {
   const lines = text.split('\n');
   const elements = [];
   let listItems = [];
+  let listType  = null;
 
   const flushList = () => {
-    if (listItems.length) {
-      elements.push(
-        <ul key={`ul-${elements.length}`} className="ai-md-list">
-          {listItems.map((li, i) => <li key={i} className="ai-md-li">{renderInline(li)}</li>)}
-        </ul>
-      );
-      listItems = [];
-    }
+    if (!listItems.length) return;
+    const Tag = listType === 'ol' ? 'ol' : 'ul';
+    elements.push(
+      <Tag key={`list-${elements.length}`} className={listType === 'ol' ? 'ai-md-olist' : 'ai-md-list'}>
+        {listItems.map((li, i) => <li key={i} className="ai-md-li">{renderInline(li)}</li>)}
+      </Tag>
+    );
+    listItems = []; listType = null;
   };
 
   const renderInline = (str) => {
@@ -111,15 +112,28 @@ function MdRenderer({ text, loading }) {
   };
 
   lines.forEach((line, i) => {
-    if (line.startsWith('## ')) {
+    const trimmed = line.trim();
+    if (line.startsWith('# ')) {
+      flushList();
+      elements.push(<h2 key={i} className="ai-md-h1">{line.slice(2)}</h2>);
+    } else if (line.startsWith('## ')) {
       flushList();
       elements.push(<h3 key={i} className="ai-md-h2">{line.slice(3)}</h3>);
     } else if (line.startsWith('### ')) {
       flushList();
       elements.push(<h4 key={i} className="ai-md-h3">{line.slice(4)}</h4>);
+    } else if (trimmed === '---') {
+      flushList();
+      elements.push(<hr key={i} className="ai-md-divider" />);
+    } else if (/^\d+\.\s/.test(line)) {
+      if (listType === 'ul') flushList();
+      listType = 'ol';
+      listItems.push(line.replace(/^\d+\.\s/, ''));
     } else if (line.startsWith('- ') || line.startsWith('• ')) {
+      if (listType === 'ol') flushList();
+      listType = 'ul';
       listItems.push(line.slice(2));
-    } else if (line.trim() === '') {
+    } else if (trimmed === '') {
       flushList();
       elements.push(<div key={i} className="ai-md-spacer" />);
     } else {
@@ -387,23 +401,29 @@ Use **negrito** nos números importantes. Máximo 5 linhas por seção.`;
 
   return (
     <div className="trk-ai-block">
-      <div className="trk-ai-head">
-        <span className="trk-ai-label">{ICONS[type]} {LABELS[type]}</span>
-        <button className="trk-ai-btn" data-cursor="hover" onClick={run} disabled={loading || !canAnalyze}>
+      <div className="trk-ai-block-top">
+        <span className="trk-ai-label">
+          <span className="trk-ai-label-icon">{ICONS[type]}</span>
+          <span className="trk-ai-label-text">{LABELS[type]}</span>
+        </span>
+        <button className={'trk-ai-btn' + (alreadyUsedToday && !loading ? ' generated' : '')}
+          data-cursor="hover" onClick={run} disabled={loading || !canAnalyze}>
           {loading ? 'Gerando...' : alreadyUsedToday ? 'Gerado hoje ✓' : 'Gerar relatório'}
         </button>
       </div>
       {blockReason && !text && <p className="trk-ai-warn">{blockReason}</p>}
       {error && <p className="trk-ai-error">{error}</p>}
       {loading && !text && (
-        <div className="trk-ai-skeleton">
-          <div className="trk-ai-sk-line w70" />
-          <div className="trk-ai-sk-line w100" />
-          <div className="trk-ai-sk-line w85" />
-          <div className="trk-ai-sk-line w60" />
+        <div className="trk-ai-body">
+          <div className="trk-ai-skeleton">
+            <div className="trk-ai-sk-line w70" />
+            <div className="trk-ai-sk-line w100" />
+            <div className="trk-ai-sk-line w85" />
+            <div className="trk-ai-sk-line w60" />
+          </div>
         </div>
       )}
-      {text && <MdRenderer text={text} loading={loading} />}
+      {text && <div className="trk-ai-body"><MdRenderer text={text} loading={loading} /></div>}
     </div>
   );
 }
@@ -438,14 +458,19 @@ function TrackerActive({ elapsed, paused, onPause, onResume, onEnd }) {
 }
 
 /* ── Formulário ── */
-function TrackerForm({ elapsed, form, setField, isComplete, onSave, saving }) {
+function TrackerForm({ elapsed, form, setField, isComplete, onSave, saving, onCancel }) {
   return (
     <div className="trk-form-wrap">
       <div className="trk-form-header">
         <h2 className="trk-form-title">Como foi a sessão?</h2>
-        <div className="trk-form-duration">
-          <span className="trk-form-duration-val">{formatTime(elapsed)}</span>
-          <span className="trk-form-duration-label">duração</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div className="trk-form-duration">
+            <span className="trk-form-duration-val">{formatTime(elapsed)}</span>
+            <span className="trk-form-duration-label">duração</span>
+          </div>
+          {onCancel && (
+            <button className="trk-form-close" data-cursor="hover" onClick={onCancel} title="Fechar">✕</button>
+          )}
         </div>
       </div>
       <div className="trk-form-body">
@@ -699,6 +724,7 @@ function StudyTracker({ user }) {
   const setField   = key => val => setForm(f => ({ ...f, [key]: val }));
 
   const isTimerActive = ['running', 'paused'].includes(view);
+  const handleCancelForm = () => setView('idle');
 
   const sessionsBlock = sessions.length > 0 && (
     <div className="trk-sessions-bottom">
@@ -771,10 +797,10 @@ function StudyTracker({ user }) {
 
             {/* Formulário como modal */}
             {view === 'form' && (
-              <div className="trk-form-overlay">
-                <div className="trk-form-modal">
+              <div className="trk-form-overlay" onClick={handleCancelForm}>
+                <div className="trk-form-modal" onClick={e => e.stopPropagation()}>
                   <TrackerForm elapsed={elapsed} form={form} setField={setField}
-                    isComplete={isComplete} onSave={handleSave} saving={saving} />
+                    isComplete={isComplete} onSave={handleSave} saving={saving} onCancel={handleCancelForm} />
                 </div>
               </div>
             )}
