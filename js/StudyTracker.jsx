@@ -50,8 +50,90 @@ function BadgeToast({ badge, onDone }) {
 }
 
 /* ── AI Analysis ── */
-const AI_LAST_KEY = type => `d30_ai_last_${type}`;
-const MIN_DAILY_SECS = 30 * 60; // 30 minutos
+const AI_LAST_KEY    = type => `d30_ai_last_${type}`;
+const MIN_DAILY_SECS = 30 * 60;
+
+/* helpers */
+function perfScore(s)   { return ({ 'Rendeu muito': 100, 'Médio': 50, 'Não rendeu': 0 })[s.performance] ?? 50; }
+function energyScore(s) { return ({ 'Disposto': 100, 'Neutro': 50, 'Cansado': 0 })[s.energy] ?? 50; }
+function avg(arr)       { return arr.length ? +(arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(1) : 0; }
+function pct(n, t)      { return t ? Math.round(n / t * 100) : 0; }
+
+function computeMetrics(sessions) {
+  if (!sessions.length) return {};
+  const totalMins   = Math.round(sessions.reduce((a, s) => a + (s.duration || 0), 0) / 60);
+  const avgPerf     = avg(sessions.map(perfScore));
+  const avgEnergy   = avg(sessions.map(energyScore));
+  const highPerf    = pct(sessions.filter(s => s.performance === 'Rendeu muito').length, sessions.length);
+  const byPeriod    = ['Manhã','Tarde','Noite','Madrugada'].map(p => {
+    const g = sessions.filter(s => s.period === p);
+    return { period: p, sessoes: g.length, rendimento: avg(g.map(perfScore)), horas: +(g.reduce((a,s)=>a+(s.duration||0),0)/3600).toFixed(1) };
+  }).filter(p => p.sessoes > 0);
+  const byType      = ['Vídeo','Leitura','Prática/Código','Exercícios'].map(t => {
+    const g = sessions.filter(s => s.studyType === t);
+    return { tipo: t, sessoes: g.length, rendimento: avg(g.map(perfScore)) };
+  }).filter(t => t.sessoes > 0);
+  const sleepImpact = ['Dormi muito bem','Dormi ok','Dormi pouco','Não dormi direito'].map(sl => {
+    const g = sessions.filter(s => s.sleep === sl);
+    return { sono: sl, rendimento: avg(g.map(perfScore)), sessoes: g.length };
+  }).filter(s => s.sessoes > 0);
+  const streak      = window.Data.getCurrentStreak();
+  const bestStreak  = window.Data.getBestStreak();
+  const days        = [...new Set(sessions.map(s => s.date))].length;
+  return { totalMins, avgPerf, avgEnergy, highPerf, byPeriod, byType, sleepImpact, streak, bestStreak, days, total: sessions.length };
+}
+
+/* markdown renderer */
+function MdRenderer({ text, loading }) {
+  const lines = text.split('\n');
+  const elements = [];
+  let listItems = [];
+
+  const flushList = () => {
+    if (listItems.length) {
+      elements.push(
+        <ul key={`ul-${elements.length}`} className="ai-md-list">
+          {listItems.map((li, i) => <li key={i} className="ai-md-li">{renderInline(li)}</li>)}
+        </ul>
+      );
+      listItems = [];
+    }
+  };
+
+  const renderInline = (str) => {
+    const parts = str.split(/(\*\*[^*]+\*\*)/g);
+    return parts.map((p, i) =>
+      p.startsWith('**') && p.endsWith('**')
+        ? <strong key={i} className="ai-md-bold">{p.slice(2, -2)}</strong>
+        : p
+    );
+  };
+
+  lines.forEach((line, i) => {
+    if (line.startsWith('## ')) {
+      flushList();
+      elements.push(<h3 key={i} className="ai-md-h2">{line.slice(3)}</h3>);
+    } else if (line.startsWith('### ')) {
+      flushList();
+      elements.push(<h4 key={i} className="ai-md-h3">{line.slice(4)}</h4>);
+    } else if (line.startsWith('- ') || line.startsWith('• ')) {
+      listItems.push(line.slice(2));
+    } else if (line.trim() === '') {
+      flushList();
+      elements.push(<div key={i} className="ai-md-spacer" />);
+    } else {
+      flushList();
+      elements.push(<p key={i} className="ai-md-p">{renderInline(line)}</p>);
+    }
+  });
+  flushList();
+  return (
+    <div className="ai-md">
+      {elements}
+      {loading && <span className="trk-ai-cursor">▌</span>}
+    </div>
+  );
+}
 
 function AiAnalysis({ sessions, type, apiKey }) {
   const [text,    setText]    = React.useState('');
@@ -62,8 +144,7 @@ function AiAnalysis({ sessions, type, apiKey }) {
 
   const todayStudiedSecs = React.useMemo(() =>
     sessions.filter(s => s.date === today).reduce((a, s) => a + (s.duration || 0), 0),
-    [sessions, today]
-  );
+  [sessions, today]);
 
   const alreadyUsedToday = React.useMemo(() => {
     try { return localStorage.getItem(AI_LAST_KEY(type)) === today; } catch { return false; }
@@ -72,48 +153,186 @@ function AiAnalysis({ sessions, type, apiKey }) {
   const hasWeekOfData = React.useMemo(() => {
     if (!sessions.length) return false;
     const oldest = sessions.reduce((min, s) => s.date < min ? s.date : min, sessions[0].date);
-    const daysAgo = Math.floor((Date.now() - new Date(oldest).getTime()) / 86400000);
-    return daysAgo >= 7;
+    return Math.floor((Date.now() - new Date(oldest)) / 86400000) >= 7;
+  }, [sessions]);
+
+  const daysRegistered = React.useMemo(() => {
+    if (!sessions.length) return 0;
+    const oldest = sessions.reduce((min, s) => s.date < min ? s.date : min, sessions[0].date);
+    return Math.floor((Date.now() - new Date(oldest)) / 86400000);
   }, [sessions]);
 
   const hasEnoughTime = todayStudiedSecs >= MIN_DAILY_SECS;
   const canAnalyze    = hasWeekOfData && hasEnoughTime && !alreadyUsedToday;
 
-  const daysRegistered = React.useMemo(() => {
-    if (!sessions.length) return 0;
-    const oldest = sessions.reduce((min, s) => s.date < min ? s.date : min, sessions[0].date);
-    return Math.floor((Date.now() - new Date(oldest).getTime()) / 86400000);
-  }, [sessions]);
-
   const blockReason = !hasWeekOfData
-    ? `Você tem ${daysRegistered} dia${daysRegistered !== 1 ? 's' : ''} de dados. É necessário pelo menos 7 dias para gerar análises.`
+    ? `${daysRegistered} dia${daysRegistered !== 1 ? 's' : ''} de dados registrados. Mínimo: 7 dias.`
     : !hasEnoughTime
-    ? `Estude pelo menos 30 min hoje (${Math.round(todayStudiedSecs / 60)}min registrados).`
-    : alreadyUsedToday
-    ? 'Você já gerou essa análise hoje. Volte amanhã.'
-    : null;
+    ? `Estude pelo menos 30 min hoje — ${Math.round(todayStudiedSecs / 60)}min registrados.`
+    : alreadyUsedToday ? 'Análise já gerada hoje. Volte amanhã.' : null;
 
   const buildPrompt = () => {
+    const fmt = (d) => new Date(d).toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' });
+
     if (type === 'daily') {
-      const today     = new Date().toISOString().split('T')[0];
       const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
       const todayS    = sessions.filter(s => s.date === today);
       const yestS     = sessions.filter(s => s.date === yesterday);
-      return `Você é um coach de estudos objetivo e direto. Compare as sessões de hoje com as de ontem e dê um feedback curto (3-4 frases máximo) em português.
+      const weekS     = sessions.filter(s => s.date >= new Date(Date.now() - 7*86400000).toISOString().split('T')[0]);
+      const mHoje     = computeMetrics(todayS);
+      const mOntem    = computeMetrics(yestS);
+      const mSemana   = computeMetrics(weekS);
+      const deltaMins = mHoje.totalMins - (mOntem.totalMins || 0);
+      const deltaPerf = mHoje.avgPerf   - (mOntem.avgPerf   || 0);
 
-HOJE: ${JSON.stringify(todayS.map(s => ({ duration: Math.round(s.duration/60)+'min', performance: s.performance, energy: s.energy, sleep: s.sleep, nutrition: s.nutrition })))}
-ONTEM: ${JSON.stringify(yestS.map(s => ({ duration: Math.round(s.duration/60)+'min', performance: s.performance, energy: s.energy, sleep: s.sleep, nutrition: s.nutrition })))}
+      return `Você é um coach de performance para devs em formação. Analise os dados abaixo e gere um relatório diário em português com markdown.
 
-Seja específico: mencione o delta de tempo e rendimento, identifique diferenças nos dados físicos como possível causa. Seja direto, sem rodeios.`;
+MÉTRICAS DE HOJE (${fmt(today)}):
+- Tempo total: ${mHoje.totalMins}min | Sessões: ${mHoje.total}
+- Score de rendimento médio: ${mHoje.avgPerf}/100 | Score de energia: ${mHoje.avgEnergy}/100
+- % sessões de alto rendimento: ${mHoje.highPerf}%
+- Distribuição por turno: ${JSON.stringify(mHoje.byPeriod)}
+- Impacto do sono hoje: ${JSON.stringify(todayS.map(s => ({ sono: s.sleep, rend: s.performance })))}
+- Estado físico hoje: sono=${todayS[0]?.sleep}, hidratação=${todayS[0]?.hydration}, alimentação=${todayS[0]?.nutrition}, atividade=${todayS[0]?.activity}
+
+MÉTRICAS DE ONTEM (${fmt(yesterday)}):
+- Tempo total: ${mOntem.totalMins || 0}min | Score rendimento: ${mOntem.avgPerf || 'sem dados'}/100
+- Estado físico: sono=${yestS[0]?.sleep || 'sem dados'}, hidratação=${yestS[0]?.hydration || 'sem dados'}, alimentação=${yestS[0]?.nutrition || 'sem dados'}
+
+DELTAS:
+- Tempo: ${deltaMins > 0 ? '+' : ''}${deltaMins}min vs ontem
+- Rendimento: ${deltaPerf > 0 ? '+' : ''}${deltaPerf.toFixed(0)} pontos vs ontem
+
+MÉDIA DA SEMANA (referência):
+- Tempo médio/dia: ${mSemana.totalMins ? Math.round(mSemana.totalMins / 7) : 0}min | Rendimento médio: ${mSemana.avgPerf}/100
+
+FORMATO OBRIGATÓRIO (use exatamente esses headers):
+## 📊 Desempenho de Hoje
+[compare hoje com ontem com números exatos, mencione os deltas]
+
+## 🔍 O que influenciou
+[correlacione especificamente os dados físicos com o rendimento. Ex: "Você dormiu X hoje vs Y ontem — isso explica a queda/melhora de Z pontos"]
+
+## ⚡ Padrão identificado
+[compare com a média da semana, diga se está acima/abaixo]
+
+## 🎯 Ação para amanhã
+[1 ação específica e concreta baseada nos dados, não genérica]
+
+Seja cirúrgico. Use **negrito** nos números importantes. Máximo 4 linhas por seção.`;
     }
+
     if (type === 'weekly') {
-      return `Coach de estudos, analise esses dados da semana em português (5-6 frases): ${JSON.stringify(sessions.slice(-7).map(s => ({ date: s.date, duration: Math.round(s.duration/60)+'min', performance: s.performance, period: s.period, sleep: s.sleep })))}. Identifique: melhor dia, pior dia, padrão de horário mais produtivo, impacto do sono.`;
+      const weekS   = sessions.filter(s => s.date >= new Date(Date.now() - 7*86400000).toISOString().split('T')[0]);
+      const prevS   = sessions.filter(s => {
+        const d = new Date(s.date); const now = Date.now();
+        return d >= new Date(now - 14*86400000) && d < new Date(now - 7*86400000);
+      });
+      const mW  = computeMetrics(weekS);
+      const mP  = computeMetrics(prevS);
+      const byDay = [...new Set(weekS.map(s => s.date))].sort().map(d => {
+        const g = weekS.filter(s => s.date === d);
+        return { dia: fmt(d), mins: Math.round(g.reduce((a,s)=>a+(s.duration||0),0)/60), rend: avg(g.map(perfScore)) };
+      });
+      const bestDay  = byDay.reduce((best, d) => d.rend > (best?.rend||0) ? d : best, null);
+      const worstDay = byDay.reduce((worst, d) => d.rend < (worst?.rend||100) ? d : worst, null);
+
+      return `Você é um coach de performance para devs em formação. Analise a semana e gere um relatório semanal em português com markdown.
+
+SEMANA ATUAL (últimos 7 dias):
+- Total: ${mW.totalMins}min em ${mW.days} dias | ${mW.total} sessões
+- Rendimento médio: ${mW.avgPerf}/100 | Alto rendimento: ${mW.highPerf}% das sessões
+- Streak atual: ${mW.streak} dias | Melhor streak: ${mW.bestStreak} dias
+- Melhor dia: ${bestDay?.dia} (${bestDay?.rend}/100 rendimento, ${bestDay?.mins}min)
+- Pior dia: ${worstDay?.dia} (${worstDay?.rend}/100 rendimento, ${worstDay?.mins}min)
+- Por turno: ${JSON.stringify(mW.byPeriod)}
+- Por tipo: ${JSON.stringify(mW.byType)}
+- Impacto do sono: ${JSON.stringify(mW.sleepImpact)}
+- Evolução diária: ${JSON.stringify(byDay)}
+
+SEMANA ANTERIOR (referência):
+- Total: ${mP.totalMins || 0}min | Rendimento médio: ${mP.avgPerf || 0}/100
+
+DELTAS semana atual vs anterior:
+- Tempo: ${mW.totalMins - (mP.totalMins||0) > 0 ? '+' : ''}${mW.totalMins - (mP.totalMins||0)}min
+- Rendimento: ${(mW.avgPerf - (mP.avgPerf||0)) > 0 ? '+' : ''}${(mW.avgPerf - (mP.avgPerf||0)).toFixed(0)} pontos
+
+FORMATO OBRIGATÓRIO:
+## 📊 Resumo da Semana
+[números principais: total de horas, rendimento médio, comparação com semana anterior com delta]
+
+## 🏆 Melhor e Pior Momento
+[melhor dia com dados, pior dia com dados, por que a diferença]
+
+## 🔍 Correlações da Semana
+[relate sono/alimentação/atividade com os dias de melhor e pior rendimento, use dados reais]
+
+## ⚡ Seu Perfil Esta Semana
+[melhor turno identificado com dados, melhor tipo de estudo, padrão físico que mais impactou]
+
+## 🎯 Foco para a Próxima Semana
+[2 ajustes específicos baseados nos dados, não genéricos]
+
+Use **negrito** nos números importantes. Máximo 4 linhas por seção.`;
     }
-    return `Coach de estudos, analise esse mês em português (6-8 frases): ${JSON.stringify(sessions.slice(-30).map(s => ({ date: s.date, duration: Math.round(s.duration/60)+'min', performance: s.performance, period: s.period, studyType: s.studyType, sleep: s.sleep, nutrition: s.nutrition })))}. Inclua: perfil ideal do estudante (melhor turno + tipo + condições), 3 dicas práticas, meta sugerida.`;
+
+    /* monthly */
+    const monthS  = sessions.filter(s => s.date >= new Date(Date.now() - 30*86400000).toISOString().split('T')[0]);
+    const prevS   = sessions.filter(s => {
+      const d = new Date(s.date); const now = Date.now();
+      return d >= new Date(now - 60*86400000) && d < new Date(now - 30*86400000);
+    });
+    const mM  = computeMetrics(monthS);
+    const mP  = computeMetrics(prevS);
+    const bestPeriod = mM.byPeriod?.reduce((b,p) => p.rendimento > (b?.rendimento||0) ? p : b, null);
+    const bestType   = mM.byType?.reduce((b,t) => t.rendimento > (b?.rendimento||0) ? t : b, null);
+    const bestSleep  = mM.sleepImpact?.reduce((b,s) => s.rendimento > (b?.rendimento||0) ? s : b, null);
+
+    return `Você é um coach de performance para devs em formação. Analise o mês e gere um relatório mensal completo em português com markdown.
+
+MÉTRICAS DO MÊS (últimos 30 dias):
+- Total: ${mM.totalMins}min (${(mM.totalMins/60).toFixed(1)}h) em ${mM.days} dias ativos | ${mM.total} sessões
+- Rendimento médio: ${mM.avgPerf}/100 | Alto rendimento: ${mM.highPerf}% das sessões
+- Streak atual: ${mM.streak} dias | Melhor streak: ${mM.bestStreak} dias
+- Melhor turno: ${bestPeriod?.period} (${bestPeriod?.rendimento}/100, ${bestPeriod?.horas}h)
+- Melhor tipo de estudo: ${bestType?.tipo} (${bestType?.rendimento}/100)
+- Melhor condição de sono: ${bestSleep?.sono} (${bestSleep?.rendimento}/100)
+- Por turno: ${JSON.stringify(mM.byPeriod)}
+- Por tipo: ${JSON.stringify(mM.byType)}
+- Impacto do sono: ${JSON.stringify(mM.sleepImpact)}
+
+MÊS ANTERIOR (referência):
+- Total: ${(mP.totalMins||0)}min | Rendimento: ${mP.avgPerf||0}/100 | Dias ativos: ${mP.days||0}
+
+DELTAS mês atual vs anterior:
+- Horas: ${((mM.totalMins-(mP.totalMins||0))/60) > 0 ? '+' : ''}${((mM.totalMins-(mP.totalMins||0))/60).toFixed(1)}h
+- Rendimento: ${(mM.avgPerf-(mP.avgPerf||0)) > 0 ? '+' : ''}${(mM.avgPerf-(mP.avgPerf||0)).toFixed(0)} pontos
+- Dias ativos: ${(mM.days||0)-(mP.days||0) > 0 ? '+' : ''}${(mM.days||0)-(mP.days||0)} dias
+
+FORMATO OBRIGATÓRIO:
+## 📊 Visão Geral do Mês
+[números principais com comparação ao mês anterior, tendência geral]
+
+## 🏆 Seu Perfil Ideal Identificado
+[condições em que você performa melhor: turno + tipo de estudo + sono + outros fatores físicos, tudo com dados]
+
+## 🔍 Correlações do Mês
+[3 correlações causais identificadas nos dados: "quando X, seu rendimento foi Y% maior/menor que a média"]
+
+## 📈 Evolução e Tendência
+[está evoluindo ou estagnando? compare com mês anterior, tendência do streak]
+
+## ⚡ O que Sabotar Você Este Mês
+[o padrão de comportamento que mais derrubou seu rendimento, com dados]
+
+## 🎯 Meta para o Próximo Mês
+[meta específica e mensurável baseada nos dados: "Se você replicar X, você pode atingir Y"]
+
+Use **negrito** nos números importantes. Máximo 5 linhas por seção.`;
   };
 
   const run = async () => {
-    if (!apiKey) { setError('Configure sua API key da Anthropic no perfil.'); return; }
+    if (!apiKey) { setError('Configure sua API key da Anthropic em Meu Perfil.'); return; }
     setLoading(true); setText(''); setError('');
     try { localStorage.setItem(AI_LAST_KEY(type), today); } catch {}
     try {
@@ -126,60 +345,57 @@ Seja específico: mencione o delta de tempo e rendimento, identifique diferença
           'anthropic-dangerous-direct-browser-access': 'true',
         },
         body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 600,
+          model: 'claude-sonnet-4-6',
+          max_tokens: 1200,
           stream: true,
           messages: [{ role: 'user', content: buildPrompt() }],
         }),
       });
-      if (!res.ok) throw new Error('Erro na API: ' + res.status);
+      if (!res.ok) throw new Error('Erro ' + res.status);
       const reader  = res.body.getReader();
       const decoder = new TextDecoder();
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        const lines = decoder.decode(value).split('\n');
-        for (const line of lines) {
+        for (const line of decoder.decode(value).split('\n')) {
           if (!line.startsWith('data: ')) continue;
           const raw = line.slice(6);
           if (raw === '[DONE]') break;
           try {
-            const json = JSON.parse(raw);
-            if (json.type === 'content_block_delta' && json.delta?.text) {
-              setText(t => t + json.delta.text);
-            }
+            const j = JSON.parse(raw);
+            if (j.type === 'content_block_delta' && j.delta?.text) setText(t => t + j.delta.text);
           } catch {}
         }
       }
     } catch (e) {
-      setError('Não foi possível gerar a análise. Verifique sua API key.');
+      try { localStorage.removeItem(AI_LAST_KEY(type)); } catch {}
+      setError('Não foi possível gerar a análise. Verifique sua API key em Meu Perfil.');
     }
     setLoading(false);
   };
 
-  const labels = { daily: 'Análise do dia', weekly: 'Análise da semana', monthly: 'Análise do mês' };
+  const LABELS = { daily: 'Análise do Dia', weekly: 'Análise da Semana', monthly: 'Análise do Mês' };
+  const ICONS  = { daily: '📅', weekly: '📆', monthly: '🗓️' };
 
   return (
     <div className="trk-ai-block">
       <div className="trk-ai-head">
-        <span className="trk-ai-label">✦ IA — {labels[type]}</span>
-        <button
-          className="trk-ai-btn"
-          data-cursor="hover"
-          onClick={run}
-          disabled={loading || !canAnalyze}
-        >
-          {loading ? 'Analisando...' : alreadyUsedToday ? 'Usado hoje ✓' : 'Gerar análise'}
+        <span className="trk-ai-label">{ICONS[type]} {LABELS[type]}</span>
+        <button className="trk-ai-btn" data-cursor="hover" onClick={run} disabled={loading || !canAnalyze}>
+          {loading ? 'Gerando...' : alreadyUsedToday ? 'Gerado hoje ✓' : 'Gerar relatório'}
         </button>
       </div>
-      {blockReason && <p className="trk-ai-warn">{blockReason}</p>}
+      {blockReason && !text && <p className="trk-ai-warn">{blockReason}</p>}
       {error && <p className="trk-ai-error">{error}</p>}
-      {text && (
-        <div className="trk-ai-text">
-          {text}
-          {loading && <span className="trk-ai-cursor">▌</span>}
+      {loading && !text && (
+        <div className="trk-ai-skeleton">
+          <div className="trk-ai-sk-line w70" />
+          <div className="trk-ai-sk-line w100" />
+          <div className="trk-ai-sk-line w85" />
+          <div className="trk-ai-sk-line w60" />
         </div>
       )}
+      {text && <MdRenderer text={text} loading={loading} />}
     </div>
   );
 }
