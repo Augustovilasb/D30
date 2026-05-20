@@ -134,24 +134,31 @@ function PhaseCard({ phase, unlocked, allDone, doneCount, phasePct, done, unlock
               </div>
             </>
           ) : (
-            phase.ids.map(id => {
-              const c         = COURSE_MAP[id];
-              const isDone    = done.has(id);
-              const isAnim    = unlocking.has(id);
+            phase.ids.map((id, idx) => {
+              const c              = COURSE_MAP[id];
+              const isDone         = done.has(id);
+              const isAnim         = unlocking.has(id);
+              const isCourseLocked = idx > 0 && !done.has(phase.ids[idx - 1]);
               return (
-                <div key={id} className={'rm3-course' + (isDone ? ' done' : '')}>
+                <div key={id} className={'rm3-course' + (isDone ? ' done' : '') + (isCourseLocked ? ' course-locked' : '')}>
                   <div className="rm3-course-info">
                     <span className="rm3-course-title">{c.title}</span>
                     <span className="rm3-course-sub">{c.subtitle}</span>
+                    {isCourseLocked && <span className="rm3-course-lock-msg">Conclua o anterior primeiro</span>}
                   </div>
                   <div className="rm3-course-actions">
-                    <a className="rm3-watch" href={c.url} target="_blank" rel="noopener noreferrer" data-cursor="hover">
-                      Assistir ↗
-                    </a>
+                    {isCourseLocked ? (
+                      <span className="rm3-watch rm3-watch--locked">Assistir ↗</span>
+                    ) : (
+                      <a className="rm3-watch" href={c.url} target="_blank" rel="noopener noreferrer" data-cursor="hover">
+                        Assistir ↗
+                      </a>
+                    )}
                     <button
                       className={'rm3-check' + (isDone ? ' done' : '') + (isAnim ? ' unlocking' : '')}
                       data-cursor="hover"
-                      onClick={() => onToggle(id)}
+                      onClick={() => !isCourseLocked && onToggle(id)}
+                      disabled={isCourseLocked}
                     >
                       {isDone ? '✓ Concluído' : 'Marcar concluído'}
                     </button>

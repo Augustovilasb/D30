@@ -68,7 +68,7 @@ function ThemeToggle() {
   );
 }
 
-function Nav({ page, onNavigate, user, onSignIn, onSignOut }) {
+function Nav({ page, onNavigate, user, onSignIn, onSignOut, indicCount, onNavigateTo, onNavigateProfile }) {
   const goAnchor = (anchorId) => {
     const doScroll = () => {
       const id = anchorId === 'top' ? 'fp-hero' : anchorId;
@@ -105,6 +105,7 @@ function Nav({ page, onNavigate, user, onSignIn, onSignOut }) {
               <button className={'nav-link' + (page === 'forum'     ? ' active' : '')} data-cursor="hover" onClick={() => onNavigate('forum')}>Fórum</button>
               <button className={'nav-link' + (page === 'roadmap'   ? ' active' : '')} data-cursor="hover" onClick={() => onNavigate('roadmap')}>Road Map</button>
               <button className={'nav-link' + (page === 'palestras' ? ' active' : '')} data-cursor="hover" onClick={() => onNavigate('palestras')}>Palestras</button>
+              <button className={'nav-link' + (page === 'profile'   ? ' active' : '')} data-cursor="hover" onClick={() => (onNavigateTo || onNavigate)('profile')}>Meu Perfil</button>
             </React.Fragment>
           ) : (
             <React.Fragment>
@@ -118,8 +119,9 @@ function Nav({ page, onNavigate, user, onSignIn, onSignOut }) {
       <div className="nav-slot nav-slot--right">
         <div className="nav-right">
           <ThemeToggle />
+          {user && <NotificationsBell onNavigate={onNavigateTo || onNavigate} />}
           {user ? (
-            <UserChip user={user} onSignOut={onSignOut} />
+            <UserChip user={user} onSignOut={onSignOut} indicCount={indicCount} onNavigateProfile={onNavigateProfile} />
           ) : (
             <React.Fragment>
               <button className="nav-cta ghost" data-cursor="hover" onClick={() => onSignIn('login')}>
@@ -135,7 +137,7 @@ function Nav({ page, onNavigate, user, onSignIn, onSignOut }) {
   );
 }
 
-function UserChip({ user, onSignOut }) {
+function UserChip({ user, onSignOut, indicCount, onNavigateProfile }) {
   const [open, setOpen] = React.useState(false);
   React.useEffect(() => {
     const close = () => setOpen(false);
@@ -145,13 +147,13 @@ function UserChip({ user, onSignOut }) {
   }, [open]);
   return (
     <div className={'user-chip' + (open ? ' open' : '')} data-cursor="hover" onClick={(e) => { e.stopPropagation(); setOpen(v => !v); }}>
-      <div className="user-chip-avatar" style={{ background: user.color || '#6d5ce6' }}>{user.initials}</div>
+      <div className="user-chip-avatar-wrap">
+        <div className="user-chip-avatar" style={{ background: user.color || '#6d5ce6' }}>{user.initials}</div>
+        {indicCount > 0 && <span className="user-chip-badge">{indicCount}</span>}
+      </div>
       <div className="user-chip-name">{user.name}</div>
       <div className="user-menu" onClick={(e) => e.stopPropagation()}>
         <div className="user-menu-info">Conectado como<br/><strong style={{ color: 'var(--text)' }}>{user.email}</strong></div>
-        <div className="user-menu-divider"></div>
-        <button className="user-menu-item" data-cursor="hover">Meu perfil</button>
-        <button className="user-menu-item" data-cursor="hover">Configurações</button>
         <div className="user-menu-divider"></div>
         <button className="user-menu-item danger" data-cursor="hover" onClick={onSignOut}>Sair</button>
       </div>

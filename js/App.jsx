@@ -1,9 +1,13 @@
 /* App.jsx — entry. Wires together Nav, pages, modals, toasts, cursor. */
 
-const PROTECTED = ['forum', 'roadmap', 'palestras'];
+const PROTECTED = ['forum', 'roadmap', 'palestras', 'profile'];
 
 function App() {
   // Preloader plays once per session. Skip on subsequent reloads within the tab.
+  const [indicCount, setIndicCount] = React.useState(() => {
+    try { return JSON.parse(localStorage.getItem('d30_indicacoes') || '[]').length; } catch { return 0; }
+  });
+
   const [loaded, setLoaded] = React.useState(() => {
     try { return sessionStorage.getItem('d30-pre-played') === '1'; } catch { return false; }
   });
@@ -85,14 +89,15 @@ function App() {
       {!loaded && <Preloader onDone={finishPreload} />}
       <div className="kit-shell">
         <CustomCursor />
-        <Nav page={page} onNavigate={navigate} user={user} onSignIn={(which) => setModal(which)} onSignOut={signOut} />
+        <Nav page={page} onNavigate={navigate} onNavigateTo={navigate} user={user} onSignIn={(which) => setModal(which)} onSignOut={signOut} indicCount={user && user.email === 'augustovilasb@hotmail.com' ? indicCount : 0} onNavigateProfile={() => navigate('profile')} />
         <SideRail visible={false} page={page} onNavigate={navigate} />
 
         <div className="page-shell" style={{ opacity: fading ? 0 : 1 }}>
           {page === 'home'      && <HomePage      onNavigate={navigate} onSignIn={() => setModal(user ? null : 'signup')} />}
-          {page === 'forum'     && user && <ForumPage     user={user} onSignIn={(which) => setModal(which)} onNewPost={() => openModal('newPost')} />}
+          {page === 'forum'     && user && <ForumPage     user={user} onSignIn={(which) => setModal(which)} toast={pushToast} />}
           {page === 'roadmap'   && user && <RoadmapPage />}
-          {page === 'palestras' && user && <PalestrasPage />}
+          {page === 'palestras' && user && <PalestrasPage toast={pushToast} user={user} onIndicCountChange={setIndicCount} />}
+          {page === 'profile'   && user && <ProfilePage user={user} onSignOut={signOut} onNavigate={navigate} />}
         </div>
 
         <LoginModal   open={modal === 'login'}   onClose={() => setModal(null)} onSignIn={signIn} onSwitch={setModal} toast={pushToast} />

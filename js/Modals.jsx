@@ -132,11 +132,13 @@ function SignupModal({ open, onClose, onSignIn, onSwitch, toast }) {
   );
 }
 
-function NewPostModal({ open, onClose, toast }) {
+function NewPostModal({ open, onClose, toast, onAdd, user }) {
   const [title, setTitle] = React.useState('');
   const [category, setCategory] = React.useState('duvida');
   const [content, setContent] = React.useState('');
   const [errors, setErrors] = React.useState({});
+
+  const CAT_LABELS = { duvida: 'Dúvidas & Estudo', recurso: 'Dicas', conquista: 'Conquistas', tech: 'Tecnologias', carreira: 'Carreira' };
 
   const submit = (e) => {
     e.preventDefault();
@@ -145,7 +147,27 @@ function NewPostModal({ open, onClose, toast }) {
     if (!content.trim() || content.length < 20) next.content = 'Conta um pouco mais — pelo menos 20 caracteres.';
     setErrors(next);
     if (Object.keys(next).length === 0) {
-      toast('success', 'Publicado! Em breve outras pessoas vão responder.');
+      const newTopic = {
+        id: 't_' + Math.random().toString(36).slice(2),
+        title: title.trim(),
+        author: user ? user.name : 'Anônimo',
+        avatar: user ? user.initials : '?',
+        color: user ? (user.color || '#6d5ce6') : '#999',
+        time: 'agora',
+        tag: category,
+        tagLabel: CAT_LABELS[category] || category,
+        hot: false,
+        replies: 0,
+        messages: [{
+          who: user ? user.name : 'Anônimo',
+          avatar: user ? user.initials : '?',
+          color: user ? (user.color || '#6d5ce6') : '#999',
+          time: 'agora',
+          text: content.trim(),
+        }],
+      };
+      if (onAdd) onAdd(newTopic);
+      toast('success', 'Publicado!');
       setTitle(''); setContent(''); setCategory('duvida'); setErrors({});
       onClose();
     }
@@ -159,9 +181,10 @@ function NewPostModal({ open, onClose, toast }) {
         </Field>
         <Field label="Categoria">
           <select value={category} onChange={(e) => setCategory(e.target.value)}>
-            <option value="duvida">Dúvida</option>
-            <option value="conquista">Conquista</option>
-            <option value="recurso">Recurso</option>
+            <option value="duvida">Dúvidas & Estudo</option>
+            <option value="recurso">Dicas</option>
+            <option value="conquista">Conquistas</option>
+            <option value="tech">Tecnologias</option>
             <option value="carreira">Carreira</option>
           </select>
         </Field>
@@ -170,6 +193,199 @@ function NewPostModal({ open, onClose, toast }) {
         </Field>
         <div className="form-actions">
           <button type="submit" className="btn-primary" data-cursor="hover">Publicar</button>
+        </div>
+      </form>
+    </Modal>
+  );
+}
+
+const DT_WEEKDAYS   = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const DT_MONTHS     = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const DAYS_IN_MONTH = [31,28,31,30,31,30,31,31,30,31,30,31];
+
+function DtDropdown({ id, label, value, display, open, onToggle, onClose, children }) {
+  const ref = React.useRef(null);
+
+  React.useEffect(() => {
+    if (!open) return;
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) onClose(); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open, onClose]);
+
+  return (
+    <div className="dtdrop" ref={ref}>
+      <button type="button" className={'dtdrop-btn' + (open ? ' open' : '')} onClick={onToggle} data-cursor="hover">
+        <span className="dtdrop-val">{display}</span>
+        <svg className="dtdrop-chevron" width="10" height="6" viewBox="0 0 10 6" fill="none">
+          <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </button>
+      {open && <div className="dtdrop-panel">{children}</div>}
+    </div>
+  );
+}
+
+function DateTimePicker({ onChange }) {
+  const now = new Date();
+  const [wd,    setWd]    = React.useState(now.getDay());
+  const [day,   setDay]   = React.useState(now.getDate());
+  const [month, setMonth] = React.useState(now.getMonth() + 1);
+  const [hour,  setHour]  = React.useState(19);
+  const [open,  setOpen]  = React.useState(null); // 'wd'|'day'|'month'|'hour'|null
+
+  const toggle = (id) => setOpen(v => v === id ? null : id);
+  const close  = ()   => setOpen(null);
+
+  const selectDay = (d) => {
+    const max = DAYS_IN_MONTH[month - 1];
+    setDay(Math.min(d, max));
+    close();
+  };
+  const selectMonth = (m) => {
+    setMonth(m);
+    setDay(d => Math.min(d, DAYS_IN_MONTH[m - 1]));
+    close();
+  };
+
+  React.useEffect(() => {
+    onChange(`${DT_WEEKDAYS[wd]} · ${day} ${DT_MONTHS[month-1]} · ${String(hour).padStart(2,'0')}h`);
+  }, [wd, day, month, hour]);
+
+  const days   = Array.from({ length: DAYS_IN_MONTH[month - 1] }, (_, i) => i + 1);
+  const hours  = Array.from({ length: 16 }, (_, i) => i + 7); // 07h–22h
+
+  return (
+    <div className="dtpick">
+      <DtDropdown id="wd" label="Dia da semana" display={DT_WEEKDAYS[wd]} open={open === 'wd'} onToggle={() => toggle('wd')} onClose={close}>
+        <div className="dtdrop-grid dtdrop-grid--7">
+          {DT_WEEKDAYS.map((d, i) => (
+            <button key={i} type="button" className={'dtdrop-opt' + (wd === i ? ' active' : '')} onClick={() => { setWd(i); close(); }} data-cursor="hover">{d}</button>
+          ))}
+        </div>
+      </DtDropdown>
+
+      <DtDropdown id="day" label="Dia do mês" display={String(day).padStart(2,'0')} open={open === 'day'} onToggle={() => toggle('day')} onClose={close}>
+        <div className="dtdrop-grid dtdrop-grid--7">
+          {days.map(d => (
+            <button key={d} type="button" className={'dtdrop-opt' + (day === d ? ' active' : '')} onClick={() => selectDay(d)} data-cursor="hover">{String(d).padStart(2,'0')}</button>
+          ))}
+        </div>
+      </DtDropdown>
+
+      <DtDropdown id="month" label="Mês" display={DT_MONTHS[month-1]} open={open === 'month'} onToggle={() => toggle('month')} onClose={close}>
+        <div className="dtdrop-grid dtdrop-grid--3">
+          {DT_MONTHS.map((m, i) => (
+            <button key={i} type="button" className={'dtdrop-opt' + (month === i + 1 ? ' active' : '')} onClick={() => selectMonth(i + 1)} data-cursor="hover">{m}</button>
+          ))}
+        </div>
+      </DtDropdown>
+
+      <DtDropdown id="hour" label="Horário" display={String(hour).padStart(2,'0') + 'h'} open={open === 'hour'} onToggle={() => toggle('hour')} onClose={close}>
+        <div className="dtdrop-grid dtdrop-grid--4">
+          {hours.map(h => (
+            <button key={h} type="button" className={'dtdrop-opt' + (hour === h ? ' active' : '')} onClick={() => { setHour(h); close(); }} data-cursor="hover">{String(h).padStart(2,'0')}h</button>
+          ))}
+        </div>
+      </DtDropdown>
+    </div>
+  );
+}
+
+function NewTalkModal({ open, onClose, onAdd, toast }) {
+  const [when,    setWhen]    = React.useState('');
+  const [guest,   setGuest]   = React.useState('');
+  const [role,    setRole]    = React.useState('');
+  const [title,   setTitle]   = React.useState('');
+  const [blurb,   setBlurb]   = React.useState('');
+  const [errors,  setErrors]  = React.useState({});
+
+  const reset = () => { setGuest(''); setRole(''); setTitle(''); setBlurb(''); setErrors({}); };
+
+  const submit = (e) => {
+    e.preventDefault();
+    const next = {};
+    if (!when.trim())  next.when  = 'Selecione a data e horário.';
+    if (!guest.trim()) next.guest = 'Nome do palestrante obrigatório.';
+    if (!title.trim()) next.title = 'Título obrigatório.';
+    if (!blurb.trim()) next.blurb = 'Descrição obrigatória.';
+    setErrors(next);
+    if (Object.keys(next).length) return;
+
+    onAdd({
+      when: when.trim(),
+      guest: guest.trim(),
+      role: role.trim(),
+      title: title.trim(),
+      blurb: blurb.trim(),
+      tag: 'geral',
+      rsvp: 0,
+      attendees: [],
+    });
+    toast('success', 'Palestra anunciada!');
+    reset();
+    onClose();
+  };
+
+  return (
+    <Modal open={open} onClose={() => { reset(); onClose(); }} title="Nova palestra">
+      <form onSubmit={submit} noValidate>
+        <div className={'field' + (errors.when ? ' error' : '')}>
+          <label>Data e horário</label>
+          <DateTimePicker onChange={setWhen} />
+          <div className="field-error">{errors.when || ''}</div>
+        </div>
+        <Field label="Nome do palestrante" error={errors.guest}>
+          <input type="text" placeholder="Nome completo" value={guest} onChange={(e) => setGuest(e.target.value)} />
+        </Field>
+        <Field label="Cargo e empresa" error={errors.role}>
+          <input type="text" placeholder="Ex: Dev Sênior · Nubank" value={role} onChange={(e) => setRole(e.target.value)} />
+        </Field>
+        <Field label="Título da palestra" error={errors.title}>
+          <input type="text" placeholder="Uma frase que resume o tema" value={title} onChange={(e) => setTitle(e.target.value)} />
+        </Field>
+        <Field label="Descrição curta" error={errors.blurb}>
+          <textarea placeholder="O que as pessoas vão aprender ou ouvir..." value={blurb} onChange={(e) => setBlurb(e.target.value)} style={{ minHeight: 72 }} />
+        </Field>
+        <div className="form-actions">
+          <button type="submit" className="btn-primary" data-cursor="hover">Anunciar palestra</button>
+        </div>
+      </form>
+    </Modal>
+  );
+}
+
+function SuggestSpeakerModal({ open, onClose, onSubmit, toast }) {
+  const [name,   setName]   = React.useState('');
+  const [why,    setWhy]    = React.useState('');
+  const [errors, setErrors] = React.useState({});
+
+  const reset = () => { setName(''); setWhy(''); setErrors({}); };
+
+  const submit = (e) => {
+    e.preventDefault();
+    const next = {};
+    if (!name.trim()) next.name = 'Coloca o nome do palestrante.';
+    if (!why.trim() || why.length < 10) next.why = 'Conta um pouco mais — pelo menos 10 caracteres.';
+    setErrors(next);
+    if (Object.keys(next).length) return;
+    onSubmit({ name: name.trim(), why: why.trim() });
+    toast('success', 'Indicação enviada! A gente vai analisar.');
+    reset();
+    onClose();
+  };
+
+  return (
+    <Modal open={open} onClose={() => { reset(); onClose(); }} label="Palestras" title="Indicar palestrante" subtitle="Quem você gostaria de ver palestrando aqui? A gente analisa e tenta trazer.">
+      <form onSubmit={submit} noValidate>
+        <Field label="Nome do palestrante" error={errors.name}>
+          <input type="text" placeholder="Nome completo ou @ das redes sociais" value={name} onChange={(e) => setName(e.target.value)} />
+        </Field>
+        <Field label="Por que essa pessoa?" error={errors.why}>
+          <textarea placeholder="O que ela tem a ensinar pra nossa comunidade?" value={why} onChange={(e) => setWhy(e.target.value)} style={{ minHeight: 80 }} />
+        </Field>
+        <div className="form-actions">
+          <button type="submit" className="btn-primary" data-cursor="hover">Enviar indicação</button>
         </div>
       </form>
     </Modal>
@@ -199,4 +415,4 @@ function useToasts() {
   return [toasts, push];
 }
 
-Object.assign(window, { Modal, Field, LoginModal, SignupModal, NewPostModal, ToastStack, useToasts });
+Object.assign(window, { Modal, Field, LoginModal, SignupModal, NewPostModal, NewTalkModal, SuggestSpeakerModal, ToastStack, useToasts });

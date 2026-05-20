@@ -91,6 +91,28 @@ nav {
 }
 .nav-cta.ghost:hover { color: var(--text); border-color: var(--border2); background: rgba(255,255,255,0.04); }
 
+/* ── USER CHIP BADGE ── */
+.user-chip-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+.user-chip-badge {
+  position: absolute;
+  top: -4px; right: -4px;
+  min-width: 16px; height: 16px;
+  border-radius: 99px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 3px;
+  border: 2px solid #111;
+  line-height: 1;
+  pointer-events: none;
+  z-index: 2;
+}
+
 /* User chip (logged) */
 .user-chip {
   display: flex; align-items: center; gap: 8px;
