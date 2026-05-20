@@ -166,10 +166,12 @@ function AiAnalysis({ sessions, type, apiKey }) {
   const canAnalyze    = hasWeekOfData && hasEnoughTime && !alreadyUsedToday;
 
   const blockReason = !hasWeekOfData
-    ? `${daysRegistered} dia${daysRegistered !== 1 ? 's' : ''} de dados registrados. Mínimo: 7 dias.`
+    ? `⛔ ${daysRegistered} dia${daysRegistered !== 1 ? 's' : ''} de dados (mínimo 7). Sessões: ${sessions.length}.`
     : !hasEnoughTime
-    ? `Estude pelo menos 30 min hoje — ${Math.round(todayStudiedSecs / 60)}min registrados.`
-    : alreadyUsedToday ? 'Análise já gerada hoje. Volte amanhã.' : null;
+    ? `⛔ Hoje: ${Math.round(todayStudiedSecs / 60)}min estudados (mínimo 30min).`
+    : alreadyUsedToday
+    ? '✓ Análise já gerada hoje. Volte amanhã.'
+    : null;
 
   const buildPrompt = () => {
     const fmt = (d) => new Date(d).toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' });

@@ -100,7 +100,10 @@ const Data = {
         });
       }
     }
-    try { localStorage.setItem(Data.KEY, JSON.stringify(sessions)); } catch {}
+    try {
+      localStorage.setItem(Data.KEY, JSON.stringify(sessions));
+      ['daily','weekly','monthly'].forEach(t => localStorage.removeItem(`d30_ai_last_${t}`));
+    } catch {}
     return sessions.length;
   },
 
