@@ -136,7 +136,7 @@ function SettingsPage({ user, onSignOut, onNavigate }) {
               <input id="s-new-email" className="settings-input" type="email" placeholder="novo@email.com" value={newEmail} onChange={e => setNewEmail(e.target.value)} style={{ marginBottom: 8 }} />
               {emailErr && <p className="settings-error">{emailErr}</p>}
               <div style={{ display: 'flex', gap: 8 }}>
-                <button className="settings-save-btn" data-cursor="hover" onClick={saveEmail} disabled={emailSaving} style={{ padding: '8px 20px', fontSize: 13 }}>
+                <button className="settings-save-btn" data-cursor="hover" onClick={saveEmail} disabled={emailSaving}>
                   {emailSaving ? 'Salvando…' : 'Confirmar'}
                 </button>
                 <button className="settings-key-toggle" data-cursor="hover" onClick={() => { setShowEmailForm(false); setEmailErr(''); }}>Cancelar</button>
@@ -174,7 +174,7 @@ function SettingsPage({ user, onSignOut, onNavigate }) {
               </div>
               {pwErr && <p className="settings-error">{pwErr}</p>}
               <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-                <button className="settings-save-btn" data-cursor="hover" onClick={savePw} disabled={pwSaving} style={{ padding: '8px 20px', fontSize: 13 }}>
+                <button className="settings-save-btn" data-cursor="hover" onClick={savePw} disabled={pwSaving}>
                   {pwSaving ? 'Salvando…' : 'Alterar senha'}
                 </button>
                 <button className="settings-key-toggle" data-cursor="hover" onClick={() => { setShowPwForm(false); setPwErr(''); setCurrentPw(''); setNewPw(''); setConfirmPw(''); }}>Cancelar</button>
@@ -255,7 +255,7 @@ function SettingsPage({ user, onSignOut, onNavigate }) {
               <button
                 data-cursor="hover"
                 onClick={() => { setShowDeleteForm(true); setDeleteInput(''); setDeleteMsg(''); }}
-                style={{ padding: '10px 24px', borderRadius: 10, border: '1px solid #ef444433', background: 'transparent', color: '#ef4444', fontSize: 13, fontWeight: 600, fontFamily: "'Inter', sans-serif", cursor: 'none', transition: 'background .15s', textAlign: 'left' }}
+                style={{ padding: '7px 14px', borderRadius: 7, border: '1px solid #ef444433', background: 'transparent', color: '#ef4444', fontSize: 12, fontWeight: 600, fontFamily: "'Inter', sans-serif", cursor: 'none', transition: 'background .15s', textAlign: 'left' }}
               >
                 Excluir conta
               </button>
@@ -280,7 +280,7 @@ function SettingsPage({ user, onSignOut, onNavigate }) {
                     data-cursor="hover"
                     onClick={confirmDelete}
                     disabled={deleteInput !== 'EXCLUIR'}
-                    style={{ padding: '8px 20px', borderRadius: 8, border: 'none', background: '#ef4444', color: '#fff', fontSize: 13, fontWeight: 600, fontFamily: "'Inter', sans-serif", cursor: deleteInput !== 'EXCLUIR' ? 'not-allowed' : 'none', opacity: deleteInput !== 'EXCLUIR' ? 0.4 : 1, transition: 'opacity .15s' }}
+                    style={{ padding: '7px 16px', borderRadius: 7, border: 'none', background: '#ef4444', color: '#fff', fontSize: 12, fontWeight: 700, fontFamily: "'Inter', sans-serif", cursor: 'none', opacity: deleteInput !== 'EXCLUIR' ? 0.35 : 1, transition: 'opacity .15s' }}
                   >
                     Confirmar exclusão
                   </button>
