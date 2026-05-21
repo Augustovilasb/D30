@@ -1,13 +1,78 @@
-/* LivrosPage.jsx — Livros gratuitos (PT-BR + EN) */
+/* LivrosPage.jsx — Livros gratuitos agrupados por área de trabalho */
 
-/* Gera cor de fundo para o placeholder a partir do nome da categoria */
-function catColor(str) {
-  let h = 0;
-  for (let i = 0; i < str.length; i++) h = str.charCodeAt(i) + ((h << 5) - h);
-  return `hsl(${Math.abs(h) % 360}, 40%, 30%)`;
+/* Mapeamento: categoria do markdown → bucket de carreira */
+const CAT_TO_BUCKET = {
+  /* Frontend */
+  'javascript':'frontend','typescript':'frontend','html / css':'frontend',
+  'html and css':'frontend','html':'frontend','css':'frontend',
+  'react':'frontend','vue.js':'frontend','angular':'frontend',
+  'svelte':'frontend','next.js':'frontend','jquery':'frontend',
+  'web development':'frontend','bootstrap':'frontend',
+
+  /* Backend */
+  'java':'backend','python':'backend','go':'backend','rust':'backend',
+  'c':'backend','c++':'backend','c#':'backend','ruby':'backend',
+  'php':'backend','elixir':'backend','scala':'backend','lua':'backend',
+  '.net':'backend','node.js':'backend','kotlin':'backend',
+  'sql':'backend','database':'backend','nosql':'backend',
+  'postgresql':'backend','mysql':'backend','mongodb':'backend',
+  'graphql':'backend','rest api':'backend','spring':'backend',
+
+  /* Mobile */
+  'android':'mobile','swift':'mobile','dart':'mobile',
+  'flutter':'mobile','ios':'mobile','react native':'mobile',
+
+  /* DevOps */
+  'git':'devops','docker':'devops','kubernetes':'devops','linux':'devops',
+  'bash':'devops','shell scripting':'devops','shell / bash / zsh / etc':'devops',
+  'devops':'devops','cloud computing':'devops','networking':'devops',
+  'operating systems':'devops','ansible':'devops','terraform':'devops',
+  'arduino':'devops',
+
+  /* Data & IA */
+  'data science':'data','machine learning':'data','deep learning':'data',
+  'artificial intelligence':'data','r':'data','ciência de dados':'data',
+  'inteligência artificial':'data','matlab':'data',
+
+  /* Segurança */
+  'security':'security','cybersecurity':'security','segurança':'security',
+  'criptografia':'security',
+
+  /* Fundamentos */
+  'algorithms & data structures':'cs','algorithms and data structures':'cs',
+  'computer science':'cs','software engineering':'cs','mathematics':'cs',
+  'engenharia de software':'cs','metodologias de desenvolvimento de software':'cs',
+  'matemática':'cs','programming':'cs','web performance':'cs',
+  'markdown':'cs','latex':'cs','estruturas de dados':'cs','algoritmos':'cs',
+};
+
+const JOB_BUCKETS = [
+  { id: 'frontend', label: 'Frontend'   },
+  { id: 'backend',  label: 'Backend'    },
+  { id: 'mobile',   label: 'Mobile'     },
+  { id: 'devops',   label: 'DevOps'     },
+  { id: 'data',     label: 'Data & IA'  },
+  { id: 'security', label: 'Segurança'  },
+  { id: 'cs',       label: 'Fundamentos'},
+];
+
+function getBucket(category) {
+  return CAT_TO_BUCKET[category.toLowerCase().trim()] || null;
 }
 
-/* Capa: tenta buscar via Google Books, fallback para placeholder colorido */
+/* Cor de placeholder baseada no bucket */
+const BUCKET_COLORS = {
+  frontend: '#1a4a7a', backend: '#2d5a27', mobile: '#5a2d7a',
+  devops:   '#7a4a1a', data:    '#1a5a5a', security:'#7a1a1a',
+  cs:       '#3a3a5a', default: '#2a2a3a',
+};
+
+function placeholderBg(category) {
+  const bucket = getBucket(category);
+  return BUCKET_COLORS[bucket] || BUCKET_COLORS.default;
+}
+
+/* Capa lazy via Google Books, fallback colorido */
 function BookCover({ title, category }) {
   const [src,   setSrc]   = React.useState(null);
   const [tried, setTried] = React.useState(false);
@@ -36,7 +101,7 @@ function BookCover({ title, category }) {
       {src
         ? <img src={src} alt={title} className="livro-cover-img" onError={() => setSrc(null)} />
         : (
-          <div className="livro-cover-ph" style={{ background: catColor(category) }}>
+          <div className="livro-cover-ph" style={{ background: placeholderBg(category) }}>
             <span className="livro-cover-ph-text">{title}</span>
           </div>
         )
@@ -58,25 +123,39 @@ function BookCard({ book }) {
 }
 
 function LivrosPage({ user }) {
-  const [lang,      setLang]      = React.useState('pt');
-  const [books,     setBooks]     = React.useState([]);
-  const [cats,      setCats]      = React.useState([]);
-  const [cat,       setCat]       = React.useState('all');
-  const [loading,   setLoading]   = React.useState(true);
-  const [error,     setError]     = React.useState(false);
+  const [lang,    setLang]    = React.useState('pt');
+  const [books,   setBooks]   = React.useState([]);
+  const [bucket,  setBucket]  = React.useState('all');
+  const [loading, setLoading] = React.useState(true);
+  const [error,   setError]   = React.useState(false);
 
   React.useEffect(() => {
     setLoading(true);
     setError(false);
-    setCat('all');
+    setBucket('all');
     fetch(`/api/livros?lang=${lang}`)
       .then(r => { if (!r.ok) throw new Error(); return r.json(); })
-      .then(d => { setBooks(d.books || []); setCats(d.categories || []); })
+      .then(d => setBooks(d.books || []))
       .catch(() => setError(true))
       .finally(() => setLoading(false));
   }, [lang]);
 
-  const visible = cat === 'all' ? books : books.filter(b => b.category === cat);
+  /* Contagem por bucket */
+  const counts = React.useMemo(() => {
+    const c = { all: 0 };
+    JOB_BUCKETS.forEach(b => { c[b.id] = 0; });
+    books.forEach(b => {
+      c.all++;
+      const bk = getBucket(b.category);
+      if (bk) c[bk] = (c[bk] || 0) + 1;
+    });
+    return c;
+  }, [books]);
+
+  const visible = React.useMemo(() => {
+    if (bucket === 'all') return books;
+    return books.filter(b => getBucket(b.category) === bucket);
+  }, [books, bucket]);
 
   const skeletons = Array.from({ length: 12 }, (_, i) => i);
 
@@ -86,10 +165,10 @@ function LivrosPage({ user }) {
 
         <div className="livros-header">
           <h1 className="livros-title">Livros</h1>
-          <p className="livros-sub">Livros gratuitos e legais — curados pelo repositório open-source mais completo da internet.</p>
+          <p className="livros-sub">Livros gratuitos e legais — organizados por área de trabalho.</p>
         </div>
 
-        {/* Tabs de idioma */}
+        {/* Tabs idioma */}
         <div className="vagas-tabs">
           <button className={'vagas-tab' + (lang === 'pt' ? ' active' : '')} data-cursor="hover" onClick={() => setLang('pt')}>
             🇧🇷 Português
@@ -99,24 +178,15 @@ function LivrosPage({ user }) {
           </button>
         </div>
 
-        {/* Filtro de categoria */}
-        {!loading && !error && cats.length > 0 && (
+        {/* Filtro por área */}
+        {!loading && !error && (
           <div className="livros-cats">
-            <button
-              className={'livros-cat' + (cat === 'all' ? ' active' : '')}
-              data-cursor="hover"
-              onClick={() => setCat('all')}
-            >
-              Todas <span className="livros-cat-count">{books.length}</span>
+            <button className={'livros-cat' + (bucket === 'all' ? ' active' : '')} data-cursor="hover" onClick={() => setBucket('all')}>
+              Todas <span className="livros-cat-count">{counts.all}</span>
             </button>
-            {cats.map(c => (
-              <button
-                key={c}
-                className={'livros-cat' + (cat === c ? ' active' : '')}
-                data-cursor="hover"
-                onClick={() => setCat(c)}
-              >
-                {c}
+            {JOB_BUCKETS.filter(b => counts[b.id] > 0).map(b => (
+              <button key={b.id} className={'livros-cat' + (bucket === b.id ? ' active' : '')} data-cursor="hover" onClick={() => setBucket(b.id)}>
+                {b.label} <span className="livros-cat-count">{counts[b.id]}</span>
               </button>
             ))}
           </div>
@@ -125,11 +195,7 @@ function LivrosPage({ user }) {
         {/* Skeleton */}
         {loading && (
           <div className="livros-grid">
-            {skeletons.map(i => (
-              <div key={i} className="livro-card livro-card--skeleton">
-                <div className="livro-cover livro-cover--skeleton" />
-              </div>
-            ))}
+            {skeletons.map(i => <div key={i} className="livro-card"><div className="livro-cover livro-cover--skeleton" /></div>)}
           </div>
         )}
 
@@ -141,12 +207,8 @@ function LivrosPage({ user }) {
         {/* Grid */}
         {!loading && !error && (
           visible.length === 0
-            ? <div className="vagas-empty"><p>Nenhum livro nessa categoria.</p></div>
-            : (
-              <div className="livros-grid">
-                {visible.map((b, i) => <BookCard key={b.url + i} book={b} />)}
-              </div>
-            )
+            ? <div className="vagas-empty"><p>Nenhum livro nessa área ainda.</p></div>
+            : <div className="livros-grid">{visible.map((b, i) => <BookCard key={b.url + i} book={b} />)}</div>
         )}
 
       </div>
