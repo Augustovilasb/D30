@@ -1,4 +1,6 @@
-/* LivrosPage.jsx — Livros gratuitos agrupados por área de trabalho */
+/* LivrosPage.jsx — Livros gratuitos + Recomendados */
+
+const OWNER_EMAIL = 'augustovilasb@hotmail.com';
 
 const JOB_BUCKETS = [
   { id: 'frontend', label: 'Frontend'    },
@@ -10,51 +12,20 @@ const JOB_BUCKETS = [
   { id: 'cs',       label: 'Fundamentos' },
 ];
 
-/* Exatos primeiro (nomes curtos/ambíguos) */
 const EXACT = { 'c':'backend', 'r':'data', 'go':'backend', 'lua':'backend' };
 
-/* Palavras-chave por bucket — verificadas em ordem, primeira que bate vence */
 const BUCKET_KW = [
-  { id: 'frontend', kw: [
-    'javascript','typescript','html','css','react','vue','angular','svelte',
-    'next.js','jquery','sass','less','web dev','frontend','front-end','bootstrap',
-  ]},
-  { id: 'backend', kw: [
-    'java','python','rust','c++','c#','ruby','php','elixir','scala','kotlin',
-    '.net','node','spring','django','laravel','flask','express','fastapi',
-    'sql','database','banco de dados','mysql','postgresql','mongodb','nosql',
-    'redis','graphql','api','rest','grpc','microservice',
-  ]},
-  { id: 'mobile', kw: [
-    'android','swift','dart','flutter','ios','mobile','react native','kotlin multiplatform',
-  ]},
-  { id: 'devops', kw: [
-    'git','docker','kubernetes','linux','bash','shell','zsh','devops',
-    'cloud','nuvem','network','redes','operating system','sistema operacional',
-    'ansible','terraform','arduino','infraestrutura','infrastructure','ci/cd',
-    'nginx','apache','prometheus','grafana','monitoring',
-  ]},
-  { id: 'data', kw: [
-    'data science','machine learning','deep learning','artificial intelligence',
-    'inteligência artificial','ciência de dados','analytics','tensorflow',
-    'pytorch','pandas','numpy','spark','bigdata','big data','estatística','statistics',
-  ]},
-  { id: 'security', kw: [
-    'security','cybersecurity','segurança','criptografia','pentest',
-    'hacking','owasp','criptograf','infosec',
-  ]},
-  { id: 'cs', kw: [
-    'algorithm','algoritmo','estrutura de dado','data structure',
-    'computer science','ciência da computação','software engineering',
-    'engenharia de software','mathematics','matemática','cálculo',
-    'programação','programming','design pattern','padrão de projeto',
-    'metodologia','markdown','latex','web performance','clean code',
-    'refactoring','fundamento',
-  ]},
+  { id: 'frontend', kw: ['javascript','typescript','html','css','react','vue','angular','svelte','next.js','jquery','sass','less','web dev','frontend','front-end','bootstrap'] },
+  { id: 'backend',  kw: ['java','python','rust','c++','c#','ruby','php','elixir','scala','kotlin','.net','node','spring','django','laravel','flask','express','fastapi','sql','database','banco de dados','mysql','postgresql','mongodb','nosql','redis','graphql','api','rest','grpc','microservice'] },
+  { id: 'mobile',   kw: ['android','swift','dart','flutter','ios','mobile','react native','kotlin multiplatform'] },
+  { id: 'devops',   kw: ['git','docker','kubernetes','linux','bash','shell','zsh','devops','cloud','nuvem','network','redes','operating system','sistema operacional','ansible','terraform','arduino','infraestrutura','infrastructure','ci/cd','nginx','apache','prometheus','grafana','monitoring'] },
+  { id: 'data',     kw: ['data science','machine learning','deep learning','artificial intelligence','inteligência artificial','ciência de dados','analytics','tensorflow','pytorch','pandas','numpy','spark','bigdata','big data','estatística','statistics'] },
+  { id: 'security', kw: ['security','cybersecurity','segurança','criptografia','pentest','hacking','owasp','infosec'] },
+  { id: 'cs',       kw: ['algorithm','algoritmo','estrutura de dado','data structure','computer science','ciência da computação','software engineering','engenharia de software','mathematics','matemática','cálculo','programação','programming','design pattern','padrão de projeto','metodologia','markdown','latex','web performance','clean code','refactoring','fundamento'] },
 ];
 
-function getBucket(category) {
-  const c = category.toLowerCase().trim();
+function getBucket(cat) {
+  const c = (cat || '').toLowerCase().trim();
   if (EXACT[c]) return EXACT[c];
   for (const { id, kw } of BUCKET_KW) {
     if (kw.some(k => c.includes(k))) return id;
@@ -62,46 +33,35 @@ function getBucket(category) {
   return null;
 }
 
-/* Cor de placeholder baseada no bucket */
 const BUCKET_COLORS = {
-  frontend: '#1a4a7a', backend: '#2d5a27', mobile: '#5a2d7a',
-  devops:   '#7a4a1a', data:    '#1a5a5a', security:'#7a1a1a',
-  cs:       '#3a3a5a', default: '#2a2a3a',
+  frontend:'#1a4a7a', backend:'#2d5a27', mobile:'#5a2d7a',
+  devops:'#7a4a1a',   data:'#1a5a5a',    security:'#7a1a1a',
+  cs:'#3a3a5a',       default:'#2a2a3a',
 };
 
-function placeholderBg(category) {
-  const bucket = getBucket(category);
-  return BUCKET_COLORS[bucket] || BUCKET_COLORS.default;
+function placeholderBg(cat) {
+  return BUCKET_COLORS[getBucket(cat)] || BUCKET_COLORS[cat] || BUCKET_COLORS.default;
 }
 
-/* Busca capa: Google Books + Open Library em paralelo, usa o que chegar primeiro */
+/* ── Capa lazy (Google Books + Open Library) ── */
 function fetchCover(title) {
   const q = encodeURIComponent(title);
   const gb = fetch(`https://www.googleapis.com/books/v1/volumes?q=${q}&maxResults=1&fields=items/volumeInfo/imageLinks`)
     .then(r => r.json())
-    .then(d => {
-      const t = d?.items?.[0]?.volumeInfo?.imageLinks?.thumbnail?.replace('http:', 'https:');
-      if (!t) throw new Error('no cover');
-      return t;
-    });
+    .then(d => { const t = d?.items?.[0]?.volumeInfo?.imageLinks?.thumbnail?.replace('http:','https:'); if (!t) throw 0; return t; });
   const ol = fetch(`https://openlibrary.org/search.json?title=${q}&limit=1&fields=cover_i`)
     .then(r => r.json())
-    .then(d => {
-      const id = d?.docs?.[0]?.cover_i;
-      if (!id) throw new Error('no cover');
-      return `https://covers.openlibrary.org/b/id/${id}-M.jpg`;
-    });
+    .then(d => { const id = d?.docs?.[0]?.cover_i; if (!id) throw 0; return `https://covers.openlibrary.org/b/id/${id}-M.jpg`; });
   return Promise.any([gb, ol]).catch(() => null);
 }
 
-/* Capa lazy — tenta Google Books e Open Library quando entra no viewport */
-function BookCover({ title, category }) {
-  const [src, setSrc] = React.useState(null);
+function BookCover({ title, category, staticSrc }) {
+  const [src, setSrc] = React.useState(staticSrc || null);
   const ref     = React.useRef(null);
-  const fetched = React.useRef(false);
+  const fetched = React.useRef(!!staticSrc);
 
   React.useEffect(() => {
-    if (!ref.current) return;
+    if (!ref.current || fetched.current) return;
     const obs = new IntersectionObserver(([e]) => {
       if (!e.isIntersecting || fetched.current) return;
       fetched.current = true;
@@ -116,16 +76,13 @@ function BookCover({ title, category }) {
     <div ref={ref} className="livro-cover">
       {src
         ? <img src={src} alt={title} className="livro-cover-img" onError={() => setSrc(null)} />
-        : (
-          <div className="livro-cover-ph" style={{ background: placeholderBg(category) }}>
-            <span className="livro-cover-ph-text">{title}</span>
-          </div>
-        )
+        : <div className="livro-cover-ph" style={{ background: placeholderBg(category) }}><span className="livro-cover-ph-text">{title}</span></div>
       }
     </div>
   );
 }
 
+/* ── Card livro gratuito ── */
 function BookCard({ book }) {
   return (
     <a className="livro-card" href={book.url} target="_blank" rel="noopener noreferrer" data-cursor="hover">
@@ -138,40 +95,146 @@ function BookCard({ book }) {
   );
 }
 
-function LivrosPage({ user }) {
-  const [lang,    setLang]    = React.useState('pt');
-  const [books,   setBooks]   = React.useState([]);
-  const [bucket,  setBucket]  = React.useState('all');
-  const [loading, setLoading] = React.useState(true);
-  const [error,   setError]   = React.useState(false);
+/* ── Card livro recomendado ── */
+function RecomCard({ book }) {
+  const bucketLabel = JOB_BUCKETS.find(b => b.id === book.category)?.label || book.category;
+  return (
+    <a className="livro-card" href={book.link} target="_blank" rel="noopener noreferrer" data-cursor="hover">
+      <BookCover title={book.title} category={book.category} staticSrc={book.cover_url || null} />
+      <div className="livro-card-info">
+        <span className="livro-recom-badge">D30 Pick</span>
+        <p className="livro-card-title">{book.title}</p>
+        {book.author && <p className="livro-card-author">{book.author}</p>}
+        {book.description && <p className="livro-card-desc">{book.description}</p>}
+      </div>
+    </a>
+  );
+}
+
+/* ── Admin form ── */
+function AdminLivroForm({ onSaved, toast }) {
+  const empty = { title:'', author:'', cover_url:'', category:'backend', description:'', link:'' };
+  const [form,   setForm]   = React.useState(empty);
+  const [saving, setSaving] = React.useState(false);
+  const [open,   setOpen]   = React.useState(false);
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  const save = async () => {
+    if (!form.title.trim() || !form.link.trim()) { toast('error', 'Título e link são obrigatórios.'); return; }
+    setSaving(true);
+    try {
+      const { error } = await window.sb.from('livros_recomendados').insert({
+        ...form,
+        title: form.title.trim(),
+        link:  form.link.trim(),
+        cover_url: form.cover_url.trim() || null,
+        author: form.author.trim() || null,
+        description: form.description.trim() || null,
+      });
+      if (error) throw error;
+      toast('success', 'Livro adicionado!');
+      setForm(empty);
+      setOpen(false);
+      onSaved();
+    } catch (e) {
+      toast('error', e.message || 'Erro ao salvar.');
+    } finally { setSaving(false); }
+  };
+
+  if (!open) return (
+    <button className="vagas-admin-toggle" data-cursor="hover" onClick={() => setOpen(true)}>+ Adicionar livro recomendado</button>
+  );
+
+  return (
+    <div className="vagas-admin-form">
+      <div className="vagas-admin-form-header">
+        <span>Novo livro recomendado</span>
+        <button className="vagas-admin-close" data-cursor="hover" onClick={() => setOpen(false)}>✕</button>
+      </div>
+      <div className="vagas-admin-grid">
+        <div className="vagas-admin-field vagas-admin-field--full">
+          <label>Título *</label>
+          <input className="settings-input" value={form.title} onChange={e => set('title', e.target.value)} placeholder="Ex: Clean Code" />
+        </div>
+        <div className="vagas-admin-field">
+          <label>Autor</label>
+          <input className="settings-input" value={form.author} onChange={e => set('author', e.target.value)} placeholder="Ex: Robert C. Martin" />
+        </div>
+        <div className="vagas-admin-field">
+          <label>Área</label>
+          <select className="settings-input" value={form.category} onChange={e => set('category', e.target.value)}>
+            {JOB_BUCKETS.map(b => <option key={b.id} value={b.id}>{b.label}</option>)}
+          </select>
+        </div>
+        <div className="vagas-admin-field vagas-admin-field--full">
+          <label>URL da capa</label>
+          <input className="settings-input" value={form.cover_url} onChange={e => set('cover_url', e.target.value)} placeholder="https://..." />
+        </div>
+        <div className="vagas-admin-field vagas-admin-field--full">
+          <label>Link *</label>
+          <input className="settings-input" type="url" value={form.link} onChange={e => set('link', e.target.value)} placeholder="https://amazon.com.br/..." />
+        </div>
+        <div className="vagas-admin-field vagas-admin-field--full">
+          <label>Por que ler?</label>
+          <textarea className="settings-input settings-textarea" rows={2} value={form.description} onChange={e => set('description', e.target.value)} placeholder="Uma linha sobre por que esse livro vale a pena..." />
+        </div>
+      </div>
+      <button className="settings-save-btn" data-cursor="hover" onClick={save} disabled={saving}>
+        {saving ? 'Salvando…' : 'Publicar'}
+      </button>
+    </div>
+  );
+}
+
+/* ── Main Page ── */
+function LivrosPage({ user, toast }) {
+  const isAdmin = user?.email === OWNER_EMAIL;
+
+  const [tab,          setTab]          = React.useState('free'); // free | recom
+  const [lang,         setLang]         = React.useState('pt');
+  const [books,        setBooks]        = React.useState([]);
+  const [recom,        setRecom]        = React.useState([]);
+  const [bucket,       setBucket]       = React.useState('all');
+  const [recomBucket,  setRecomBucket]  = React.useState('all');
+  const [loading,      setLoading]      = React.useState(true);
+  const [loadingRecom, setLoadingRecom] = React.useState(true);
+  const [error,        setError]        = React.useState(false);
 
   React.useEffect(() => {
-    setLoading(true);
-    setError(false);
-    setBucket('all');
+    setLoading(true); setError(false); setBucket('all');
     fetch(`/api/livros?lang=${lang}`)
-      .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+      .then(r => { if (!r.ok) throw 0; return r.json(); })
       .then(d => setBooks(d.books || []))
       .catch(() => setError(true))
       .finally(() => setLoading(false));
   }, [lang]);
 
-  /* Contagem por bucket */
-  const counts = React.useMemo(() => {
-    const c = { all: 0 };
-    JOB_BUCKETS.forEach(b => { c[b.id] = 0; });
-    books.forEach(b => {
-      c.all++;
-      const bk = getBucket(b.category);
-      if (bk) c[bk] = (c[bk] || 0) + 1;
-    });
+  const fetchRecom = React.useCallback(async () => {
+    if (!window.sb) return;
+    setLoadingRecom(true);
+    try {
+      const { data } = await window.sb.from('livros_recomendados').select('*').eq('active', true).order('created_at', { ascending: false });
+      setRecom(data || []);
+    } catch {} finally { setLoadingRecom(false); }
+  }, []);
+
+  React.useEffect(() => { fetchRecom(); }, [fetchRecom]);
+
+  /* Contagens */
+  const freeCounts = React.useMemo(() => {
+    const c = { all: books.length };
+    books.forEach(b => { const bk = getBucket(b.category); if (bk) c[bk] = (c[bk] || 0) + 1; });
     return c;
   }, [books]);
 
-  const visible = React.useMemo(() => {
-    if (bucket === 'all') return books;
-    return books.filter(b => getBucket(b.category) === bucket);
-  }, [books, bucket]);
+  const recomCounts = React.useMemo(() => {
+    const c = { all: recom.length };
+    recom.forEach(b => { if (b.category) c[b.category] = (c[b.category] || 0) + 1; });
+    return c;
+  }, [recom]);
+
+  const visibleFree  = bucket === 'all'      ? books : books.filter(b => getBucket(b.category) === bucket);
+  const visibleRecom = recomBucket === 'all' ? recom : recom.filter(b => b.category === recomBucket);
 
   const skeletons = Array.from({ length: 12 }, (_, i) => i);
 
@@ -181,50 +244,87 @@ function LivrosPage({ user }) {
 
         <div className="livros-header">
           <h1 className="livros-title">Livros</h1>
-          <p className="livros-sub">Livros gratuitos e legais — organizados por área de trabalho.</p>
+          <p className="livros-sub">Gratuitos do mundo todo e os melhores recomendados pela D30.</p>
         </div>
 
-        {/* Tabs idioma */}
+        {/* Tabs principais */}
         <div className="vagas-tabs">
-          <button className={'vagas-tab' + (lang === 'pt' ? ' active' : '')} data-cursor="hover" onClick={() => setLang('pt')}>
-            🇧🇷 Português
+          <button className={'vagas-tab' + (tab === 'free' ? ' active' : '')} data-cursor="hover" onClick={() => setTab('free')}>
+            Gratuitos
+            {!loading && <span className="vagas-tab-count">{books.length}</span>}
           </button>
-          <button className={'vagas-tab' + (lang === 'en' ? ' active' : '')} data-cursor="hover" onClick={() => setLang('en')}>
-            🇺🇸 English
+          <button className={'vagas-tab' + (tab === 'recom' ? ' active' : '')} data-cursor="hover" onClick={() => setTab('recom')}>
+            D30 Recomenda
+            {!loadingRecom && <span className="vagas-tab-count">{recom.length}</span>}
           </button>
         </div>
 
-        {/* Filtro por área */}
-        {!loading && !error && (
-          <div className="livros-cats">
-            <button className={'livros-cat' + (bucket === 'all' ? ' active' : '')} data-cursor="hover" onClick={() => setBucket('all')}>
-              Todas <span className="livros-cat-count">{counts.all}</span>
-            </button>
-            {JOB_BUCKETS.filter(b => counts[b.id] > 0).map(b => (
-              <button key={b.id} className={'livros-cat' + (bucket === b.id ? ' active' : '')} data-cursor="hover" onClick={() => setBucket(b.id)}>
-                {b.label} <span className="livros-cat-count">{counts[b.id]}</span>
-              </button>
-            ))}
-          </div>
+        {/* ── GRATUITOS ── */}
+        {tab === 'free' && (
+          <React.Fragment>
+            {/* Sub-tabs idioma */}
+            <div style={{ display:'flex', gap:8, marginBottom:20 }}>
+              {[['pt','🇧🇷 Português'],['en','🇺🇸 English']].map(([l, label]) => (
+                <button key={l} className={'livros-cat' + (lang === l ? ' active' : '')} data-cursor="hover" onClick={() => setLang(l)}>{label}</button>
+              ))}
+            </div>
+
+            {/* Filtro área */}
+            {!loading && !error && (
+              <div className="livros-cats">
+                <button className={'livros-cat' + (bucket === 'all' ? ' active' : '')} data-cursor="hover" onClick={() => setBucket('all')}>
+                  Todas <span className="livros-cat-count">{freeCounts.all}</span>
+                </button>
+                {JOB_BUCKETS.filter(b => freeCounts[b.id] > 0).map(b => (
+                  <button key={b.id} className={'livros-cat' + (bucket === b.id ? ' active' : '')} data-cursor="hover" onClick={() => setBucket(b.id)}>
+                    {b.label} <span className="livros-cat-count">{freeCounts[b.id]}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {loading && <div className="livros-grid">{skeletons.map(i => <div key={i} className="livro-card"><div className="livro-cover livro-cover--skeleton" /></div>)}</div>}
+            {!loading && error && <div className="vagas-empty"><p>Não foi possível carregar. Tente novamente.</p></div>}
+            {!loading && !error && (
+              visibleFree.length === 0
+                ? <div className="vagas-empty"><p>Nenhum livro nessa área.</p></div>
+                : <div className="livros-grid">{visibleFree.map((b, i) => <BookCard key={b.url + i} book={b} />)}</div>
+            )}
+          </React.Fragment>
         )}
 
-        {/* Skeleton */}
-        {loading && (
-          <div className="livros-grid">
-            {skeletons.map(i => <div key={i} className="livro-card"><div className="livro-cover livro-cover--skeleton" /></div>)}
-          </div>
-        )}
+        {/* ── RECOMENDADOS ── */}
+        {tab === 'recom' && (
+          <React.Fragment>
+            {isAdmin && <AdminLivroForm onSaved={fetchRecom} toast={toast} />}
 
-        {/* Erro */}
-        {!loading && error && (
-          <div className="vagas-empty"><p>Não foi possível carregar os livros. Tente novamente.</p></div>
-        )}
+            {/* Filtro área */}
+            {!loadingRecom && recom.length > 0 && (
+              <div className="livros-cats" style={{ marginTop: isAdmin ? 16 : 0 }}>
+                <button className={'livros-cat' + (recomBucket === 'all' ? ' active' : '')} data-cursor="hover" onClick={() => setRecomBucket('all')}>
+                  Todos <span className="livros-cat-count">{recomCounts.all}</span>
+                </button>
+                {JOB_BUCKETS.filter(b => recomCounts[b.id] > 0).map(b => (
+                  <button key={b.id} className={'livros-cat' + (recomBucket === b.id ? ' active' : '')} data-cursor="hover" onClick={() => setRecomBucket(b.id)}>
+                    {b.label} <span className="livros-cat-count">{recomCounts[b.id]}</span>
+                  </button>
+                ))}
+              </div>
+            )}
 
-        {/* Grid */}
-        {!loading && !error && (
-          visible.length === 0
-            ? <div className="vagas-empty"><p>Nenhum livro nessa área ainda.</p></div>
-            : <div className="livros-grid">{visible.map((b, i) => <BookCard key={b.url + i} book={b} />)}</div>
+            {loadingRecom && <div className="livros-grid">{skeletons.map(i => <div key={i} className="livro-card"><div className="livro-cover livro-cover--skeleton" /></div>)}</div>}
+
+            {!loadingRecom && visibleRecom.length === 0 && (
+              <div className="vagas-empty">
+                <p>Nenhum livro recomendado ainda.</p>
+                {!isAdmin && <p style={{ fontSize:13, marginTop:6 }}>Em breve o Augusto vai listar os melhores.</p>}
+              </div>
+            )}
+
+            {!loadingRecom && visibleRecom.length > 0 && (
+              <div className="livros-grid">{visibleRecom.map(b => <RecomCard key={b.id} book={b} />)}</div>
+            )}
+          </React.Fragment>
         )}
 
       </div>
