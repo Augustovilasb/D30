@@ -458,7 +458,7 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
               <StatCard iconSlug="primeiros_passos" value={`${totalHours}h`}   label="estudadas"             onClick={() => goRank('hours')}   />
               <StatCard iconSlug="consistente"      value={sessions.length}     label="sessões de estudo"     onClick={() => goRank('sessions')} />
               <StatCard iconSlug="lendario"         value={livrosLidos}         label="livros lidos"          onClick={() => goRank('books')}    />
-              <StatCard iconSlug="palestrante_fiel" value={palestrasCount === null ? '—' : palestrasCount} label="talks participações"     onClick={() => goRank('talks')}    />
+              <StatCard iconSlug="palestrante_fiel" value={palestrasCount === null ? '—' : palestrasCount} label="talks presença"     onClick={() => goRank('talks')}    />
               <StatCard iconSlug="primeira_sessao"  value={forumCount === null ? '—' : forumCount}         label="tópicos criados no fórum" onClick={() => goRank('forum')}    />
               {totalCourses > 0 && (
                 <StatCard iconSlug="dedicado" value={`${doneCourses}/${totalCourses}`} label="cursos finalizados" onClick={() => goRank('courses')} />
