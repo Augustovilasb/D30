@@ -71,8 +71,7 @@ function EditProfilePage({ user, onUpdate, onNavigate }) {
         website_url:   form.website_url.trim()   || null,
         initials,
       });
-      setSaved(true);
-      setTimeout(() => onNavigate('profile'), 800);
+      onNavigate('profile');
     } catch (err) {
       setError(err.message || 'Erro ao salvar.');
     } finally { setSaving(false); }
