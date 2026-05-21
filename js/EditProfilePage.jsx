@@ -17,26 +17,54 @@ function EditProfilePage({ user, onUpdate, onNavigate }) {
   const [saved,     setSaved]     = React.useState(false);
   const [error,     setError]     = React.useState('');
   const [uploading, setUploading] = React.useState(false);
+  const [cropSrc,   setCropSrc]   = React.useState(null);
   const fileInputRef = React.useRef(null);
+  const cropImgRef   = React.useRef(null);
+  const cropperRef   = React.useRef(null);
 
-  const handleFileSelect = async (e) => {
+  const handleFileSelect = (e) => {
     const file = e.target.files[0];
     if (!file) return;
     if (!file.type.startsWith('image/')) { setError('Selecione uma imagem válida.'); return; }
-    if (file.size > 3 * 1024 * 1024) { setError('Imagem muito grande. Máximo 3MB.'); return; }
-    setUploading(true); setError('');
-    try {
-      const ext  = file.name.split('.').pop().toLowerCase() || 'jpg';
-      const path = `${user.id}.${ext}`;
-      const { error: upErr } = await window.sb.storage
-        .from('avatars')
-        .upload(path, file, { upsert: true, contentType: file.type });
-      if (upErr) throw upErr;
-      const { data: { publicUrl } } = window.sb.storage.from('avatars').getPublicUrl(path);
-      set('avatar_url', publicUrl + '?t=' + Date.now());
-    } catch (err) {
-      setError('Erro ao enviar foto: ' + (err.message || 'tente novamente.'));
-    } finally { setUploading(false); e.target.value = ''; }
+    if (file.size > 10 * 1024 * 1024) { setError('Imagem muito grande. Máximo 10MB.'); return; }
+    const reader = new FileReader();
+    reader.onload = (ev) => setCropSrc(ev.target.result);
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
+
+  const initCropper = () => {
+    if (cropperRef.current) cropperRef.current.destroy();
+    if (cropImgRef.current && window.Cropper) {
+      cropperRef.current = new window.Cropper(cropImgRef.current, {
+        aspectRatio: 1, viewMode: 1, dragMode: 'move', autoCropArea: 0.85,
+      });
+    }
+  };
+
+  const closeCrop = () => {
+    cropperRef.current?.destroy();
+    cropperRef.current = null;
+    setCropSrc(null);
+  };
+
+  const confirmCrop = () => {
+    if (!cropperRef.current) return;
+    setUploading(true);
+    cropperRef.current.getCroppedCanvas({ width: 400, height: 400 }).toBlob(async (blob) => {
+      try {
+        const path = `${user.id}.jpg`;
+        const { error: upErr } = await window.sb.storage
+          .from('avatars')
+          .upload(path, blob, { upsert: true, contentType: 'image/jpeg' });
+        if (upErr) throw upErr;
+        const { data: { publicUrl } } = window.sb.storage.from('avatars').getPublicUrl(path);
+        set('avatar_url', publicUrl + '?t=' + Date.now());
+        closeCrop();
+      } catch (err) {
+        setError('Erro ao enviar foto: ' + (err.message || 'tente novamente.'));
+      } finally { setUploading(false); }
+    }, 'image/jpeg', 0.92);
   };
 
   const set = (field, val) => setForm(f => ({ ...f, [field]: val }));
@@ -102,6 +130,26 @@ function EditProfilePage({ user, onUpdate, onNavigate }) {
   const previewInitials = form.full_name.trim().split(/\s+/).map(s => s[0]).slice(0,2).join('').toUpperCase() || user.initials;
 
   return (
+    <>
+    {cropSrc && (
+      <div className="avatar-crop-overlay" onClick={closeCrop}>
+        <div className="avatar-crop-modal" onClick={e => e.stopPropagation()}>
+          <div className="avatar-crop-header">
+            <span>Ajustar foto</span>
+            <button className="avatar-crop-close" onClick={closeCrop} data-cursor="hover">✕</button>
+          </div>
+          <div className="avatar-crop-area">
+            <img ref={cropImgRef} src={cropSrc} onLoad={initCropper} alt="crop" />
+          </div>
+          <div className="avatar-crop-actions">
+            <button className="avatar-crop-rotate" data-cursor="hover" onClick={() => cropperRef.current?.rotate(-90)}>↺ Girar</button>
+            <button className="avatar-crop-confirm" data-cursor="hover" onClick={confirmCrop} disabled={uploading}>
+              {uploading ? 'Enviando…' : 'Confirmar'}
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
     <div className="page active fade-in">
       <div className="settings-wrap">
 
@@ -203,6 +251,7 @@ function EditProfilePage({ user, onUpdate, onNavigate }) {
       </div>
       <Footer />
     </div>
+    </>
   );
 }
 
