@@ -118,15 +118,12 @@ function EditProfilePage({ user, onUpdate, onNavigate }) {
               className={'settings-avatar-preview settings-avatar-clickable' + (uploading ? ' uploading' : '')}
               onClick={() => !uploading && fileInputRef.current?.click()}
               data-cursor="hover"
-              title="Clique para trocar a foto"
             >
               {form.avatar_url
                 ? <img src={form.avatar_url} alt="Avatar" className="settings-avatar-img" onError={e => { e.target.style.display = 'none'; }} />
                 : <div className="settings-avatar-init" style={{ background: user.color || '#6d5ce6' }}>{previewInitials}</div>
               }
-              <div className="settings-avatar-overlay">
-                {uploading ? <span className="settings-avatar-spinner" /> : <span>📷</span>}
-              </div>
+              <span className="settings-avatar-spinner" />
             </div>
             <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileSelect} />
             <div className="settings-avatar-input">

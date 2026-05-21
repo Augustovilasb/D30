@@ -4754,25 +4754,19 @@ nav.nav--floating .user-menu-info strong{ color: var(--text); }
   border-radius: 50%; overflow: hidden;
   border: 1px solid var(--border);
 }
-.settings-avatar-clickable { position: relative; cursor: pointer; transition: opacity 0.18s; }
-.settings-avatar-clickable:hover { opacity: 0.85; }
-.settings-avatar-clickable.uploading { opacity: 0.6; pointer-events: none; }
-.settings-avatar-overlay {
-  position: absolute; inset: 0; border-radius: 50%;
-  background: rgba(0,0,0,0.45);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
-  opacity: 0; transition: opacity 0.18s;
-}
-.settings-avatar-clickable:hover .settings-avatar-overlay,
-.settings-avatar-clickable.uploading .settings-avatar-overlay { opacity: 1; }
+.settings-avatar-clickable { position: relative; cursor: pointer; }
+.settings-avatar-clickable.uploading { pointer-events: none; }
+.settings-avatar-overlay { display: none; }
 .settings-avatar-spinner {
-  width: 18px; height: 18px; border-radius: 50%;
+  position: absolute; bottom: 2px; right: 2px;
+  width: 14px; height: 14px; border-radius: 50%;
   border: 2px solid rgba(255,255,255,0.3);
   border-top-color: #fff;
   animation: spin 0.7s linear infinite;
-  display: inline-block;
+  display: none;
+  background: rgba(0,0,0,0.5);
 }
+.settings-avatar-clickable.uploading .settings-avatar-spinner { display: block; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .settings-avatar-upload-btn {
   padding: 8px 14px; background: var(--bg3); border: 1px solid var(--border2);
