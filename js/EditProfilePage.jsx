@@ -72,7 +72,7 @@ function EditProfilePage({ user, onUpdate, onNavigate }) {
         initials,
       });
       setSaved(true);
-      setTimeout(() => setSaved(false), 2500);
+      setTimeout(() => onNavigate('profile'), 800);
     } catch (err) {
       setError(err.message || 'Erro ao salvar.');
     } finally { setSaving(false); }
