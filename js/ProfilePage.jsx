@@ -317,21 +317,26 @@ function StatsDetailModal({ type, user, onClose }) {
       try { setItems(JSON.parse(localStorage.getItem('d30_livros_lidos_v2') || '[]')); }
       catch { setItems([]); }
     } else if (type === 'cursos') {
-      try {
-        const done = new Set(JSON.parse(localStorage.getItem('d30_roadmap_v3') || '[]'));
+      DB.roadmap.getProgress(user.id).then(done => {
         const list = typeof COURSES !== 'undefined' && COURSES ? COURSES.filter(c => done.has(c.id)) : [];
         setItems(list);
-      } catch { setItems([]); }
+      }).catch(() => setItems([]));
     } else if (type === 'sessoes') {
       const s = window.Data ? [...window.Data.load()].reverse().slice(0, 30) : [];
       setItems(s);
     } else if (type === 'talks') {
       if (!window.sb) { setItems([]); return; }
-      window.sb.from('palestra_attendance').select('*').eq('user_id', user.id).order('created_at', { ascending: false })
+      window.sb.from('talk_rsvp')
+        .select('id, created_at, talks(title, when_text, guest_name)')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
         .then(({ data }) => setItems(data || []));
     } else if (type === 'forum') {
       if (!window.sb) { setItems([]); return; }
-      window.sb.from('forum_activity').select('*').eq('user_id', user.id).eq('type', 'topic').order('created_at', { ascending: false })
+      window.sb.from('forum_topics')
+        .select('id, title, created_at')
+        .eq('author_id', user.id)
+        .order('created_at', { ascending: false })
         .then(({ data }) => setItems(data || []));
     }
   }, [type]);
@@ -378,8 +383,8 @@ function StatsDetailModal({ type, user, onClose }) {
               ))}
               {type === 'talks' && items.map((t, i) => (
                 <li key={t.id || i} className="stats-detail-item">
-                  <span className="stats-detail-item-title">{t.title || t.palestra_title || t.name || `Talk #${i + 1}`}</span>
-                  {t.created_at && <span className="stats-detail-item-sub">{t.created_at.slice(0, 10)}</span>}
+                  <span className="stats-detail-item-title">{t.talks?.title || `Talk #${i + 1}`}</span>
+                  {t.talks?.when_text && <span className="stats-detail-item-sub">{t.talks.when_text}</span>}
                 </li>
               ))}
               {type === 'forum' && items.map((f, i) => (
@@ -429,8 +434,8 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
   React.useEffect(() => {
     if (!window.sb || !user.id) return;
     Promise.all([
-      window.sb.from('forum_activity').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('type', 'topic'),
-      window.sb.from('palestra_attendance').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
+      window.sb.from('forum_topics').select('id', { count: 'exact', head: true }).eq('author_id', user.id),
+      window.sb.from('talk_rsvp').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
       window.sb.from('profiles').select('total_hours').eq('id', user.id).single(),
     ]).then(([{ count: fc }, { count: pc }, { data: myProf }]) => {
       setForumCount(fc || 0);
@@ -540,8 +545,8 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
 
         {/* ── Stats com ícones SVG ── */}
         <div className="pub-stats-row">
-          <StatCard iconSlug="primeiros_passos" value={`${totalHours}h`}   label="estudadas"                onClick={() => setDetailModal('sessoes')} />
-          <StatCard iconSlug="consistente"      value={sessions.length}     label="sessões de estudo"        onClick={() => setDetailModal('sessoes')} />
+          <StatCard iconSlug="primeiros_passos" value={`${totalHours}h`}   label="estudadas"                />
+          <StatCard iconSlug="consistente"      value={sessions.length}     label="sessões de estudo"        />
           <StatCard iconSlug="lendario"         value={livrosLidos}         label="livros lidos"             onClick={() => setDetailModal('livros')}  />
           <StatCard iconSlug="palestrante_fiel" value={palestrasCount === null ? '—' : palestrasCount} label="talks presença"          onClick={() => setDetailModal('talks')}   />
           <StatCard iconSlug="primeira_sessao"  value={forumCount === null ? '—' : forumCount}         label="tópicos criados no fórum" onClick={() => setDetailModal('forum')}   />
