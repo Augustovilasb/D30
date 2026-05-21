@@ -4756,87 +4756,73 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
 /* ── D30 Card (the image) ── */
 .d30-share-card {
   width: 360px; height: 360px;
-  background: #080808;
+  background: #090b14;
   border-radius: 16px;
   display: flex; flex-direction: column;
-  padding: 0;
+  justify-content: space-between;
+  padding: 22px;
   position: relative;
   overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
-/* borda roxa no topo */
-.d30-share-card::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: linear-gradient(90deg, #6d5ce6, #a78bfa, transparent);
-  z-index: 2;
-}
-/* watermark D30 gigante */
-.d30-share-card::after {
-  content: 'D30';
-  position: absolute; bottom: -20px; right: -10px;
-  font-size: 160px; font-weight: 900; color: #fff;
-  opacity: 0.03; letter-spacing: -8px; line-height: 1;
+.d30-card-dots {
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px);
+  background-size: 18px 18px;
   pointer-events: none; z-index: 0;
+  mask-image: linear-gradient(to right, rgba(0,0,0,0.6) 0%, transparent 70%);
+  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0.6) 0%, transparent 70%);
 }
-/* glow canto */
-.d30-card-glow {
-  position: absolute; top: -60px; right: -60px;
-  width: 200px; height: 200px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(109,92,230,0.2) 0%, transparent 70%);
+.d30-card-curves {
+  position: absolute; inset: 0; width: 100%; height: 100%;
   pointer-events: none; z-index: 0;
 }
 .d30-card-top {
   position: relative; z-index: 1;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 22px 22px 0;
 }
 .d30-card-logo {
   font-size: 18px; font-weight: 900; color: #fff; letter-spacing: -1px;
 }
+.d30-card-logo em { color: #6d5ce6; font-style: normal; }
 .d30-card-tag {
-  font-size: 9px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
-  border: 1px solid; border-radius: 5px; padding: 3px 7px; line-height: 1;
+  font-size: 9px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase;
+  border: 1px solid; border-radius: 20px; padding: 4px 10px; line-height: 1;
+  background: transparent;
 }
 .d30-card-center {
   position: relative; z-index: 1;
   display: flex; flex-direction: column; align-items: flex-start; gap: 0;
-  padding: 24px 22px 0;
-  flex: 1;
+  flex: 1; justify-content: center; padding: 8px 0;
 }
 .d30-card-avatar {
-  width: 64px; height: 64px; border-radius: 50%;
+  width: 48px; height: 48px; border-radius: 50%;
   background: #6d5ce6;
   display: flex; align-items: center; justify-content: center;
-  font-size: 22px; font-weight: 800; color: #fff;
+  font-size: 17px; font-weight: 800; color: #fff;
   overflow: hidden; flex-shrink: 0;
-  box-shadow: 0 0 0 3px #080808, 0 0 0 5px rgba(109,92,230,0.5);
-  margin-bottom: 14px;
+  box-shadow: 0 0 0 2px #090b14, 0 0 0 4px rgba(109,92,230,0.6);
+  margin-bottom: 12px;
 }
 .d30-card-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .d30-card-name {
-  font-size: 24px; font-weight: 800; color: #fff; letter-spacing: -0.8px;
-  line-height: 1.1; margin: 0;
+  font-size: 36px; font-weight: 800; color: #fff; letter-spacing: -1.5px;
+  line-height: 1.05; margin: 0;
 }
-.d30-card-handle { font-size: 12px; color: #444; margin-top: 4px; font-weight: 500; }
-.d30-card-bottom {
-  position: relative; z-index: 1;
-  padding: 0 22px 22px;
-}
+.d30-card-handle { font-size: 12px; color: #3a3f55; margin-top: 6px; font-weight: 500; }
+.d30-card-bottom { position: relative; z-index: 1; }
+.d30-card-tagline-wrap { margin-bottom: 14px; }
 .d30-card-divider {
-  width: 32px; height: 2px; background: #6d5ce6; border-radius: 2px;
-  margin-bottom: 12px;
+  width: 28px; height: 2px; background: #6d5ce6; border-radius: 2px; margin-bottom: 8px;
 }
 .d30-card-tagline {
-  font-size: 26px; font-weight: 800; color: #fff; line-height: 1.1; margin: 0 0 16px;
-  letter-spacing: -1px;
+  font-size: 16px; font-weight: 700; color: #8888aa; line-height: 1.3; margin: 0;
+  letter-spacing: -0.3px;
 }
 .d30-card-tagline em { color: #6d5ce6; font-style: normal; }
-.d30-card-footer {
-  display: flex; align-items: center; justify-content: space-between;
-}
-.d30-card-url { font-size: 10px; color: #333; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
-.d30-card-ig  { font-size: 10px; color: #333; font-weight: 600; letter-spacing: 0.5px; }
+.d30-card-footer { display: flex; align-items: center; justify-content: space-between; }
+.d30-card-url { font-size: 10px; color: #2a2d3e; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+.d30-card-ig  { font-size: 10px; color: #2a2d3e; font-weight: 600; letter-spacing: 0.5px; }
 
 /* Public profile join CTA */
 .pub-join-cta {

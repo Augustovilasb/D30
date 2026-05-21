@@ -234,13 +234,22 @@ function ShareCardModal({ user, onClose }) {
         </div>
 
         <div ref={cardRef} className="d30-share-card">
-          <div className="d30-card-glow" />
+          {/* dot grid */}
+          <div className="d30-card-dots" />
+          {/* decorative curves */}
+          <svg className="d30-card-curves" viewBox="0 0 360 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M280 60 Q320 130 300 200 Q280 270 340 320" stroke="#6d5ce6" strokeWidth="1.2" strokeOpacity="0.35" fill="none"/>
+            <path d="M300 40 Q350 120 320 210 Q295 280 360 340" stroke="#6d5ce6" strokeWidth="0.7" strokeOpacity="0.2" fill="none"/>
+            <path d="M240 300 Q270 330 310 340 Q340 348 355 360" stroke="#6d5ce6" strokeWidth="1" strokeOpacity="0.25" fill="none"/>
+          </svg>
 
+          {/* top bar */}
           <div className="d30-card-top">
-            <span className="d30-card-logo">D30</span>
-            <span className="d30-card-tag" style={{ color: badgeColor, borderColor: badgeColor + '66', background: badgeColor + '15' }}>{badgeLabel}</span>
+            <span className="d30-card-logo"><em>D</em>30</span>
+            <span className="d30-card-tag" style={{ color: badgeColor, borderColor: badgeColor + '80' }}>{badgeLabel}</span>
           </div>
 
+          {/* hero name */}
           <div className="d30-card-center">
             <div className="d30-card-avatar">
               {user.avatar_url
@@ -248,12 +257,15 @@ function ShareCardModal({ user, onClose }) {
                 : <span>{user.initials}</span>}
             </div>
             <div className="d30-card-name">{user.name}</div>
-            {user.username && <div className="d30-card-handle">@{user.username}</div>}
+            <div className="d30-card-handle">{user.username ? `@${user.username}` : user.email.split('@')[0]}</div>
           </div>
 
+          {/* bottom */}
           <div className="d30-card-bottom">
-            <div className="d30-card-divider" />
-            <p className="d30-card-tagline">Faço parte<br/>da <em>D30.</em></p>
+            <div className="d30-card-tagline-wrap">
+              <div className="d30-card-divider" />
+              <p className="d30-card-tagline">Faço parte<br/>da <em>D30.</em></p>
+            </div>
             <div className="d30-card-footer">
               <span className="d30-card-url">D30.DEV</span>
               <span className="d30-card-ig">@dev.aos30</span>
