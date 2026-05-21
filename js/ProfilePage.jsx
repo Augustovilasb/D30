@@ -264,7 +264,9 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
                     <svg width="30" height="34" viewBox="0 0 34 38" fill="none" style={{ color: '#6d5ce6' }}>
                       <path d="M17 1.5L32.5 10V28L17 36.5L1.5 28V10Z" stroke="currentColor" strokeWidth="1.5"/>
                       <path d="M17 6L28 12.5V25.5L17 32L6 25.5V12.5Z" stroke="currentColor" strokeWidth="0.6" strokeOpacity="0.4"/>
-                      <path d="M9 26h16M9 26v-8l5 4.5 3-9 3 9 5-4.5v8" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round"/>
+                      {/* martelo */}
+                      <rect x="9" y="12" width="13" height="6" rx="2" fill="currentColor"/>
+                      <rect x="15" y="18" width="4" height="9" rx="1.5" fill="currentColor"/>
                     </svg>
                     <span className="pub-pioneer-label">FOUNDER</span>
                   </div>
@@ -274,10 +276,10 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
                     <svg width="30" height="34" viewBox="0 0 34 38" fill="none" style={{ color: '#999' }}>
                       <path d="M17 1.5L32.5 10V28L17 36.5L1.5 28V10Z" stroke="currentColor" strokeWidth="1.5"/>
                       <path d="M17 6L28 12.5V25.5L17 32L6 25.5V12.5Z" stroke="currentColor" strokeWidth="0.6" strokeOpacity="0.4"/>
-                      <g transform="rotate(-38, 17, 19)">
-                        <rect x="9" y="12" width="14" height="5.5" rx="1.5" fill="currentColor"/>
-                        <rect x="14" y="17.5" width="3.5" height="9" rx="1.5" fill="currentColor"/>
-                      </g>
+                      {/* </> */}
+                      <path d="M13 16l-4 3 4 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M21 16l4 3-4 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                      <line x1="19" y1="14" x2="15" y2="25" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
                     </svg>
                     <span className="pub-pioneer-label">DEV 00</span>
                   </div>
