@@ -4566,6 +4566,7 @@ nav.nav--floating .user-menu-info strong{ color: var(--text); }
 .pub-stat-card-lbl {
   font-size: 11px; font-weight: 600; color: var(--muted);
   text-transform: uppercase; letter-spacing: 0.4px;
+  overflow-wrap: break-word; word-break: break-word;
 }
 
 /* Stats detail modal */

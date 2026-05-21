@@ -594,7 +594,7 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
           <StatCard iconSlug="consistente"      value={sessions.length}     label="sessões de estudo"        />
           <StatCard iconSlug="lendario"         value={livrosLidos}         label="livros lidos"             onClick={() => setDetailModal('livros')}  />
           <StatCard iconSlug="palestrante_fiel" value={palestrasCount === null ? '—' : palestrasCount} label="talks presença"          onClick={() => setDetailModal('talks')}   />
-          <StatCard iconSlug="primeira_sessao"  value={forumCount === null ? '—' : forumCount}         label="engajamento no fórum" onClick={() => setDetailModal('forum')}   />
+          <StatCard iconSlug="primeira_sessao"  value={forumCount === null ? '—' : forumCount}         label="no fórum" onClick={() => setDetailModal('forum')}   />
           {totalCourses > 0 && (
             <StatCard iconSlug="dedicado" value={`${doneCourses}/${totalCourses}`} label="cursos finalizados" onClick={() => setDetailModal('cursos')} />
           )}
