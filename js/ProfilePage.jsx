@@ -234,9 +234,11 @@ function ShareCardModal({ user, onClose }) {
         </div>
 
         <div ref={cardRef} className="d30-share-card">
+          <div className="d30-card-glow" />
+
           <div className="d30-card-top">
             <span className="d30-card-logo">D30</span>
-            <span className="d30-card-tag" style={{ color: badgeColor, borderColor: badgeColor + '55', background: badgeColor + '18' }}>{badgeLabel}</span>
+            <span className="d30-card-tag" style={{ color: badgeColor, borderColor: badgeColor + '66', background: badgeColor + '15' }}>{badgeLabel}</span>
           </div>
 
           <div className="d30-card-center">
@@ -250,8 +252,12 @@ function ShareCardModal({ user, onClose }) {
           </div>
 
           <div className="d30-card-bottom">
-            <p className="d30-card-tagline">Faço parte<br/>da <strong>D30.</strong></p>
-            <span className="d30-card-url">d30.dev</span>
+            <div className="d30-card-divider" />
+            <p className="d30-card-tagline">Faço parte<br/>da <em>D30.</em></p>
+            <div className="d30-card-footer">
+              <span className="d30-card-url">D30.DEV</span>
+              <span className="d30-card-ig">@dev.aos30</span>
+            </div>
           </div>
         </div>
 

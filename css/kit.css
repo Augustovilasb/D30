@@ -4756,53 +4756,87 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
 /* ── D30 Card (the image) ── */
 .d30-share-card {
   width: 360px; height: 360px;
-  background: #0d0d0d;
+  background: #080808;
   border-radius: 16px;
   display: flex; flex-direction: column;
-  justify-content: space-between;
-  padding: 24px;
+  padding: 0;
   position: relative;
   overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
+/* borda roxa no topo */
 .d30-share-card::before {
   content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(ellipse at 80% 20%, rgba(109,92,230,0.15) 0%, transparent 60%);
-  pointer-events: none;
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, #6d5ce6, #a78bfa, transparent);
+  z-index: 2;
+}
+/* watermark D30 gigante */
+.d30-share-card::after {
+  content: 'D30';
+  position: absolute; bottom: -20px; right: -10px;
+  font-size: 160px; font-weight: 900; color: #fff;
+  opacity: 0.03; letter-spacing: -8px; line-height: 1;
+  pointer-events: none; z-index: 0;
+}
+/* glow canto */
+.d30-card-glow {
+  position: absolute; top: -60px; right: -60px;
+  width: 200px; height: 200px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(109,92,230,0.2) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
 }
 .d30-card-top {
+  position: relative; z-index: 1;
   display: flex; align-items: center; justify-content: space-between;
+  padding: 22px 22px 0;
 }
 .d30-card-logo {
-  font-size: 22px; font-weight: 900; color: #fff; letter-spacing: -1px;
+  font-size: 18px; font-weight: 900; color: #fff; letter-spacing: -1px;
 }
 .d30-card-tag {
-  font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
-  border: 1px solid; border-radius: 6px; padding: 3px 8px; line-height: 1;
+  font-size: 9px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
+  border: 1px solid; border-radius: 5px; padding: 3px 7px; line-height: 1;
 }
 .d30-card-center {
-  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0;
+  padding: 24px 22px 0;
+  flex: 1;
 }
 .d30-card-avatar {
-  width: 72px; height: 72px; border-radius: 50%;
-  background: #6d5ce6; display: flex; align-items: center; justify-content: center;
-  font-size: 24px; font-weight: 800; color: #fff; overflow: hidden; flex-shrink: 0;
+  width: 64px; height: 64px; border-radius: 50%;
+  background: #6d5ce6;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; font-weight: 800; color: #fff;
+  overflow: hidden; flex-shrink: 0;
+  box-shadow: 0 0 0 3px #080808, 0 0 0 5px rgba(109,92,230,0.5);
+  margin-bottom: 14px;
 }
 .d30-card-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .d30-card-name {
-  font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.5px; text-align: center;
+  font-size: 24px; font-weight: 800; color: #fff; letter-spacing: -0.8px;
+  line-height: 1.1; margin: 0;
 }
-.d30-card-handle { font-size: 13px; color: #666; }
+.d30-card-handle { font-size: 12px; color: #444; margin-top: 4px; font-weight: 500; }
 .d30-card-bottom {
-  display: flex; align-items: flex-end; justify-content: space-between;
+  position: relative; z-index: 1;
+  padding: 0 22px 22px;
+}
+.d30-card-divider {
+  width: 32px; height: 2px; background: #6d5ce6; border-radius: 2px;
+  margin-bottom: 12px;
 }
 .d30-card-tagline {
-  font-size: 20px; font-weight: 800; color: #fff; line-height: 1.2; margin: 0;
-  letter-spacing: -0.5px;
+  font-size: 26px; font-weight: 800; color: #fff; line-height: 1.1; margin: 0 0 16px;
+  letter-spacing: -1px;
 }
-.d30-card-tagline strong { color: #6d5ce6; }
-.d30-card-url { font-size: 11px; color: #444; font-weight: 600; letter-spacing: 0.5px; }
+.d30-card-tagline em { color: #6d5ce6; font-style: normal; }
+.d30-card-footer {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.d30-card-url { font-size: 10px; color: #333; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.d30-card-ig  { font-size: 10px; color: #333; font-weight: 600; letter-spacing: 0.5px; }
 
 /* Public profile join CTA */
 .pub-join-cta {
