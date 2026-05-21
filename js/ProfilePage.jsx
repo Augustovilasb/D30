@@ -266,7 +266,7 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
                       <path d="M17 6L28 12.5V25.5L17 32L6 25.5V12.5Z" stroke="currentColor" strokeWidth="0.6" strokeOpacity="0.4"/>
                       <path d="M9 26h16M9 26v-8l5 4.5 3-9 3 9 5-4.5v8" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round"/>
                     </svg>
-                    <span className="pub-pioneer-label">D30 FOUNDER</span>
+                    <span className="pub-pioneer-label">FOUNDER</span>
                   </div>
                 )}
                 {user.is_founding_member && (
@@ -279,7 +279,7 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
                         <rect x="14" y="17.5" width="3.5" height="9" rx="1.5" fill="currentColor"/>
                       </g>
                     </svg>
-                    <span className="pub-pioneer-label">PIONEIRO</span>
+                    <span className="pub-pioneer-label">DEV 00</span>
                   </div>
                 )}
               </div>
