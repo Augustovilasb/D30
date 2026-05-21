@@ -711,34 +711,132 @@ nav {
 
 .rm3-congrats { text-align: center; padding: 2rem 1rem; font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.6); margin-top: 0.5rem; }
 
-/* ── Roadmap — games section ── */
-.rm3-games-section { border-top: 1px solid rgba(255,255,255,0.07); padding-top: 14px; display: flex; flex-direction: column; gap: 10px; }
-.rm3-games-header  { display: flex; align-items: center; gap: 6px; }
-.rm3-games-icon    { font-size: 13px; line-height: 1; }
-.rm3-games-label   { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; color: rgba(255,255,255,0.28); text-transform: uppercase; }
-.rm3-games-list    { display: flex; flex-wrap: wrap; gap: 8px; }
+/* ── Roadmap — Skill Tree ── */
+.rm-tree { display: flex; flex-direction: column; align-items: center; margin-top: 2.5rem; }
+
+.rm-tree-connector { width: 2px; height: 36px; background: rgba(255,255,255,0.1); flex-shrink: 0; }
+.rm-tree-connector.done { background: rgba(255,255,255,0.28); }
+
+.rm-tree-node {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 14px;
+  padding: 18px 20px;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, transform 0.18s;
+}
+.rm-tree-node:not(.locked):not(.coming-soon):hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.22); transform: translateY(-2px); }
+.rm-tree-node.locked { opacity: 0.42; cursor: default; }
+.rm-tree-node.coming-soon { opacity: 0.3; cursor: default; }
+
+.rm-tree-node-inner { display: flex; align-items: flex-start; gap: 16px; }
+.rm-tree-node-left  { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+.rm-tree-node-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
+
+/* level tag colors per node */
+.rm-tree-level { font-size: 9px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; }
+.rm-tree-level--fundamentos { color: rgba(100,200,120,0.7); }
+.rm-tree-level--junior      { color: rgba(80,160,240,0.7); }
+.rm-tree-level--pleno       { color: rgba(220,140,60,0.7); }
+.rm-tree-level--senior      { color: rgba(180,100,240,0.7); }
+
+.rm-tree-title { font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.88); letter-spacing: -0.2px; margin: 0; }
+.rm-tree-desc  { font-size: 12px; color: rgba(255,255,255,0.38); line-height: 1.5; margin: 0; max-width: 340px; }
+.rm-tree-soon  { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.28); background: rgba(255,255,255,0.07); padding: 2px 8px; border-radius: 20px; width: fit-content; margin-top: 2px; }
+
+.rm-tree-trophy { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.rm-tree-trophy-icon  { font-size: 22px; line-height: 1; }
+.rm-tree-trophy-label { font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.28); white-space: nowrap; text-align: center; }
+.rm-tree-trophy:not(.earned) .rm-tree-trophy-icon { filter: grayscale(1); opacity: 0.25; }
+
+.rm-tree-progress { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; width: 72px; }
+.rm-tree-progress-bar  { width: 100%; height: 3px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+.rm-tree-progress-fill { height: 100%; background: rgba(255,255,255,0.5); border-radius: 4px; transition: width 0.6s ease; }
+.rm-tree-progress-pct  { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.4); }
+
+.rm-tree-cta { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.3); white-space: nowrap; }
+.rm-tree-node:not(.locked):hover .rm-tree-cta { color: rgba(255,255,255,0.65); }
+
+/* ── NodeDetail ── */
+.rm-back-btn {
+  background: none; border: none;
+  color: rgba(255,255,255,0.4); font-size: 13px; font-weight: 600;
+  cursor: pointer; padding: 0; margin-bottom: 1.5rem;
+  transition: color 0.15s;
+}
+.rm-back-btn:hover { color: rgba(255,255,255,0.8); }
+
+.rm-detail-header { margin-bottom: 2rem; }
+
+.rm-detail-tabs {
+  display: flex; gap: 2px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 1.5rem;
+}
+.rm-detail-tab {
+  background: none; border: none;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  padding: 8px 14px;
+  font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.35);
+  cursor: pointer; transition: color 0.15s, border-color 0.15s;
+  display: flex; align-items: center; gap: 6px;
+}
+.rm-detail-tab:hover { color: rgba(255,255,255,0.65); }
+.rm-detail-tab.active { color: rgba(255,255,255,0.88); border-bottom-color: rgba(255,255,255,0.55); }
+.rm-detail-tab-count { font-size: 10px; background: rgba(255,255,255,0.1); padding: 1px 5px; border-radius: 10px; }
+
+.rm-tab-content { margin-top: 0.5rem; }
+.rm-empty-state { font-size: 13px; color: rgba(255,255,255,0.25); text-align: center; padding: 3rem 1rem; }
+
+/* games list (also used in NodeDetail) */
+.rm3-games-list { display: flex; flex-wrap: wrap; gap: 8px; }
 
 .rm3-game-card {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 12px;
+  display: flex; flex-direction: column; gap: 3px;
+  padding: 10px 14px;
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.09);
-  border-radius: 8px;
+  border-radius: 10px;
   text-decoration: none;
   transition: background 0.18s, border-color 0.18s;
-  flex: 1 1 180px; min-width: 160px;
+  flex: 1 1 160px; min-width: 150px;
+  position: relative;
 }
-.rm3-game-card:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.22); }
-.rm3-game-title { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.72); flex: 1; }
-.rm3-game-desc  { font-size: 11px; color: rgba(255,255,255,0.32); display: none; }
-.rm3-game-arrow { font-size: 11px; color: rgba(255,255,255,0.28); flex-shrink: 0; transition: color 0.18s; }
+.rm3-game-card:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.22); }
+.rm3-game-title { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.72); padding-right: 16px; }
+.rm3-game-desc  { font-size: 11px; color: rgba(255,255,255,0.3); }
+.rm3-game-arrow { position: absolute; top: 10px; right: 12px; font-size: 11px; color: rgba(255,255,255,0.25); transition: color 0.18s; }
 .rm3-game-card:hover .rm3-game-arrow { color: rgba(255,255,255,0.65); }
 
-@media (min-width: 520px) {
-  .rm3-game-card { flex-direction: column; align-items: flex-start; gap: 3px; }
-  .rm3-game-desc  { display: block; }
-  .rm3-game-arrow { align-self: flex-end; margin-top: -16px; }
+/* docs cards */
+.rm-doc-card {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 10px;
+  text-decoration: none;
+  margin-bottom: 8px;
+  transition: background 0.18s, border-color 0.18s;
 }
+.rm-doc-card:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.22); }
+.rm-doc-title { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.75); flex: 1; }
+.rm-doc-desc  { font-size: 11px; color: rgba(255,255,255,0.32); }
+.rm-doc-arrow { font-size: 11px; color: rgba(255,255,255,0.28); }
+
+/* trophy banner */
+.rm-trophy-earned {
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(255,210,0,0.07);
+  border: 1px solid rgba(255,210,0,0.2);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-top: 2rem;
+}
+.rm-trophy-earned-icon  { font-size: 28px; line-height: 1; }
+.rm-trophy-earned-title { font-size: 13px; font-weight: 700; color: rgba(255,210,0,0.9); margin: 0 0 2px; }
+.rm-trophy-earned-sub   { font-size: 12px; color: rgba(255,210,0,0.55); margin: 0; }
 
 /* ── MODAL ── */
 .modal-backdrop {

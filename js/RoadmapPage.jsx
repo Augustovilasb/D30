@@ -1,4 +1,4 @@
-/* RoadmapPage.jsx — colored phase cards, vertical stack, side ruler */
+/* RoadmapPage.jsx — skill tree + node detail view */
 
 const COURSES = [
   { id: 'logica',   title: 'Lógica de Programação',              subtitle: 'Virado no Jiraya · DevDojo',  url: 'https://www.youtube.com/watch?v=ycyL5CqZoUo&list=PL62G310vn6nH-uBTKREcUWDkOi2Q9n4OZ' },
@@ -27,42 +27,86 @@ const PHASES = [
 
 const COURSE_MAP = Object.fromEntries(COURSES.map(c => [c.id, c]));
 
-const GAMES_BY_PHASE = {
-  p1: [
-    { id: 'linux',      title: 'Linux Survival',      desc: 'Aprenda comandos Linux',         url: 'https://linuxsurvival.com/linux-tutorial-introduction/' },
-    { id: 'cmdchall',   title: 'CMD Challenge',        desc: 'Desafios de linha de comando',   url: 'https://cmdchallenge.com/#/last_lines' },
-  ],
-  p2: [
-    { id: 'learngit',   title: 'Learn Git Branching',  desc: 'Git visual e interativo',        url: 'https://learngitbranching.js.org/' },
-  ],
-  p4: [
-    { id: 'sqlbolt',    title: 'SQLBolt',              desc: 'Lições interativas de SQL',      url: 'https://sqlbolt.com/' },
-    { id: 'sqlmystery', title: 'SQL Murder Mystery',   desc: 'Resolva um crime usando SQL',    url: 'https://mystery.knightlab.com/' },
-  ],
-};
+const TREE = [
+  {
+    id: 'fundamentos',
+    levelTag: 'NOOB',
+    title: 'Fundamentos Essenciais',
+    desc: 'Lógica, versionamento, linguagem e banco de dados. A base de tudo.',
+    trophy: 'Fundamentado',
+    phaseIds: ['p1', 'p2', 'p3', 'p4'],
+    games: [
+      { id: 'linux',      title: 'Linux Survival',     desc: 'Aprenda comandos Linux',       url: 'https://linuxsurvival.com/linux-tutorial-introduction/' },
+      { id: 'cmdchall',   title: 'CMD Challenge',       desc: 'Desafios de linha de comando', url: 'https://cmdchallenge.com/#/last_lines' },
+      { id: 'learngit',   title: 'Learn Git Branching', desc: 'Git visual e interativo',      url: 'https://learngitbranching.js.org/' },
+      { id: 'sqlbolt',    title: 'SQLBolt',             desc: 'Lições interativas de SQL',    url: 'https://sqlbolt.com/' },
+      { id: 'sqlmystery', title: 'SQL Murder Mystery',  desc: 'Resolva um crime com SQL',     url: 'https://mystery.knightlab.com/' },
+    ],
+    docs: [],
+  },
+  {
+    id: 'junior',
+    levelTag: 'DEV JUNIOR',
+    title: 'Trilha Dev Junior',
+    desc: 'Testes de API, Spring Boot e suas primeiras aplicações reais.',
+    trophy: 'Dev Junior',
+    phaseIds: ['p5', 'p6'],
+    games: [],
+    docs: [],
+  },
+  {
+    id: 'pleno',
+    levelTag: 'DEV PLENO',
+    title: 'Trilha Dev Pleno',
+    desc: 'Docker, Cloud e autonomia técnica no dia a dia.',
+    trophy: 'Dev Pleno',
+    phaseIds: ['p7'],
+    games: [],
+    docs: [],
+  },
+  {
+    id: 'senior',
+    levelTag: 'DEV SENIOR',
+    title: 'Trilha Dev Senior',
+    desc: 'Arquitetura de sistemas, liderança técnica e visão de produto.',
+    trophy: 'Dev Senior',
+    phaseIds: [],
+    games: [],
+    docs: [],
+    comingSoon: true,
+  },
+];
+
+function _nodeAllIds(node) {
+  return node.phaseIds.flatMap(pid => (PHASES.find(p => p.id === pid)?.ids || []));
+}
+
 function RoadmapPage({ user }) {
   const userId = user?.id || null;
 
-  const [done,      setDone]      = React.useState(() => DB.roadmap._loadLocal());
-  const [unlocking, setUnlocking] = React.useState(new Set());
-  const [loaded,    setLoaded]    = React.useState(false);
+  const [done,         setDone]         = React.useState(() => DB.roadmap._loadLocal());
+  const [unlocking,    setUnlocking]    = React.useState(new Set());
+  const [selectedNode, setSelectedNode] = React.useState(null);
+  const [detailTab,    setDetailTab]    = React.useState('cursos');
 
-  // Merge localStorage + Supabase on mount
   React.useEffect(() => {
-    DB.roadmap.getProgress(userId).then(progress => {
-      setDone(progress);
-      setLoaded(true);
-    }).catch(() => setLoaded(true));
+    DB.roadmap.getProgress(userId).then(setDone).catch(() => {});
   }, [userId]);
 
+  // handle cross-page highlight navigation
   React.useEffect(() => {
-    const id = window.__roadmapHighlight;
-    if (!id) return;
+    const courseId = window.__roadmapHighlight;
+    if (!courseId) return;
     window.__roadmapHighlight = null;
-    setTimeout(() => {
-      const el = document.querySelector(`[data-highlight-id="${id}"]`);
-      if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.classList.add('highlight-flash'); }
-    }, 200);
+    const node = TREE.find(n => _nodeAllIds(n).includes(courseId));
+    if (node) {
+      setSelectedNode(node.id);
+      setDetailTab('cursos');
+      setTimeout(() => {
+        const el = document.querySelector(`[data-highlight-id="${courseId}"]`);
+        if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.classList.add('highlight-flash'); }
+      }, 300);
+    }
   }, []);
 
   const toggle = React.useCallback((id) => {
@@ -81,54 +125,224 @@ function RoadmapPage({ user }) {
     });
   }, [userId]);
 
-  const totalDone = COURSES.filter(c => done.has(c.id)).length;
-  const pct = Math.round(totalDone / COURSES.length * 100);
+  const nodeProgress = (node) => {
+    const ids = _nodeAllIds(node);
+    if (!ids.length) return { done: 0, total: 0, pct: 0 };
+    const d = ids.filter(id => done.has(id)).length;
+    return { done: d, total: ids.length, pct: Math.round(d / ids.length * 100) };
+  };
+
+  const isNodeUnlocked = (idx) => {
+    if (idx === 0) return true;
+    return _nodeAllIds(TREE[idx - 1]).every(id => done.has(id));
+  };
+
+  if (selectedNode) {
+    const node    = TREE.find(n => n.id === selectedNode);
+    const nodeIdx = TREE.findIndex(n => n.id === selectedNode);
+    return (
+      <NodeDetail
+        node={node}
+        unlocked={isNodeUnlocked(nodeIdx)}
+        progress={nodeProgress(node)}
+        done={done}
+        unlocking={unlocking}
+        onToggle={toggle}
+        tab={detailTab}
+        onTabChange={setDetailTab}
+        onBack={() => { setSelectedNode(null); window.scrollTo({ top: 0, behavior: 'instant' }); }}
+      />
+    );
+  }
 
   return (
     <div className="page active fade-in">
       <div className="roadmap-wrap">
-        <h1 className="page-title">Roadmap iniciante para <em>Dev Junior</em>.</h1>
-        <p className="rm3-lead">Tudo que você precisa para iniciar sua carreira em programação.</p>
-        <p className="rm3-lead rm3-lead--sub">Esse é exatamente o roadmap que estou fazendo.</p>
+        <h1 className="page-title">Sua jornada como <em>desenvolvedor</em>.</h1>
+        <p className="rm3-lead">Do zero ao sênior, passo a passo. Clique em uma etapa para ver os conteúdos.</p>
 
-        <div className="rm3-overall">
-          <div className="rm3-overall-bar">
-            <div className="rm3-overall-fill" style={{ width: pct + '%' }} />
-            {pct >= 3 && (
-              <span className="rm3-overall-label" style={{ left: pct + '%' }}>{pct}%</span>
-            )}
-          </div>
-          <div className="rm3-overall-meta">
-            <span className="rm3-overall-pct">{pct}% concluído</span>
-            <span className="rm3-overall-count">{totalDone}/{COURSES.length} cursos</span>
-          </div>
-        </div>
-
-        <div className="rm3-stack">
-          {PHASES.map((phase, i) => {
-            const unlocked  = i === 0 || PHASES[i - 1].ids.every(id => done.has(id));
-            const doneCount = phase.ids.filter(id => done.has(id)).length;
-            const phasePct  = Math.round(doneCount / phase.ids.length * 100);
-            const allDone   = doneCount === phase.ids.length;
+        <div className="rm-tree">
+          {TREE.map((node, idx) => {
+            const unlocked = isNodeUnlocked(idx);
+            const progress = nodeProgress(node);
+            const earned   = progress.total > 0 && progress.done === progress.total;
             return (
-              <PhaseCard
-                key={phase.id}
-                phase={phase}
-                unlocked={unlocked}
-                allDone={allDone}
-                doneCount={doneCount}
-                phasePct={phasePct}
-                done={done}
-                unlocking={unlocking}
-                onToggle={toggle}
-                games={GAMES_BY_PHASE[phase.id] || []}
-              />
+              <React.Fragment key={node.id}>
+                <TreeNode
+                  node={node}
+                  unlocked={unlocked}
+                  progress={progress}
+                  earned={earned}
+                  onClick={() => { if (!node.comingSoon) { setSelectedNode(node.id); setDetailTab('cursos'); window.scrollTo({ top: 0, behavior: 'instant' }); } }}
+                />
+                {idx < TREE.length - 1 && (
+                  <div className={'rm-tree-connector' + (unlocked ? ' done' : '')} />
+                )}
+              </React.Fragment>
             );
           })}
         </div>
+      </div>
+      <Footer />
+    </div>
+  );
+}
 
-        {totalDone === COURSES.length && (
-          <p className="rm3-congrats">Roadmap concluído. Agora vai atrás da vaga.</p>
+function TreeNode({ node, unlocked, progress, earned, onClick }) {
+  const cls = 'rm-tree-node'
+    + (!unlocked ? ' locked' : '')
+    + (node.comingSoon ? ' coming-soon' : '')
+    + (' rm-tree-node--' + node.id);
+  return (
+    <div className={cls} onClick={onClick} data-cursor={!node.comingSoon && unlocked ? 'hover' : undefined}>
+      <div className="rm-tree-node-inner">
+        <div className="rm-tree-node-left">
+          <span className={'rm-tree-level rm-tree-level--' + node.id}>{node.levelTag}</span>
+          <h3 className="rm-tree-title">{node.title}</h3>
+          <p className="rm-tree-desc">{node.desc}</p>
+          {node.comingSoon && <span className="rm-tree-soon">Em breve</span>}
+        </div>
+        <div className="rm-tree-node-right">
+          <div className={'rm-tree-trophy' + (earned ? ' earned' : '')}>
+            <span className="rm-tree-trophy-icon">{earned ? '🏆' : '🔒'}</span>
+            <span className="rm-tree-trophy-label">{node.trophy}</span>
+          </div>
+          {!node.comingSoon && unlocked && progress.total > 0 && (
+            <div className="rm-tree-progress">
+              <div className="rm-tree-progress-bar">
+                <div className="rm-tree-progress-fill" style={{ width: progress.pct + '%' }} />
+              </div>
+              <span className="rm-tree-progress-pct">{progress.pct}%</span>
+            </div>
+          )}
+          {!node.comingSoon && (
+            <span className="rm-tree-cta">{unlocked ? 'Ver trilha →' : 'Bloqueado'}</span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function NodeDetail({ node, unlocked, progress, done, unlocking, onToggle, tab, onTabChange, onBack }) {
+  const phases = node.phaseIds.map(pid => PHASES.find(p => p.id === pid)).filter(Boolean);
+  const earned = progress.total > 0 && progress.done === progress.total;
+
+  const TABS = [
+    { id: 'cursos', label: 'Cursos',      count: progress.total },
+    { id: 'jogos',  label: 'Jogos',       count: node.games.length },
+    { id: 'docs',   label: 'Docs',        count: node.docs.length },
+  ];
+
+  return (
+    <div className="page active fade-in">
+      <div className="roadmap-wrap">
+        <button className="rm-back-btn" onClick={onBack} data-cursor="hover">← Voltar</button>
+
+        <div className="rm-detail-header">
+          <span className={'rm-tree-level rm-tree-level--' + node.id}>{node.levelTag}</span>
+          <h1 className="page-title" style={{ marginTop: '0.5rem' }}>{node.title}</h1>
+          <p className="rm3-lead">{node.desc}</p>
+
+          {progress.total > 0 && (
+            <div className="rm3-overall" style={{ marginTop: '1.5rem', marginBottom: 0 }}>
+              <div className="rm3-overall-bar">
+                <div className="rm3-overall-fill" style={{ width: progress.pct + '%' }} />
+                {progress.pct >= 3 && (
+                  <span className="rm3-overall-label" style={{ left: progress.pct + '%' }}>{progress.pct}%</span>
+                )}
+              </div>
+              <div className="rm3-overall-meta">
+                <span className="rm3-overall-pct">{progress.pct}% concluído</span>
+                <span className="rm3-overall-count">{progress.done}/{progress.total} cursos</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="rm-detail-tabs">
+          {TABS.map(t => (
+            <button
+              key={t.id}
+              className={'rm-detail-tab' + (tab === t.id ? ' active' : '')}
+              onClick={() => onTabChange(t.id)}
+              data-cursor="hover"
+            >
+              {t.label}
+              {t.count > 0 && <span className="rm-detail-tab-count">{t.count}</span>}
+            </button>
+          ))}
+        </div>
+
+        {tab === 'cursos' && (
+          <div className="rm3-stack">
+            {phases.length === 0
+              ? <p className="rm-empty-state">Cursos em breve.</p>
+              : phases.map((phase, i) => {
+                  const prevPhaseIds  = i > 0 ? (PHASES.find(p => p.id === node.phaseIds[i - 1])?.ids || []) : [];
+                  const phaseUnlocked = unlocked && (i === 0 || prevPhaseIds.every(id => done.has(id)));
+                  const doneCount     = phase.ids.filter(id => done.has(id)).length;
+                  const phasePct      = Math.round(doneCount / phase.ids.length * 100);
+                  return (
+                    <PhaseCard
+                      key={phase.id}
+                      phase={phase}
+                      unlocked={phaseUnlocked}
+                      allDone={doneCount === phase.ids.length}
+                      doneCount={doneCount}
+                      phasePct={phasePct}
+                      done={done}
+                      unlocking={unlocking}
+                      onToggle={onToggle}
+                    />
+                  );
+                })
+            }
+          </div>
+        )}
+
+        {tab === 'jogos' && (
+          <div className="rm-tab-content">
+            {node.games.length === 0
+              ? <p className="rm-empty-state">Jogos em breve.</p>
+              : (
+                <div className="rm3-games-list">
+                  {node.games.map(g => (
+                    <a key={g.id} href={g.url} target="_blank" rel="noopener noreferrer" className="rm3-game-card" data-cursor="hover">
+                      <span className="rm3-game-title">{g.title}</span>
+                      <span className="rm3-game-desc">{g.desc}</span>
+                      <span className="rm3-game-arrow">↗</span>
+                    </a>
+                  ))}
+                </div>
+              )
+            }
+          </div>
+        )}
+
+        {tab === 'docs' && (
+          <div className="rm-tab-content">
+            {node.docs.length === 0
+              ? <p className="rm-empty-state">Documentação em breve.</p>
+              : node.docs.map(d => (
+                  <a key={d.id} href={d.url} target="_blank" rel="noopener noreferrer" className="rm-doc-card" data-cursor="hover">
+                    <span className="rm-doc-title">{d.title}</span>
+                    <span className="rm-doc-desc">{d.desc}</span>
+                    <span className="rm-doc-arrow">↗</span>
+                  </a>
+                ))
+            }
+          </div>
+        )}
+
+        {earned && (
+          <div className="rm-trophy-earned">
+            <span className="rm-trophy-earned-icon">🏆</span>
+            <div>
+              <p className="rm-trophy-earned-title">Conquista desbloqueada!</p>
+              <p className="rm-trophy-earned-sub">Você é {node.trophy}.</p>
+            </div>
+          </div>
         )}
       </div>
       <Footer />
@@ -136,7 +350,7 @@ function RoadmapPage({ user }) {
   );
 }
 
-function PhaseCard({ phase, unlocked, allDone, doneCount, phasePct, done, unlocking, onToggle, games }) {
+function PhaseCard({ phase, unlocked, allDone, doneCount, phasePct, done, unlocking, onToggle }) {
   const cls = 'rm3-card' + (!unlocked ? ' locked' : allDone ? ' all-done' : '');
   return (
     <div className="rm3-entry">
@@ -194,35 +408,9 @@ function PhaseCard({ phase, unlocked, allDone, doneCount, phasePct, done, unlock
               );
             })
           )}
-
-          {unlocked && games.length > 0 && (
-            <div className="rm3-games-section">
-              <div className="rm3-games-header">
-                <span className="rm3-games-icon">🎮</span>
-                <span className="rm3-games-label">Aprendendo com jogos</span>
-              </div>
-              <div className="rm3-games-list">
-                {games.map(g => (
-                  <a
-                    key={g.id}
-                    href={g.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="rm3-game-card"
-                    data-cursor="hover"
-                  >
-                    <span className="rm3-game-title">{g.title}</span>
-                    <span className="rm3-game-desc">{g.desc}</span>
-                    <span className="rm3-game-arrow">↗</span>
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
-      {/* Side ruler */}
       <div className="rm3-ruler" data-phase={phase.id}>
         <span className="rm3-ruler-top">100</span>
         <div className="rm3-ruler-track">
@@ -237,4 +425,4 @@ function PhaseCard({ phase, unlocked, allDone, doneCount, phasePct, done, unlock
   );
 }
 
-Object.assign(window, { RoadmapPage, COURSES, PHASES });
+Object.assign(window, { RoadmapPage, COURSES, PHASES, TREE });
