@@ -44,7 +44,7 @@ function RankingPage({ user }) {
       const col = currentTab.col;
       const { data, error } = await window.sb
         .from('profiles')
-        .select('id, full_name, username, avatar_url, total_hours, total_sessions, total_livros_lidos, total_talks, total_forum_topics, total_courses_done, is_founding_member')
+        .select('id, full_name, username, avatar_url, total_hours, total_sessions, total_livros_lidos, total_talks, total_forum_topics, total_courses_done, is_founding_member, dev_number')
         .not(col, 'is', null)
         .gt(col, 0)
         .order(col, { ascending: false })
@@ -119,10 +119,10 @@ function RankingPage({ user }) {
                           <span>FOUNDER</span>
                         </span>
                       )}
-                      {row.is_founding_member && (
-                        <span className="ranking-founder-badge" title="Membro Fundador">
+                      {row.dev_number !== null && row.dev_number !== undefined && (
+                        <span className="ranking-founder-badge" title={'DEV ' + String(row.dev_number).padStart(2, '0')}>
                           <HammerIcon size={11} />
-                          <span>DEV 00</span>
+                          <span>{'DEV ' + String(row.dev_number).padStart(2, '0')}</span>
                         </span>
                       )}
                       {isMe && <span className="ranking-you">você</span>}

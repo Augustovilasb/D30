@@ -23,7 +23,7 @@ async function buildUserObj(supabaseUser) {
 
   const name = profile?.full_name || supabaseUser.user_metadata?.full_name || supabaseUser.email.split('@')[0];
   const initials = name.trim().split(/\s+/).map(s => s[0]).slice(0,2).join('').toUpperCase();
-  return { id: supabaseUser.id, email: supabaseUser.email, name, initials, username: profile?.username || '', color: '#6d5ce6', avatar_url: profile?.avatar_url || null, bio: profile?.bio || null, profession: profile?.profession || null, github_url: profile?.github_url || null, linkedin_url: profile?.linkedin_url || null, instagram_url: profile?.instagram_url || null, twitter_url: profile?.twitter_url || null, website_url: profile?.website_url || null, is_founding_member: profile?.is_founding_member || false, is_admin: profile?.is_admin || false, discord_onboarded: profile?.discord_onboarded || false };
+  return { id: supabaseUser.id, email: supabaseUser.email, name, initials, username: profile?.username || '', color: '#6d5ce6', avatar_url: profile?.avatar_url || null, bio: profile?.bio || null, profession: profile?.profession || null, github_url: profile?.github_url || null, linkedin_url: profile?.linkedin_url || null, instagram_url: profile?.instagram_url || null, twitter_url: profile?.twitter_url || null, website_url: profile?.website_url || null, is_founding_member: profile?.is_founding_member || false, is_admin: profile?.is_admin || false, discord_onboarded: profile?.discord_onboarded || false, dev_number: profile?.dev_number ?? null };
 }
 
 function App() {

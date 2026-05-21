@@ -205,12 +205,9 @@ function ShareCardModal({ user, onClose }) {
   const cardRef = React.useRef(null);
   const [downloading, setDownloading] = React.useState(false);
 
-  const badgeLabel = user.email === 'augustovilasb@hotmail.com'
-    ? 'FOUNDER'
-    : user.is_founding_member
-    ? 'DEV 00'
-    : 'MEMBRO';
-  const badgeColor = user.email === 'augustovilasb@hotmail.com' ? '#6d5ce6' : user.is_founding_member ? '#888' : '#555';
+  const devLabel   = user.dev_number !== null && user.dev_number !== undefined ? 'DEV ' + String(user.dev_number).padStart(2, '0') : null;
+  const badgeLabel = user.email === 'augustovilasb@hotmail.com' ? 'FOUNDER' : devLabel || 'MEMBRO';
+  const badgeColor = user.email === 'augustovilasb@hotmail.com' ? '#6d5ce6' : devLabel ? '#888' : '#555';
 
   const handleDownload = async () => {
     if (!cardRef.current || !window.html2canvas) return;
@@ -272,7 +269,7 @@ function ShareCardModal({ user, onClose }) {
                   <span style={{ color: '#6d5ce6' }}>FOUNDER</span>
                 </div>
               )}
-              {user.is_founding_member && (
+              {devLabel && (
                 <div className="d30-card-badge-item">
                   <svg width="22" height="25" viewBox="0 0 34 38" fill="none" style={{ color: '#888' }}>
                     <path d="M17 1.5L32.5 10V28L17 36.5L1.5 28V10Z" stroke="currentColor" strokeWidth="1.5"/>
@@ -281,7 +278,7 @@ function ShareCardModal({ user, onClose }) {
                     <path d="M21 16l4 3-4 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
                     <line x1="19" y1="14" x2="15" y2="25" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
                   </svg>
-                  <span style={{ color: '#888' }}>DEV 00</span>
+                  <span style={{ color: '#888' }}>{devLabel}</span>
                 </div>
               )}
             </div>
@@ -507,7 +504,7 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
           <div className="pub-hero-body">
             <h1 className="pub-name">{user.name}</h1>
 
-            {(user.is_founding_member || user.username || user.profession || user.email === 'augustovilasb@hotmail.com') && (
+            {(devLabel || user.username || user.profession || user.email === 'augustovilasb@hotmail.com') && (
               <div className="pub-identity-row">
                 <div className="pub-identity-text">
                   {user.username   && <span className="pub-username">@{user.username}</span>}
@@ -526,17 +523,16 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
                     <span className="pub-pioneer-label">FOUNDER</span>
                   </div>
                 )}
-                {user.is_founding_member && (
+                {devLabel && (
                   <div className="pub-pioneer-badge">
                     <svg width="30" height="34" viewBox="0 0 34 38" fill="none" style={{ color: '#999' }}>
                       <path d="M17 1.5L32.5 10V28L17 36.5L1.5 28V10Z" stroke="currentColor" strokeWidth="1.5"/>
                       <path d="M17 6L28 12.5V25.5L17 32L6 25.5V12.5Z" stroke="currentColor" strokeWidth="0.6" strokeOpacity="0.4"/>
-                      {/* </> */}
                       <path d="M13 16l-4 3 4 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
                       <path d="M21 16l4 3-4 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
                       <line x1="19" y1="14" x2="15" y2="25" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
                     </svg>
-                    <span className="pub-pioneer-label">DEV 00</span>
+                    <span className="pub-pioneer-label">{devLabel}</span>
                   </div>
                 )}
               </div>

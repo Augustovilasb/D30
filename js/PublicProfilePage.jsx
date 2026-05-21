@@ -10,7 +10,7 @@ function PublicProfilePage({ username, onSignIn }) {
       if (!username) { setNotFound(true); setLoading(false); return; }
       const { data } = await window.sb
         .from('profiles')
-        .select('id, full_name, username, bio, profession, avatar_url, color, github_url, linkedin_url, instagram_url, twitter_url, website_url, total_hours, current_streak, best_streak, total_sessions, is_founding_member')
+        .select('id, full_name, username, bio, profession, avatar_url, color, github_url, linkedin_url, instagram_url, twitter_url, website_url, total_hours, current_streak, best_streak, total_sessions, is_founding_member, dev_number')
         .eq('username', username)
         .single();
 
@@ -77,11 +77,9 @@ function PublicProfilePage({ username, onSignIn }) {
             <div className="pub-hero-top">
               <h1 className="pub-name">
                 {name}
-                {profile.is_founding_member && (
-                  <span title="Membro Fundador" style={{ color: '#f59e0b', marginLeft: 8, fontSize: 18 }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle' }}>
-                      <path d="M2 4l4 8 6-10 6 10 4-8-2 14H4z"/>
-                    </svg>
+                {profile.dev_number !== null && profile.dev_number !== undefined && (
+                  <span title={'DEV ' + String(profile.dev_number).padStart(2, '0')} style={{ color: '#888', marginLeft: 8, fontSize: 12, fontWeight: 700, letterSpacing: '0.05em', verticalAlign: 'middle' }}>
+                    {'DEV ' + String(profile.dev_number).padStart(2, '0')}
                   </span>
                 )}
               </h1>
