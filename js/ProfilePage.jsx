@@ -443,6 +443,8 @@ function StatsDetailModal({ type, user, onClose, onNavigate }) {
 }
 
 function ProfilePage({ user, onSignOut, onNavigate }) {
+  const devLabel = user.dev_number !== null && user.dev_number !== undefined ? 'DEV ' + String(user.dev_number).padStart(2, '0') : null;
+
   const [showShare,      setShowShare]      = React.useState(false);
   const [showCard,       setShowCard]       = React.useState(false);
   const [forumCount,     setForumCount]     = React.useState(null);
