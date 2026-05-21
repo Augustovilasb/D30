@@ -4747,6 +4747,12 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
 .share-card-download-btn:disabled { opacity: 0.5; }
 .share-card-hint { font-size: 11px; color: var(--muted2); margin: 0; }
 
+@media (max-width: 420px) {
+  .share-card-overlay { padding: 12px; align-items: center; }
+  .share-card-modal { padding: 16px; gap: 10px; }
+  .d30-share-card { transform: scale(0.82); transform-origin: center; margin: -32px 0; }
+}
+
 /* ── D30 Card (the image) ── */
 .d30-share-card {
   width: 360px; height: 360px;
