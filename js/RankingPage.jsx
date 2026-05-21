@@ -1,9 +1,11 @@
 /* RankingPage.jsx — community leaderboard */
 
-function CrownIcon({ size = 16 }) {
+function HammerIcon({ size = 13 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M2 4l4 8 6-10 6 10 4-8-2 14H4z"/>
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M15 12l-8.5 8.5a2.12 2.12 0 0 1-3-3L12 9"/>
+      <path d="M17.64 15L22 10.64"/>
+      <path d="M20.91 11.7l-1.25-1.25c-.6-.6-.93-1.4-.93-2.25v-.86L16.01 4.6a5.56 5.56 0 0 0-3.94-1.64H9l.92.82A6.18 6.18 0 0 1 12 8.4v1.56l2 2h2.47l2.26 1.91"/>
     </svg>
   );
 }
@@ -110,8 +112,9 @@ function RankingPage({ user }) {
                     <div className="ranking-name">
                       {row.full_name || row.username || 'Anônimo'}
                       {row.is_founding_member && (
-                        <span className="ranking-founder-icon" title="Membro Fundador" style={{ color: '#f59e0b' }}>
-                          <CrownIcon size={13} />
+                        <span className="ranking-founder-badge" title="Dev 00 — Membro Fundador">
+                          <HammerIcon size={11} />
+                          <span>DEV 00</span>
                         </span>
                       )}
                       {isMe && <span className="ranking-you">você</span>}
