@@ -15,13 +15,15 @@ function RankBadge({ rank }) {
   return <span className="rank-num">#{rank}</span>;
 }
 
+function pl(n, singular, plural) { return n + ' ' + (n === 1 ? singular : plural); }
+
 const RANK_TABS = [
-  { key: 'hours',   col: 'total_hours',        label: 'Horas',    fmt: r => (r.total_hours    || 0).toFixed(1) + 'h'     },
-  { key: 'books',   col: 'total_livros_lidos',  label: 'Livros',   fmt: r => (r.total_livros_lidos || 0) + ' livros'      },
-  { key: 'talks',   col: 'total_talks',         label: 'Talks',    fmt: r => (r.total_talks    || 0) + ' talks'            },
-  { key: 'forum',   col: 'total_forum_topics',  label: 'Fórum',    fmt: r => (r.total_forum_topics || 0) + ' tópicos'     },
-  { key: 'sessions',col: 'total_sessions',      label: 'Sessões',  fmt: r => (r.total_sessions  || 0) + ' sessões'        },
-  { key: 'courses', col: 'total_courses_done',  label: 'Cursos',   fmt: r => (r.total_courses_done || 0) + ' cursos'      },
+  { key: 'hours',   col: 'total_hours',        label: 'Horas',    fmt: r => (r.total_hours    || 0).toFixed(1) + 'h'                              },
+  { key: 'books',   col: 'total_livros_lidos',  label: 'Livros',   fmt: r => pl(r.total_livros_lidos || 0, 'livro',  'livros')                     },
+  { key: 'talks',   col: 'total_talks',         label: 'Talks',    fmt: r => pl(r.total_talks         || 0, 'talk',   'talks')                      },
+  { key: 'forum',   col: 'total_forum_topics',  label: 'Fórum',    fmt: r => pl(r.total_forum_topics  || 0, 'tópico', 'tópicos')                   },
+  { key: 'sessions',col: 'total_sessions',      label: 'Sessões',  fmt: r => pl(r.total_sessions      || 0, 'sessão', 'sessões')                   },
+  { key: 'courses', col: 'total_courses_done',  label: 'Cursos',   fmt: r => pl(r.total_courses_done  || 0, 'curso',  'cursos')                    },
 ];
 
 function RankingPage({ user }) {
