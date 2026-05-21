@@ -437,6 +437,7 @@ function DiscordOnboardingModal({ open, user, onClose }) {
     if (!checked || saving) return;
     setSaving(true);
     try { await window.sb.from('profiles').update({ discord_onboarded: true }).eq('id', user.id); } catch {}
+    try { localStorage.setItem('d30_discord_done', '1'); } catch {}
     setSaving(false);
     onClose(true);
   };
