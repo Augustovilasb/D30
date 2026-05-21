@@ -1,63 +1,65 @@
 /* LivrosPage.jsx — Livros gratuitos agrupados por área de trabalho */
 
-/* Mapeamento: categoria do markdown → bucket de carreira */
-const CAT_TO_BUCKET = {
-  /* Frontend */
-  'javascript':'frontend','typescript':'frontend','html / css':'frontend',
-  'html and css':'frontend','html':'frontend','css':'frontend',
-  'react':'frontend','vue.js':'frontend','angular':'frontend',
-  'svelte':'frontend','next.js':'frontend','jquery':'frontend',
-  'web development':'frontend','bootstrap':'frontend',
-
-  /* Backend */
-  'java':'backend','python':'backend','go':'backend','rust':'backend',
-  'c':'backend','c++':'backend','c#':'backend','ruby':'backend',
-  'php':'backend','elixir':'backend','scala':'backend','lua':'backend',
-  '.net':'backend','node.js':'backend','kotlin':'backend',
-  'sql':'backend','database':'backend','nosql':'backend',
-  'postgresql':'backend','mysql':'backend','mongodb':'backend',
-  'graphql':'backend','rest api':'backend','spring':'backend',
-
-  /* Mobile */
-  'android':'mobile','swift':'mobile','dart':'mobile',
-  'flutter':'mobile','ios':'mobile','react native':'mobile',
-
-  /* DevOps */
-  'git':'devops','docker':'devops','kubernetes':'devops','linux':'devops',
-  'bash':'devops','shell scripting':'devops','shell / bash / zsh / etc':'devops',
-  'devops':'devops','cloud computing':'devops','networking':'devops',
-  'operating systems':'devops','ansible':'devops','terraform':'devops',
-  'arduino':'devops',
-
-  /* Data & IA */
-  'data science':'data','machine learning':'data','deep learning':'data',
-  'artificial intelligence':'data','r':'data','ciência de dados':'data',
-  'inteligência artificial':'data','matlab':'data',
-
-  /* Segurança */
-  'security':'security','cybersecurity':'security','segurança':'security',
-  'criptografia':'security',
-
-  /* Fundamentos */
-  'algorithms & data structures':'cs','algorithms and data structures':'cs',
-  'computer science':'cs','software engineering':'cs','mathematics':'cs',
-  'engenharia de software':'cs','metodologias de desenvolvimento de software':'cs',
-  'matemática':'cs','programming':'cs','web performance':'cs',
-  'markdown':'cs','latex':'cs','estruturas de dados':'cs','algoritmos':'cs',
-};
-
 const JOB_BUCKETS = [
-  { id: 'frontend', label: 'Frontend'   },
-  { id: 'backend',  label: 'Backend'    },
-  { id: 'mobile',   label: 'Mobile'     },
-  { id: 'devops',   label: 'DevOps'     },
-  { id: 'data',     label: 'Data & IA'  },
-  { id: 'security', label: 'Segurança'  },
-  { id: 'cs',       label: 'Fundamentos'},
+  { id: 'frontend', label: 'Frontend'    },
+  { id: 'backend',  label: 'Backend'     },
+  { id: 'mobile',   label: 'Mobile'      },
+  { id: 'devops',   label: 'DevOps'      },
+  { id: 'data',     label: 'Data & IA'   },
+  { id: 'security', label: 'Segurança'   },
+  { id: 'cs',       label: 'Fundamentos' },
+];
+
+/* Exatos primeiro (nomes curtos/ambíguos) */
+const EXACT = { 'c':'backend', 'r':'data', 'go':'backend', 'lua':'backend' };
+
+/* Palavras-chave por bucket — verificadas em ordem, primeira que bate vence */
+const BUCKET_KW = [
+  { id: 'frontend', kw: [
+    'javascript','typescript','html','css','react','vue','angular','svelte',
+    'next.js','jquery','sass','less','web dev','frontend','front-end','bootstrap',
+  ]},
+  { id: 'backend', kw: [
+    'java','python','rust','c++','c#','ruby','php','elixir','scala','kotlin',
+    '.net','node','spring','django','laravel','flask','express','fastapi',
+    'sql','database','banco de dados','mysql','postgresql','mongodb','nosql',
+    'redis','graphql','api','rest','grpc','microservice',
+  ]},
+  { id: 'mobile', kw: [
+    'android','swift','dart','flutter','ios','mobile','react native','kotlin multiplatform',
+  ]},
+  { id: 'devops', kw: [
+    'git','docker','kubernetes','linux','bash','shell','zsh','devops',
+    'cloud','nuvem','network','redes','operating system','sistema operacional',
+    'ansible','terraform','arduino','infraestrutura','infrastructure','ci/cd',
+    'nginx','apache','prometheus','grafana','monitoring',
+  ]},
+  { id: 'data', kw: [
+    'data science','machine learning','deep learning','artificial intelligence',
+    'inteligência artificial','ciência de dados','analytics','tensorflow',
+    'pytorch','pandas','numpy','spark','bigdata','big data','estatística','statistics',
+  ]},
+  { id: 'security', kw: [
+    'security','cybersecurity','segurança','criptografia','pentest',
+    'hacking','owasp','criptograf','infosec',
+  ]},
+  { id: 'cs', kw: [
+    'algorithm','algoritmo','estrutura de dado','data structure',
+    'computer science','ciência da computação','software engineering',
+    'engenharia de software','mathematics','matemática','cálculo',
+    'programação','programming','design pattern','padrão de projeto',
+    'metodologia','markdown','latex','web performance','clean code',
+    'refactoring','fundamento',
+  ]},
 ];
 
 function getBucket(category) {
-  return CAT_TO_BUCKET[category.toLowerCase().trim()] || null;
+  const c = category.toLowerCase().trim();
+  if (EXACT[c]) return EXACT[c];
+  for (const { id, kw } of BUCKET_KW) {
+    if (kw.some(k => c.includes(k))) return id;
+  }
+  return null;
 }
 
 /* Cor de placeholder baseada no bucket */
