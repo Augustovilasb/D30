@@ -251,7 +251,12 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
           </div>
 
           <div className="pub-hero-body">
-            <h1 className="pub-name">{user.name}</h1>
+            <h1 className="pub-name">
+              {user.name}
+              {user.email === 'augustovilasb@hotmail.com' && (
+                <span className="pub-owner-tag">D30 Founder</span>
+              )}
+            </h1>
 
             {(user.is_founding_member || user.username || user.profession) && (
               <div className="pub-identity-row">

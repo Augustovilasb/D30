@@ -4438,7 +4438,8 @@ nav.nav--floating .user-menu-info strong{ color: var(--text); }
   letter-spacing: -1px;
 }
 .pub-hero-body { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-.pub-name { font-size: 26px; font-weight: 800; color: var(--text); margin: 0; line-height: 1.1; letter-spacing: -0.5px; }
+.pub-name { font-size: 26px; font-weight: 800; color: var(--text); margin: 0; line-height: 1.1; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.pub-owner-tag { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #6d5ce6; background: rgba(109,92,230,0.12); border: 1px solid rgba(109,92,230,0.3); border-radius: 6px; padding: 3px 8px; line-height: 1; flex-shrink: 0; }
 .pub-identity-row { display: flex; align-items: center; gap: 10px; }
 .pub-identity-text { display: flex; flex-direction: column; gap: 2px; }
 .pub-username { font-size: 13px; font-weight: 600; color: var(--muted); }
