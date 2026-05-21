@@ -93,4 +93,5 @@ const FORUM_TOPICS = [
 
 const TAG_CLASSES = { duvida: 'tag-duvida', conquista: 'tag-conquista', recurso: 'tag-recurso', carreira: 'tag-carreira', tech: 'tag-tech' };
 
+// Legacy: kept for reference only — data now lives in Supabase (forum_topics / forum_messages)
 Object.assign(window, { FORUM_TOPICS, TAG_CLASSES });

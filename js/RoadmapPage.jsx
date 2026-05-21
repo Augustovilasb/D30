@@ -26,34 +26,36 @@ const PHASES = [
 ];
 
 const COURSE_MAP = Object.fromEntries(COURSES.map(c => [c.id, c]));
-const RM_KEY = 'd30_roadmap_v3';
+function RoadmapPage({ user }) {
+  const userId = user?.id || null;
 
-function rmLoad() {
-  try { const r = localStorage.getItem(RM_KEY); return r ? new Set(JSON.parse(r)) : new Set(); }
-  catch { return new Set(); }
-}
-function rmSave(s) {
-  try { localStorage.setItem(RM_KEY, JSON.stringify([...s])); } catch {}
-}
-
-function RoadmapPage() {
-  const [done,      setDone]      = React.useState(() => rmLoad());
+  const [done,      setDone]      = React.useState(() => DB.roadmap._loadLocal());
   const [unlocking, setUnlocking] = React.useState(new Set());
+  const [loaded,    setLoaded]    = React.useState(false);
+
+  // Merge localStorage + Supabase on mount
+  React.useEffect(() => {
+    DB.roadmap.getProgress(userId).then(progress => {
+      setDone(progress);
+      setLoaded(true);
+    }).catch(() => setLoaded(true));
+  }, [userId]);
 
   const toggle = React.useCallback((id) => {
     setDone(prev => {
       const next = new Set(prev);
       if (next.has(id)) {
         next.delete(id);
+        DB.roadmap.markUndone(userId, id);
       } else {
         next.add(id);
+        DB.roadmap.markDone(userId, id);
         setUnlocking(u => { const n = new Set(u); n.add(id); return n; });
         setTimeout(() => setUnlocking(u => { const n = new Set(u); n.delete(id); return n; }), 500);
       }
-      rmSave(next);
       return next;
     });
-  }, []);
+  }, [userId]);
 
   const totalDone = COURSES.filter(c => done.has(c.id)).length;
   const pct = Math.round(totalDone / COURSES.length * 100);

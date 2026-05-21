@@ -1,6 +1,4 @@
-/* ForumPage.jsx — topic list + thread split, minimal */
-
-const FORUM_OWNER_EMAIL = 'augustovilasb@hotmail.com';
+/* ForumPage.jsx — topics list + thread, data from Supabase via DB */
 
 const CATEGORIES = [
   { id: 'all',       label: 'Todos' },
@@ -14,125 +12,176 @@ const CATEGORIES = [
 ];
 
 function stripHtml(html) {
-  return html.replace(/<[^>]+>/g, '');
+  return (html || '').replace(/<[^>]+>/g, '');
 }
 
 function ForumPage({ user, onSignIn, toast }) {
-  const isOwner = user && user.email === FORUM_OWNER_EMAIL;
-  const [mobileView, setMobileView] = React.useState('list'); // 'list' | 'thread'
+  const isAdmin  = !!user?.is_admin;
+  const t        = toast || (() => {});
   const isMobile = () => window.innerWidth <= 768;
 
-  const [topics,    setTopics]    = React.useState(FORUM_TOPICS);
+  /* ── state ─────────────────────────────────────────────────── */
+  const [topics,       setTopics]       = React.useState([]);
+  const [loadingTopics,setLoadingTopics]= React.useState(true);
+  const [topicMsgs,    setTopicMsgs]    = React.useState({}); // { topicId: Message[] }
+  const [loadingMsgs,  setLoadingMsgs]  = React.useState(false);
+  const [voteCounts,   setVoteCounts]   = React.useState({}); // { msgId: {up,down} }
+  const [myVotes,      setMyVotes]      = React.useState({}); // { msgId: 'up'|'down' }
+
   const [cat,       setCat]       = React.useState('all');
   const [query,     setQuery]     = React.useState('');
   const [activeId,  setActiveId]  = React.useState(null);
   const [postModal, setPostModal] = React.useState(false);
-  const [extras,    setExtras]    = React.useState({});
-  const [closed,    setClosed]    = React.useState({});
-  const [likes,     setLikes]     = React.useState({});   // { topicId: count }
-  const [likedMe,   setLikedMe]   = React.useState({});   // { topicId: bool }
-  const [dislikes,  setDislikes]  = React.useState({});   // { topicId_idx: count }
-  const [dislikedMe,setDislikedMe]= React.useState({});   // { topicId_idx: bool }
-  const [blocked,   setBlocked]   = React.useState({});   // { username: bool }
-  const [msgVotes,  setMsgVotes]  = React.useState({});   // { topicId_key: { up, down } }
-  const [msgVotedMe,setMsgVotedMe]= React.useState({});   // { topicId_key: 'up'|'down'|null }
+  const [blocked,   setBlocked]   = React.useState({});
+  const [mobileView,setMobileView]= React.useState('list');
 
-  const addTopic = React.useCallback((topic) => {
-    setTopics(prev => [topic, ...prev]);
-    setActiveId(topic.id);
+  /* ── load topics ────────────────────────────────────────────── */
+  React.useEffect(() => {
+    let cancelled = false;
+    DB.forum.getTopics()
+      .then(data => {
+        if (cancelled) return;
+        setTopics(data);
+        if (data.length) setActiveId(data[0].id);
+      })
+      .catch(() => t('error', 'Erro ao carregar o fórum.'))
+      .finally(() => { if (!cancelled) setLoadingTopics(false); });
+    return () => { cancelled = true; };
   }, []);
 
-  const deleteTopic = React.useCallback((topicId) => {
-    setTopics(prev => {
-      const next = prev.filter(t => t.id !== topicId);
-      if (next.length > 0) setActiveId(next[0].id);
-      return next;
-    });
+  /* ── load messages when topic selected ─────────────────────── */
+  React.useEffect(() => {
+    if (!activeId) return;
+    if (topicMsgs[activeId] !== undefined) return; // cached
+
+    let cancelled = false;
+    setLoadingMsgs(true);
+
+    DB.forum.getMessages(activeId)
+      .then(async msgs => {
+        if (cancelled) return;
+        setTopicMsgs(prev => ({ ...prev, [activeId]: msgs }));
+
+        const ids = msgs.map(m => m.id);
+        if (!ids.length) return;
+
+        const [counts, myV] = await Promise.all([
+          DB.forum.getVoteCounts(ids),
+          user ? DB.forum.getMyVotes(user.id) : Promise.resolve({}),
+        ]);
+        if (cancelled) return;
+        setVoteCounts(prev => ({ ...prev, ...counts }));
+        setMyVotes(prev => ({ ...prev, ...myV }));
+      })
+      .catch(() => {})
+      .finally(() => { if (!cancelled) setLoadingMsgs(false); });
+
+    return () => { cancelled = true; };
+  }, [activeId]);
+
+  /* ── actions ────────────────────────────────────────────────── */
+  const addTopic = React.useCallback(async ({ title, tag, firstMessage }) => {
+    if (!user) return;
+    try {
+      const topic = await DB.forum.createTopic({ title, tag, userId: user.id, authorName: user.name });
+      const msg   = await DB.forum.createMessage({ topicId: topic.id, text: firstMessage, userId: user.id, authorName: user.name });
+      setTopics(prev => [topic, ...prev]);
+      setTopicMsgs(prev => ({ ...prev, [topic.id]: [msg] }));
+      setActiveId(topic.id);
+      if (isMobile()) setMobileView('thread');
+      t('success', 'Publicado!');
+    } catch (e) {
+      t('error', 'Erro ao publicar. Tente novamente.');
+    }
+  }, [user]);
+
+  const addReply = React.useCallback(async (topicId, text) => {
+    if (!user || !text.trim()) return;
+    try {
+      const msg = await DB.forum.createMessage({ topicId, text, userId: user.id, authorName: user.name });
+      setTopicMsgs(prev => ({ ...prev, [topicId]: [...(prev[topicId] || []), msg] }));
+      setTopics(prev => prev.map(t => t.id === topicId ? { ...t, reply_count: (t.reply_count || 0) + 1 } : t));
+    } catch {
+      t('error', 'Erro ao enviar resposta.');
+    }
+  }, [user]);
+
+  const closeTopic = React.useCallback(async (topicId) => {
+    try {
+      await DB.forum.closeTopic(topicId);
+      setTopics(prev => prev.map(t => t.id === topicId ? { ...t, closed: true } : t));
+    } catch { t('error', 'Erro ao encerrar tópico.'); }
   }, []);
 
-  const addReply = React.useCallback((topicId, msg) => {
-    setExtras(prev => ({ ...prev, [topicId]: [...(prev[topicId] || []), msg] }));
+  const deleteTopic = React.useCallback(async (topicId) => {
+    try {
+      await DB.forum.deleteTopic(topicId);
+      setTopics(prev => {
+        const next = prev.filter(tt => tt.id !== topicId);
+        setActiveId(next.length ? next[0].id : null);
+        return next;
+      });
+    } catch { t('error', 'Erro ao excluir tópico.'); }
   }, []);
 
-  const closeTopic = React.useCallback((topicId) => {
-    setClosed(prev => ({ ...prev, [topicId]: true }));
+  const voteMsg = React.useCallback(async (msgId, voteType) => {
+    if (!user) { onSignIn('login'); return; }
+    try {
+      const result = await DB.forum.vote({ userId: user.id, messageId: msgId, voteType });
+
+      setMyVotes(prev => {
+        const was = prev[msgId];
+        const next = { ...prev, [msgId]: result };
+
+        setVoteCounts(vc => {
+          const c = { ...(vc[msgId] || { up: 0, down: 0 }) };
+          if (was === 'up')    c.up   = Math.max(0, c.up - 1);
+          if (was === 'down')  c.down = Math.max(0, c.down - 1);
+          if (result === 'up')   c.up++;
+          if (result === 'down') c.down++;
+          return { ...vc, [msgId]: c };
+        });
+
+        return next;
+      });
+    } catch {}
+  }, [user]);
+
+  const toggleBlock = React.useCallback((name) => {
+    setBlocked(prev => ({ ...prev, [name]: !prev[name] }));
   }, []);
 
-  const toggleLike = React.useCallback((topicId, e) => {
-    e.stopPropagation();
-    setLikedMe(prev => {
-      const wasLiked = !!prev[topicId];
-      setLikes(lk => ({ ...lk, [topicId]: Math.max(0, (lk[topicId] || 0) + (wasLiked ? -1 : 1)) }));
-      return { ...prev, [topicId]: !wasLiked };
-    });
-  }, []);
-
-  const toggleDislike = React.useCallback((topicId, msgKey) => {
-    const key = topicId + '_' + msgKey;
-    setDislikedMe(prev => {
-      const was = !!prev[key];
-      setDislikes(dk => ({ ...dk, [key]: Math.max(0, (dk[key] || 0) + (was ? -1 : 1)) }));
-      return { ...prev, [key]: !was };
-    });
-  }, []);
-
-  const toggleBlock = React.useCallback((username) => {
-    setBlocked(prev => ({ ...prev, [username]: !prev[username] }));
-  }, []);
-
-  const voteMsgUp = React.useCallback((topicId, msgKey) => {
-    const key = topicId + '_' + msgKey;
-    setMsgVotedMe(prev => {
-      const was = prev[key];
-      const next = was === 'up' ? null : 'up';
-      setMsgVotes(v => ({
-        ...v,
-        [key]: {
-          up:   (v[key]?.up   || 0) + (was === 'up' ? -1 : 1),
-          down: (v[key]?.down || 0) + (was === 'down' ? -1 : 0),
-        },
-      }));
-      return { ...prev, [key]: next };
-    });
-  }, []);
-
-  const voteMsgDown = React.useCallback((topicId, msgKey) => {
-    const key = topicId + '_' + msgKey;
-    setMsgVotedMe(prev => {
-      const was = prev[key];
-      const next = was === 'down' ? null : 'down';
-      setMsgVotes(v => ({
-        ...v,
-        [key]: {
-          up:   (v[key]?.up   || 0) + (was === 'up' ? -1 : 0),
-          down: (v[key]?.down || 0) + (was === 'down' ? -1 : 1),
-        },
-      }));
-      return { ...prev, [key]: next };
-    });
-  }, []);
-
+  /* ── filter ─────────────────────────────────────────────────── */
   const filtered = React.useMemo(() => {
     let list = topics.slice();
-    if (cat === 'hot')         list = list.filter(t => t.hot || (likes[t.id] || 0) >= 5);
-    else if (cat === 'closed') list = list.filter(t => !!closed[t.id]);
+    if (cat === 'hot')         list = list.filter(t => t.hot);
+    else if (cat === 'closed') list = list.filter(t => t.closed);
     else if (cat !== 'all')    list = list.filter(t => t.tag === cat);
     if (query) list = list.filter(t =>
       t.title.toLowerCase().includes(query.toLowerCase()) ||
-      t.author.toLowerCase().includes(query.toLowerCase())
+      t.author_name.toLowerCase().includes(query.toLowerCase())
     );
     return list;
-  }, [topics, cat, query, closed, likes]);
+  }, [topics, cat, query]);
 
-  const active = filtered.find(t => t.id === activeId) || null;
+  const active    = filtered.find(t => t.id === activeId) || null;
+  const showList  = !isMobile() || mobileView === 'list';
+  const showThread= !isMobile() || mobileView === 'thread';
 
   const handleSelectTopic = React.useCallback((id) => {
     setActiveId(id);
     if (isMobile()) setMobileView('thread');
   }, []);
 
-  const showList   = !isMobile() || mobileView === 'list';
-  const showThread = !isMobile() || mobileView === 'thread';
+  if (loadingTopics) {
+    return (
+      <div className="page active fade-in">
+        <div className="forum-wrap">
+          <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--muted)' }}>Carregando fórum…</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="page active fade-in">
@@ -166,33 +215,25 @@ function ForumPage({ user, onSignIn, toast }) {
                 setQuery={setQuery}
                 activeId={active ? active.id : null}
                 setActiveId={handleSelectTopic}
-                extras={extras}
-                closed={closed}
-                likes={likes}
-                likedMe={likedMe}
-                onLike={toggleLike}
-                dislikes={dislikes}
-                dislikedMe={dislikedMe}
-                onDislike={(topicId, e) => { e.stopPropagation(); toggleDislike(topicId, 'topic'); }}
+                topicMsgs={topicMsgs}
               />
             )}
             {showThread && (active
               ? <ThreadPane
                   topic={active}
                   user={user}
-                  isOwner={isOwner}
+                  isAdmin={isAdmin}
                   onSignIn={onSignIn}
-                  extra={extras[active.id] || []}
-                  onReply={(msg) => addReply(active.id, msg)}
-                  isClosed={!!closed[active.id]}
+                  msgs={topicMsgs[active.id] || []}
+                  loadingMsgs={loadingMsgs && !topicMsgs[active.id]}
+                  onReply={(text) => addReply(active.id, text)}
                   onClose={() => closeTopic(active.id)}
                   onDelete={() => deleteTopic(active.id)}
                   blocked={blocked}
                   onBlock={toggleBlock}
-                  msgVotes={msgVotes}
-                  msgVotedMe={msgVotedMe}
-                  onVoteUp={(key) => voteMsgUp(active.id, key)}
-                  onVoteDown={(key) => voteMsgDown(active.id, key)}
+                  voteCounts={voteCounts}
+                  myVotes={myVotes}
+                  onVote={voteMsg}
                 />
               : <div className="thread-pane"><div className="thread-empty">Selecione um tópico ao lado.</div></div>
             )}
@@ -200,12 +241,12 @@ function ForumPage({ user, onSignIn, toast }) {
         </div>
       </div>
       <Footer />
-      <NewPostModal open={postModal} onClose={() => setPostModal(false)} onAdd={addTopic} user={user} toast={toast || (() => {})} />
+      <NewPostModal open={postModal} onClose={() => setPostModal(false)} onAdd={addTopic} user={user} toast={t} />
     </div>
   );
 }
 
-function TopicsPane({ topics, query, setQuery, activeId, setActiveId, extras, closed, likes, likedMe, onLike, dislikes, dislikedMe, onDislike }) {
+function TopicsPane({ topics, query, setQuery, activeId, setActiveId, topicMsgs }) {
   return (
     <div className="topics-pane">
       <div className="topics-search">
@@ -215,19 +256,13 @@ function TopicsPane({ topics, query, setQuery, activeId, setActiveId, extras, cl
       <div className="topics-list">
         {topics.length === 0
           ? <div className="topics-empty">Nada por aqui.</div>
-          : topics.map((t) => {
-              const topicExtras  = extras[t.id] || [];
-              const totalReplies = t.replies + topicExtras.length;
-              const allMsgs      = t.messages.concat(topicExtras);
-              const lastMsg      = allMsgs[allMsgs.length - 1];
-              const preview      = lastMsg ? stripHtml(lastMsg.text) : '';
-              const isClosed     = !!closed[t.id];
-              const likeCount    = (likes[t.id] || 0) + (t.likes || 0);
-              const liked        = !!likedMe[t.id];
-              const dkKey        = t.id + '_topic';
-              const dkCount      = dislikes[dkKey] || 0;
-              const didDislike   = !!dislikedMe[dkKey];
-              const isHot        = t.hot || likeCount >= 5;
+          : topics.map(t => {
+              const msgs      = topicMsgs[t.id];
+              const lastMsg   = msgs ? msgs[msgs.length - 1] : null;
+              const preview   = lastMsg ? stripHtml(lastMsg.text) : '';
+              const previewWho= lastMsg ? lastMsg.author_name : '';
+              const isHot     = t.hot;
+              const isClosed  = t.closed;
 
               return (
                 <div
@@ -243,11 +278,11 @@ function TopicsPane({ topics, query, setQuery, activeId, setActiveId, extras, cl
                   </div>
                   {preview && (
                     <div className="topic-preview">
-                      <span className="topic-preview-who">{lastMsg.who}:</span> {preview}
+                      <span className="topic-preview-who">{previewWho}:</span> {preview}
                     </div>
                   )}
                   <div className="topic-meta-row">
-                    <span className="topic-meta">{t.author} · {totalReplies} resp. · {t.time}</span>
+                    <span className="topic-meta">{t.author_name} · {t.reply_count || 0} resp. · {t.time}</span>
                   </div>
                 </div>
               );
@@ -258,22 +293,22 @@ function TopicsPane({ topics, query, setQuery, activeId, setActiveId, extras, cl
   );
 }
 
-function ThreadPane({ topic, user, isOwner, onSignIn, extra, onReply, isClosed, onClose, onDelete, blocked, onBlock, msgVotes, msgVotedMe, onVoteUp, onVoteDown }) {
+function ThreadPane({ topic, user, isAdmin, onSignIn, msgs, loadingMsgs, onReply, onClose, onDelete, blocked, onBlock, voteCounts, myVotes, onVote }) {
   const [reply,      setReply]   = React.useState('');
   const [confirming, setConf]    = React.useState(false);
   const [confirmDel, setConfDel] = React.useState(false);
   const msgsRef                  = React.useRef(null);
+  const isClosed                 = topic.closed;
 
-  const allMsgs = topic.messages.concat(extra);
-  // First message is the original post — stays pinned. Replies sorted by score.
-  const firstMsg  = allMsgs[0];
-  const replies   = allMsgs.slice(1).map((m, i) => ({ ...m, _origIdx: i + 1 })).sort((a, b) => {
-    const scoreA = (msgVotes[topic.id + '_' + a._origIdx]?.up || 0) - (msgVotes[topic.id + '_' + a._origIdx]?.down || 0);
-    const scoreB = (msgVotes[topic.id + '_' + b._origIdx]?.up || 0) - (msgVotes[topic.id + '_' + b._origIdx]?.down || 0);
-    return scoreB - scoreA;
+  const canDelete = isAdmin || (user && msgs[0]?.author_id === user.id);
+
+  const firstMsg  = msgs[0] || null;
+  const replies   = msgs.slice(1).slice().sort((a, b) => {
+    const sa = (voteCounts[a.id]?.up || 0) - (voteCounts[a.id]?.down || 0);
+    const sb = (voteCounts[b.id]?.up || 0) - (voteCounts[b.id]?.down || 0);
+    return sb - sa;
   });
-  const msgs         = firstMsg ? [{ ...firstMsg, _origIdx: 0 }, ...replies] : replies;
-  const totalReplies = topic.replies + extra.length;
+  const sortedMsgs = firstMsg ? [firstMsg, ...replies] : replies;
 
   React.useEffect(() => {
     if (msgsRef.current) msgsRef.current.scrollTop = msgsRef.current.scrollHeight;
@@ -281,18 +316,8 @@ function ThreadPane({ topic, user, isOwner, onSignIn, extra, onReply, isClosed, 
 
   const send = () => {
     if (!reply.trim() || !user || isClosed) return;
-    onReply({ who: user.name, avatar: user.initials, color: user.color, time: 'agora', text: reply });
+    onReply(reply.trim());
     setReply('');
-  };
-
-  const handleClose = () => {
-    if (!confirming) { setConf(true); return; }
-    onClose(); setConf(false);
-  };
-
-  const handleDelete = () => {
-    if (!confirmDel) { setConfDel(true); return; }
-    onDelete(); setConfDel(false);
   };
 
   return (
@@ -304,13 +329,17 @@ function ThreadPane({ topic, user, isOwner, onSignIn, extra, onReply, isClosed, 
             {isClosed && <span className="thread-closed-badge">encerrada</span>}
           </div>
           <div className="thread-header-actions">
-            {isOwner && !isClosed && (
-              <button className={'thread-close-btn' + (confirming ? ' confirming' : '')} data-cursor="hover" onClick={handleClose} onBlur={() => setConf(false)}>
+            {isAdmin && !isClosed && (
+              <button className={'thread-close-btn' + (confirming ? ' confirming' : '')} data-cursor="hover"
+                onClick={() => { if (!confirming) { setConf(true); return; } onClose(); setConf(false); }}
+                onBlur={() => setConf(false)}>
                 {confirming ? 'Confirmar?' : 'Encerrar'}
               </button>
             )}
-            {(isOwner || (user && user.name === topic.author)) && (
-              <button className={'thread-delete-btn' + (confirmDel ? ' confirming' : '')} data-cursor="hover" onClick={handleDelete} onBlur={() => setConfDel(false)}>
+            {canDelete && (
+              <button className={'thread-delete-btn' + (confirmDel ? ' confirming' : '')} data-cursor="hover"
+                onClick={() => { if (!confirmDel) { setConfDel(true); return; } onDelete(); setConfDel(false); }}
+                onBlur={() => setConfDel(false)}>
                 {confirmDel ? 'Confirmar exclusão?' : 'Excluir'}
               </button>
             )}
@@ -319,29 +348,30 @@ function ThreadPane({ topic, user, isOwner, onSignIn, extra, onReply, isClosed, 
         <div className="thread-sub">
           <span>{topic.tagLabel}</span>
           <span>·</span>
-          <span>{topic.author}</span>
+          <span>{topic.author_name}</span>
           <span>·</span>
           <span>{topic.time}</span>
           <span>·</span>
-          <span>{totalReplies} respostas</span>
+          <span>{topic.reply_count || msgs.length} respostas</span>
         </div>
       </div>
 
       <div className="thread-msgs" ref={msgsRef}>
-        {msgs.map((m, renderIdx) => {
-          const msgKey    = m._origIdx;
-          const voteKey   = topic.id + '_' + msgKey;
-          const isBlocked = !!blocked[m.who];
-          const isMine    = user && m.who === user.name;
-          const votes     = msgVotes[voteKey] || { up: 0, down: 0 };
-          const myVote    = msgVotedMe[voteKey] || null;
+        {loadingMsgs && (
+          <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--muted)' }}>Carregando…</div>
+        )}
+        {sortedMsgs.map((m) => {
+          const isBlocked = !!blocked[m.author_name];
+          const isMine    = user && m.author_id === user.id;
+          const votes     = voteCounts[m.id] || { up: 0, down: 0 };
+          const myVote    = myVotes[m.id] || null;
 
           return (
-            <div key={voteKey + renderIdx} className={'msg' + (isBlocked ? ' msg--blocked' : '')}>
+            <div key={m.id} className={'msg' + (isBlocked ? ' msg--blocked' : '')}>
               <div className="msg-avatar" style={{ background: m.color }}>{m.avatar}</div>
               <div className="msg-body">
                 <div className="msg-head">
-                  <span className="msg-name">{m.who}</span>
+                  <span className="msg-name">{m.author_name}</span>
                   <span className="msg-time">{m.time}</span>
                   {isBlocked && <span className="msg-blocked-badge">bloqueado</span>}
                 </div>
@@ -352,14 +382,14 @@ function ThreadPane({ topic, user, isOwner, onSignIn, extra, onReply, isClosed, 
                 <div className="msg-actions">
                   {!isMine && (
                     <React.Fragment>
-                      <button className={'msg-vote-up' + (myVote === 'up' ? ' active' : '')} data-cursor="hover" onClick={() => onVoteUp(msgKey)}>
+                      <button className={'msg-vote-up' + (myVote === 'up' ? ' active' : '')} data-cursor="hover" onClick={() => onVote(m.id, 'up')}>
                         <svg width="15" height="15" viewBox="0 0 24 24" fill={myVote === 'up' ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3z"/>
                           <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
                         </svg>
                         {votes.up > 0 && <span>{votes.up}</span>}
                       </button>
-                      <button className={'msg-vote-down' + (myVote === 'down' ? ' active' : '')} data-cursor="hover" onClick={() => onVoteDown(msgKey)}>
+                      <button className={'msg-vote-down' + (myVote === 'down' ? ' active' : '')} data-cursor="hover" onClick={() => onVote(m.id, 'down')}>
                         <svg width="15" height="15" viewBox="0 0 24 24" fill={myVote === 'down' ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3z"/>
                           <path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/>
@@ -368,8 +398,8 @@ function ThreadPane({ topic, user, isOwner, onSignIn, extra, onReply, isClosed, 
                       </button>
                     </React.Fragment>
                   )}
-                  {isOwner && !isMine && (
-                    <button className={'msg-block-btn' + (isBlocked ? ' blocked' : '')} data-cursor="hover" onClick={() => onBlock(m.who)}>
+                  {isAdmin && !isMine && (
+                    <button className={'msg-block-btn' + (isBlocked ? ' blocked' : '')} data-cursor="hover" onClick={() => onBlock(m.author_name)}>
                       {isBlocked ? 'Desbloquear' : 'Bloquear'}
                     </button>
                   )}

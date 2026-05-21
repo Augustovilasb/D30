@@ -23,13 +23,11 @@ async function buildUserObj(supabaseUser) {
 
   const name = profile?.full_name || supabaseUser.user_metadata?.full_name || supabaseUser.email.split('@')[0];
   const initials = name.trim().split(/\s+/).map(s => s[0]).slice(0,2).join('').toUpperCase();
-  return { id: supabaseUser.id, email: supabaseUser.email, name, initials, username: profile?.username || '', color: '#6d5ce6', avatar_url: profile?.avatar_url || null, bio: profile?.bio || null, profession: profile?.profession || null, github_url: profile?.github_url || null, linkedin_url: profile?.linkedin_url || null, instagram_url: profile?.instagram_url || null, twitter_url: profile?.twitter_url || null, website_url: profile?.website_url || null, is_founding_member: profile?.is_founding_member || false };
+  return { id: supabaseUser.id, email: supabaseUser.email, name, initials, username: profile?.username || '', color: '#6d5ce6', avatar_url: profile?.avatar_url || null, bio: profile?.bio || null, profession: profile?.profession || null, github_url: profile?.github_url || null, linkedin_url: profile?.linkedin_url || null, instagram_url: profile?.instagram_url || null, twitter_url: profile?.twitter_url || null, website_url: profile?.website_url || null, is_founding_member: profile?.is_founding_member || false, is_admin: profile?.is_admin || false };
 }
 
 function App() {
-  const [indicCount, setIndicCount] = React.useState(() => {
-    try { return JSON.parse(localStorage.getItem('d30_indicacoes') || '[]').length; } catch { return 0; }
-  });
+  const [indicCount, setIndicCount] = React.useState(0);
 
   const [loaded, setLoaded] = React.useState(() => {
     try { return sessionStorage.getItem('d30-pre-played') === '1'; } catch { return false; }
@@ -115,6 +113,9 @@ function App() {
           setUser(u);
           setAuthReady(true);
           if (window.Data) window.Data.updateProfileStats(supabaseUser.id);
+          if (u?.is_admin && window.DB) {
+            window.DB.talks.getSuggestions().then(list => setIndicCount(list.length)).catch(() => {});
+          }
         });
       } else {
         setAuthReady(true);
@@ -125,6 +126,9 @@ function App() {
 
   const signIn = (u) => {
     setUser(u);
+    if (u?.is_admin && window.DB) {
+      window.DB.talks.getSuggestions().then(list => setIndicCount(list.length)).catch(() => {});
+    }
     if (!publicUsername) navigate('forum', u);
   };
 
@@ -162,13 +166,13 @@ function App() {
       {!loaded && <Preloader onDone={finishPreload} />}
       <div className="kit-shell">
         <CustomCursor />
-        <Nav page={page} onNavigate={navigate} onNavigateTo={navigate} user={user} onSignIn={(which) => setModal(which)} onSignOut={signOut} indicCount={user && user.email === 'augustovilasb@hotmail.com' ? indicCount : 0} onNavigateProfile={() => navigate('profile')} />
+        <Nav page={page} onNavigate={navigate} onNavigateTo={navigate} user={user} onSignIn={(which) => setModal(which)} onSignOut={signOut} indicCount={user?.is_admin ? indicCount : 0} onNavigateProfile={() => navigate('profile')} />
         <SideRail visible={false} page={page} onNavigate={navigate} />
 
         <div className="page-shell" style={{ opacity: fading ? 0 : 1 }}>
           {page === 'home'      && <HomePage      key={navKey} onNavigate={navigate} onSignIn={() => setModal(user ? null : 'signup')} />}
           {page === 'forum'     && user && <ForumPage     key={navKey} user={user} onSignIn={(which) => setModal(which)} toast={pushToast} />}
-          {page === 'roadmap'   && user && <RoadmapPage   key={navKey} />}
+          {page === 'roadmap'   && user && <RoadmapPage   key={navKey} user={user} />}
           {page === 'palestras' && user && <PalestrasPage key={navKey} toast={pushToast} user={user} onIndicCountChange={setIndicCount} />}
           {page === 'profile'   && user && <ProfilePage   key={navKey} user={user} onSignOut={signOut} onNavigate={navigate} />}
           {page === 'tracker'   && user && <StudyTracker  key={navKey} user={user} />}

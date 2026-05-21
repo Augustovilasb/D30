@@ -178,27 +178,7 @@ function NewPostModal({ open, onClose, toast, onAdd, user }) {
     if (!content.trim() || content.length < 20) next.content = 'Conta um pouco mais — pelo menos 20 caracteres.';
     setErrors(next);
     if (Object.keys(next).length === 0) {
-      const newTopic = {
-        id: 't_' + Math.random().toString(36).slice(2),
-        title: title.trim(),
-        author: user ? user.name : 'Anônimo',
-        avatar: user ? user.initials : '?',
-        color: user ? (user.color || '#6d5ce6') : '#999',
-        time: 'agora',
-        tag: category,
-        tagLabel: CAT_LABELS[category] || category,
-        hot: false,
-        replies: 0,
-        messages: [{
-          who: user ? user.name : 'Anônimo',
-          avatar: user ? user.initials : '?',
-          color: user ? (user.color || '#6d5ce6') : '#999',
-          time: 'agora',
-          text: content.trim(),
-        }],
-      };
-      if (onAdd) onAdd(newTopic);
-      toast('success', 'Publicado!');
+      if (onAdd) onAdd({ title: title.trim(), tag: category, firstMessage: content.trim() });
       setTitle(''); setContent(''); setCategory('duvida'); setErrors({});
       onClose();
     }

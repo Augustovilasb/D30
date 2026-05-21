@@ -142,8 +142,8 @@ const Data = {
       const coursesDone = (() => { try { return JSON.parse(localStorage.getItem('d30_roadmap_v3') || '[]').length; } catch { return 0; } })();
 
       const [{ count: talks }, { count: forum }] = await Promise.all([
-        window.sb.from('palestra_attendance').select('id', { count: 'exact', head: true }).eq('user_id', userId),
-        window.sb.from('forum_activity').select('id', { count: 'exact', head: true }).eq('user_id', userId).eq('type', 'topic'),
+        window.sb.from('talk_rsvp').select('id',         { count: 'exact', head: true }).eq('user_id', userId),
+        window.sb.from('forum_topics').select('id',      { count: 'exact', head: true }).eq('author_id', userId),
       ]);
 
       await window.sb.from('profiles').update({

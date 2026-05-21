@@ -1,4 +1,39 @@
 /* UI kit — Awwwards-inspired light theme */
+/*
+ * TABLE OF CONTENTS
+ * ─────────────────────────────────────────────────────
+ *   L.001  Light mode variables / resets
+ *   L.133  Fullpage scroll (home sections)
+ *   L.314  Preloader
+ *   L.476  Nav — black bar + floating pill
+ *   L.557  Hero — editorial landing
+ *   L.688  About + Features (folder reveal)
+ *   L.1192 Features strip
+ *   L.1221 Hero dice / Values dice
+ *   L.1496 Side rail
+ *   L.1557 Palestras page        ← css/components/palestras.css (future)
+ *   L.1853 Date-time picker
+ *   L.1979 About values scroll
+ *   L.2010 Profile card
+ *   L.2054 Nav pill morph
+ *   L.2174 Theme toggle button
+ *   L.2194 Palette lock
+ *   L.2268 Dark mode overrides   [data-theme="dark"]
+ *   L.2620 Profile page          ← css/components/profile.css (future)
+ *   L.2833 Study Tracker         ← css/components/tracker.css (future)
+ *   L.4400 Public Profile page
+ *   L.4626 Settings page
+ *   L.4919 Livros page           ← css/components/livros.css (future)
+ *   L.5253 Ranking page          ← css/components/ranking.css (future)
+ *   L.5356 Responsive (≤768px)
+ *
+ * Forum styles are in d30.css   ← css/components/forum.css (future)
+ * Roadmap styles are in d30.css ← css/components/roadmap.css (future)
+ *
+ * Convention: new component styles → css/components/<name>.css
+ *             load via <link> in index.html after this file.
+ * ─────────────────────────────────────────────────────
+ */
 
 /* ════════════════════════════════════════════════════════════
    LIGHT MODE — flip all d30.css dark variables to white/black
@@ -1793,6 +1828,15 @@ nav.nav--floating {
   background: var(--purple2);
   border-color: var(--purple2);
   color: #fff;
+  transform: translateY(-1px);
+}
+.talk-rsvp-btn.rsvpd {
+  background: var(--purple2);
+  border-color: var(--purple2);
+  color: #fff;
+}
+.talk-rsvp-btn.rsvpd:hover {
+  opacity: 0.85;
   transform: translateY(-1px);
 }
 
