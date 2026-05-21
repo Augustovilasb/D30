@@ -74,29 +74,43 @@ function placeholderBg(category) {
   return BUCKET_COLORS[bucket] || BUCKET_COLORS.default;
 }
 
-/* Capa lazy via Google Books, fallback colorido */
+/* Busca capa: Google Books + Open Library em paralelo, usa o que chegar primeiro */
+function fetchCover(title) {
+  const q = encodeURIComponent(title);
+  const gb = fetch(`https://www.googleapis.com/books/v1/volumes?q=${q}&maxResults=1&fields=items/volumeInfo/imageLinks`)
+    .then(r => r.json())
+    .then(d => {
+      const t = d?.items?.[0]?.volumeInfo?.imageLinks?.thumbnail?.replace('http:', 'https:');
+      if (!t) throw new Error('no cover');
+      return t;
+    });
+  const ol = fetch(`https://openlibrary.org/search.json?title=${q}&limit=1&fields=cover_i`)
+    .then(r => r.json())
+    .then(d => {
+      const id = d?.docs?.[0]?.cover_i;
+      if (!id) throw new Error('no cover');
+      return `https://covers.openlibrary.org/b/id/${id}-M.jpg`;
+    });
+  return Promise.any([gb, ol]).catch(() => null);
+}
+
+/* Capa lazy — tenta Google Books e Open Library quando entra no viewport */
 function BookCover({ title, category }) {
-  const [src,   setSrc]   = React.useState(null);
-  const [tried, setTried] = React.useState(false);
-  const ref = React.useRef(null);
+  const [src, setSrc] = React.useState(null);
+  const ref     = React.useRef(null);
+  const fetched = React.useRef(false);
 
   React.useEffect(() => {
-    if (!ref.current || tried) return;
+    if (!ref.current) return;
     const obs = new IntersectionObserver(([e]) => {
-      if (!e.isIntersecting) return;
-      setTried(true);
+      if (!e.isIntersecting || fetched.current) return;
+      fetched.current = true;
       obs.disconnect();
-      fetch(`https://www.googleapis.com/books/v1/volumes?q=intitle:${encodeURIComponent(title)}&maxResults=1&fields=items/volumeInfo/imageLinks`)
-        .then(r => r.json())
-        .then(d => {
-          const t = d?.items?.[0]?.volumeInfo?.imageLinks?.thumbnail;
-          if (t) setSrc(t.replace('http:', 'https:'));
-        })
-        .catch(() => {});
+      fetchCover(title).then(url => { if (url) setSrc(url); });
     }, { threshold: 0.1 });
     obs.observe(ref.current);
     return () => obs.disconnect();
-  }, [title, tried]);
+  }, [title]);
 
   return (
     <div ref={ref} className="livro-cover">
