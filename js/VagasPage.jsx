@@ -206,22 +206,22 @@ function VagasPage({ user, toast }) {
     setAdzunaError(false);
     try {
       const res = await fetch(`/api/vagas?cat=${cat}`);
-      if (!res.ok) throw new Error('adzuna error');
+      if (!res.ok) throw new Error('gupy error');
       const json = await res.json();
-      const jobs = (json.results || []).map(j => ({
-        id:           j.id,
-        title:        j.title,
-        company:      j.company?.display_name || '',
-        description:  j.description?.slice(0, 160) + '…' || '',
-        link:         j.redirect_url,
-        created_at:   j.created,
-        source:       'adzuna',
-        location_type: null,
+      /* Gupy response: { data: [...] } */
+      const list = json.data || json.results || [];
+      const jobs = list.map(j => ({
+        id:           j.id || j.jobCode || String(Math.random()),
+        title:        j.name || j.title || '',
+        company:      j.careerPageName || j.company?.name || '',
+        description:  (j.description || '').replace(/<[^>]+>/g, '').slice(0, 160) + '…',
+        link:         j.jobUrl || j.redirect_url || '#',
+        created_at:   j.publishedDate || j.created || new Date().toISOString(),
+        source:       'gupy',
+        location_type: j.isRemoteWork ? 'remote' : (j.workplaceType === 'hybrid' ? 'hybrid' : null),
         category:     cat === 'all' ? null : cat,
         level:        null,
-        salary_range: j.salary_min
-          ? `R$ ${Math.round(j.salary_min).toLocaleString('pt-BR')}${j.salary_max ? ' – ' + Math.round(j.salary_max).toLocaleString('pt-BR') : '+'}`
-          : null,
+        salary_range: null,
       }));
       setAdzunaJobs(jobs);
     } catch {

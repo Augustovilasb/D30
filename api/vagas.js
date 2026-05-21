@@ -1,13 +1,10 @@
-/* api/vagas.js — Vercel serverless proxy para Adzuna (evita CORS) */
-
-const ADZUNA_ID  = '141de08a';
-const ADZUNA_KEY = 'fa60364764187e6580cefc55800ef82e';
+/* api/vagas.js — Vercel serverless proxy para Gupy (evita CORS) */
 
 const QUERIES = {
-  all:      'desenvolvedor programador TI tecnologia',
+  all:      'desenvolvedor programador TI tecnologia suporte',
   dev:      'desenvolvedor programador software engineer',
-  devops:   'devops sre cloud infraestrutura',
-  security:  'segurança cibersegurança cyber security',
+  devops:   'devops cloud infraestrutura sre',
+  security: 'segurança cyber security cibersegurança',
   support:  'suporte TI help desk técnico',
   data:     'dados data science analista BI',
   design:   'UX UI design produto',
@@ -19,10 +16,12 @@ module.exports = async function handler(req, res) {
 
   const cat   = req.query.cat || 'all';
   const query = encodeURIComponent(QUERIES[cat] || QUERIES.all);
-  const url   = `https://api.adzuna.com/v1/api/jobs/br/search/1?app_id=${ADZUNA_ID}&app_key=${ADZUNA_KEY}&results_per_page=12&what=${query}&content-type=application/json`;
+  const url   = `https://portal.api.gupy.io/api/v1/jobs?name=${query}&limit=20&offset=0`;
 
   try {
-    const upstream = await fetch(url);
+    const upstream = await fetch(url, {
+      headers: { 'Accept': 'application/json', 'User-Agent': 'D30Community/1.0' }
+    });
     if (!upstream.ok) {
       return res.status(upstream.status).json({ error: 'upstream error', status: upstream.status });
     }
