@@ -5291,6 +5291,9 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
   color: #888; background: rgba(136,136,136,.12);
   border-radius: 4px; padding: 1px 5px;
 }
+.ranking-founder-badge--founder {
+  color: #6d5ce6; background: rgba(109,92,230,.12);
+}
 .ranking-you {
   font-size: 10px; font-weight: 700; color: #6366f1;
   background: #6366f115; border-radius: 4px; padding: 1px 5px;
