@@ -61,9 +61,9 @@ function App() {
     window.history.replaceState({ page }, '', page === 'home' ? '#' : '#' + page);
   }, []);
 
-  const navigate = (p) => {
+  const navigate = (p, authedUser) => {
     const target = p === 'about' ? 'home' : p;
-    if (PROTECTED.includes(target) && !user) { setModal('login'); return; }
+    if (PROTECTED.includes(target) && !(authedUser || user)) { setModal('login'); return; }
     window.history.pushState({ page: target }, '', target === 'home' ? '#' : '#' + target);
     setFading(true);
     setTimeout(function () {
@@ -127,7 +127,7 @@ function App() {
 
   const signIn = (u) => {
     setUser(u);
-    if (!publicUsername) navigate('forum');
+    if (!publicUsername) navigate('forum', u);
   };
 
   const signOut = async () => {
