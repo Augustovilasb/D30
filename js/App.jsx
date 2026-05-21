@@ -114,6 +114,7 @@ function App() {
         buildUserObj(supabaseUser).then(u => {
           setUser(u);
           setAuthReady(true);
+          if (window.Data) window.Data.updateProfileStats(supabaseUser.id);
         });
       } else {
         setAuthReady(true);
