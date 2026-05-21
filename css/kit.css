@@ -4642,6 +4642,7 @@ nav.nav--floating .user-menu-info strong{ color: var(--text); }
   display: flex; align-items: center; gap: 10px;
   font-size: 13px; color: #888; cursor: pointer; user-select: none;
 }
+.discord-check-label--disabled { opacity: .35; cursor: not-allowed; }
 .discord-check-label input { display: none; }
 .discord-check-box {
   width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid #333;
