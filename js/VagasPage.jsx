@@ -79,23 +79,21 @@ function JobCard({ job }) {
       <h3 className="vaga-card-title">{job.title}</h3>
       {job.company && <p className="vaga-card-company">{job.company}</p>}
 
-      {/* Linha 3 — 3 pilares fixos: tipo · localização da empresa · salário */}
-      <div className="vaga-card-pillars">
-        <div className={'vaga-pillar' + (isRemote ? ' vaga-pillar--remote' : ' vaga-pillar--presential')}>
+      {/* Linha 3 — tipo + restrição + salário (só mostra o que tem dado) */}
+      <div className="vaga-card-info-row">
+        <span className={'vaga-info-chip' + (isRemote ? ' vaga-info-chip--remote' : ' vaga-info-chip--presential')}>
           {isRemote ? '🌐 Remoto' : '🏢 Presencial'}
-        </div>
-        <div className="vaga-pillar">
-          📍 {job.company_location || 'N/D'}
-        </div>
-        <div className={'vaga-pillar' + (salary ? ' vaga-pillar--salary' : '')}>
-          💰 {salary || 'Salário não informado'}
-        </div>
+        </span>
+        {job.company_location && (
+          <span className="vaga-info-chip">📍 {job.company_location}</span>
+        )}
+        {restriction && (
+          <span className="vaga-info-chip vaga-info-chip--warn">⚠️ {restriction}</span>
+        )}
+        {salary && (
+          <span className="vaga-info-chip vaga-info-chip--salary">💰 {salary}</span>
+        )}
       </div>
-
-      {/* Restrição geográfica — só mostra se diferente de Worldwide */}
-      {restriction && restriction.toLowerCase() !== 'worldwide' && (
-        <p className="vaga-card-restriction">⚠️ Requer: {restriction}</p>
-      )}
 
       {/* Tags de stack */}
       {job.tags && job.tags.length > 0 && (
@@ -251,8 +249,9 @@ function VagasPage({ user, toast }) {
 
   const filteredAdzuna = React.useMemo(() => {
     return adzunaJobs.filter(j => {
-      if (levelFilter !== 'all' && j.level         !== levelFilter) return false;
-      if (typeFilter  !== 'all' && j.location_type !== typeFilter)  return false;
+      // só filtra por tipo/nível se o job tiver esse dado — senão mantém
+      if (typeFilter  !== 'all' && j.location_type && j.location_type !== typeFilter) return false;
+      if (levelFilter !== 'all' && j.level         && j.level         !== levelFilter) return false;
       return true;
     });
   }, [adzunaJobs, levelFilter, typeFilter]);
