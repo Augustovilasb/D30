@@ -258,6 +258,33 @@ function ShareCardModal({ user, onClose }) {
             </div>
             <div className="d30-card-name">{user.name}</div>
             <div className="d30-card-handle">{user.username ? `@${user.username}` : user.email.split('@')[0]}</div>
+            <div className="d30-card-badges">
+              {user.email === 'augustovilasb@hotmail.com' && (
+                <div className="d30-card-badge-item">
+                  <svg width="22" height="25" viewBox="0 0 34 38" fill="none" style={{ color: '#6d5ce6' }}>
+                    <path d="M17 1.5L32.5 10V28L17 36.5L1.5 28V10Z" stroke="currentColor" strokeWidth="1.5"/>
+                    <path d="M17 6L28 12.5V25.5L17 32L6 25.5V12.5Z" stroke="currentColor" strokeWidth="0.6" strokeOpacity="0.4"/>
+                    <g transform="rotate(-38, 17, 19)">
+                      <rect x="9" y="12" width="14" height="5.5" rx="1.5" fill="currentColor"/>
+                      <rect x="14" y="17.5" width="3.5" height="9" rx="1.5" fill="currentColor"/>
+                    </g>
+                  </svg>
+                  <span style={{ color: '#6d5ce6' }}>FOUNDER</span>
+                </div>
+              )}
+              {user.is_founding_member && (
+                <div className="d30-card-badge-item">
+                  <svg width="22" height="25" viewBox="0 0 34 38" fill="none" style={{ color: '#888' }}>
+                    <path d="M17 1.5L32.5 10V28L17 36.5L1.5 28V10Z" stroke="currentColor" strokeWidth="1.5"/>
+                    <path d="M17 6L28 12.5V25.5L17 32L6 25.5V12.5Z" stroke="currentColor" strokeWidth="0.6" strokeOpacity="0.4"/>
+                    <path d="M13 16l-4 3 4 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M21 16l4 3-4 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                    <line x1="19" y1="14" x2="15" y2="25" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+                  </svg>
+                  <span style={{ color: '#888' }}>DEV 00</span>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* bottom */}

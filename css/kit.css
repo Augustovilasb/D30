@@ -4810,6 +4810,9 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
   line-height: 1.1; margin: 0;
 }
 .d30-card-handle { font-size: 12px; color: #3a3f55; margin-top: 6px; font-weight: 500; }
+.d30-card-badges { display: flex; gap: 12px; margin-top: 10px; }
+.d30-card-badge-item { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.d30-card-badge-item span { font-size: 6px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; line-height: 1; }
 .d30-card-bottom { position: relative; z-index: 1; }
 .d30-card-tagline-wrap { margin-bottom: 14px; }
 .d30-card-divider {
