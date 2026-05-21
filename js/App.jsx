@@ -90,14 +90,16 @@ function App() {
     return () => window.removeEventListener('popstate', onPop);
   }, [user]);
 
-  /* Só redireciona para home depois que o auth resolveu (evita piscar durante refresh) */
+  /* Redireciona assim que o auth resolve */
   React.useEffect(() => {
     if (!authReady) return;
-    if (!user && PROTECTED.includes(page)) {
+    if (user && page === 'home') {
+      navigate('forum', user);
+    } else if (!user && PROTECTED.includes(page)) {
       setPage('home');
       window.history.replaceState({ page: 'home' }, '', '#');
     }
-  }, [user, page, authReady]);
+  }, [authReady]); // eslint-disable-line react-hooks/exhaustive-deps
 
   React.useEffect(() => {
     const { data } = window.Auth.onAuthChange(async (event, supabaseUser) => {
