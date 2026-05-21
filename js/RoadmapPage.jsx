@@ -1,6 +1,7 @@
 /* RoadmapPage.jsx — skill tree + node detail view */
 
 const COURSES = [
+  { id: 'intro-video', title: 'O Mundo da TI', subtitle: 'Renato Augusto · Obrigatório', url: 'https://www.youtube.com/watch?v=oDXDYjksMds' },
   { id: 'logica',   title: 'Lógica de Programação',              subtitle: 'Virado no Jiraya · DevDojo',  url: 'https://www.youtube.com/watch?v=ycyL5CqZoUo&list=PL62G310vn6nH-uBTKREcUWDkOi2Q9n4OZ' },
   { id: 'java',     title: 'Maratona Java',                      subtitle: 'Virado no Jiraya · DevDojo',  url: 'https://www.youtube.com/watch?v=F2Y867f1J8U&list=PL62G310vn6nFIsOCC0H-C2infYgwm8SWW' },
   { id: 'git',      title: 'Git e Github',                       subtitle: 'Curso Gratuito',              url: 'https://www.youtube.com/watch?v=2c7yWlpWDJM&list=PLcoYAcR89n-qbO7YAVj5S0alABLis_QVU' },
@@ -16,6 +17,7 @@ const COURSES = [
 ];
 
 const PHASES = [
+  { id: 'p0', num: '00', label: 'Vídeo Introdutório', ids: ['intro-video'] },
   { id: 'p1', num: '01', label: 'Base',           ids: ['logica'] },
   { id: 'p2', num: '02', label: 'Versionamento',  ids: ['git'] },
   { id: 'p3', num: '03', label: 'Linguagem',      ids: ['java'] },
@@ -28,6 +30,19 @@ const PHASES = [
 const COURSE_MAP = Object.fromEntries(COURSES.map(c => [c.id, c]));
 
 const TREE = [
+  {
+    id: 'intro',
+    levelTag: 'PONTO DE PARTIDA',
+    title: 'Antes de Começar',
+    desc: 'Um vídeo essencial para calibrar sua mentalidade antes do primeiro passo.',
+    trophy: 'Mentalidade',
+    ctaLabel: 'Assistir vídeo →',
+    phaseIds: ['p0'],
+    introVideoId: 'oDXDYjksMds',
+    introText: 'Antes de mais nada você DEVE assistir esse vídeo que resume o mundo ao redor da tecnologia da informação hoje.\n\nO vídeo é do Renato Augusto, um canal muito bom que eu já indico que você siga. Ele mostra o comportamento das tecnologias ao longo do tempo até os dias atuais, fazendo críticas RELEVANTES aos profissionais e o que nos tornamos ao longo do tempo.\n\nESSENCIAL para que não nos deixemos levar com a manada e focemos no que é importante.\n\nPor favor assista o vídeo antes de avançar.',
+    games: [],
+    docs: [],
+  },
   {
     id: 'fundamentos',
     levelTag: 'NOOB',
@@ -232,7 +247,7 @@ function TreeNode({ node, unlocked, progress, earned, onClick }) {
             </div>
           )}
           {!node.comingSoon && (
-            <span className="rm-tree-cta">{unlocked ? 'Ver trilha →' : 'Bloqueado'}</span>
+            <span className="rm-tree-cta">{unlocked ? (node.ctaLabel || 'Ver trilha →') : 'Bloqueado'}</span>
           )}
         </div>
       </div>
@@ -276,89 +291,132 @@ function NodeDetail({ node, unlocked, progress, done, unlocking, onToggle, tab, 
           )}
         </div>
 
-        <div className="rm-detail-tabs">
-          {TABS.map(t => (
-            <button
-              key={t.id}
-              className={'rm-detail-tab' + (tab === t.id ? ' active' : '')}
-              onClick={() => onTabChange(t.id)}
-              data-cursor="hover"
-            >
-              {t.label}
-              {t.count > 0 && <span className="rm-detail-tab-count">{t.count}</span>}
-            </button>
-          ))}
-        </div>
-
-        {tab === 'cursos' && (
-          <div className="rm3-stack">
-            {phases.length === 0
-              ? <p className="rm-empty-state">Cursos em breve.</p>
-              : phases.map((phase, i) => {
-                  const prevPhaseIds  = i > 0 ? (PHASES.find(p => p.id === node.phaseIds[i - 1])?.ids || []) : [];
-                  const phaseUnlocked = unlocked && (i === 0 || prevPhaseIds.every(id => done.has(id)));
-                  const doneCount     = phase.ids.filter(id => done.has(id)).length;
-                  const phasePct      = Math.round(doneCount / phase.ids.length * 100);
-                  return (
-                    <PhaseCard
-                      key={phase.id}
-                      phase={phase}
-                      unlocked={phaseUnlocked}
-                      allDone={doneCount === phase.ids.length}
-                      doneCount={doneCount}
-                      phasePct={phasePct}
-                      done={done}
-                      unlocking={unlocking}
-                      onToggle={onToggle}
-                    />
-                  );
-                })
-            }
-          </div>
-        )}
-
-        {tab === 'jogos' && (
-          <div className="rm-tab-content">
-            {node.games.length === 0
-              ? <p className="rm-empty-state">Jogos em breve.</p>
-              : (
-                <div className="rm3-games-list">
-                  {node.games.map(g => (
-                    <a key={g.id} href={g.url} target="_blank" rel="noopener noreferrer" className="rm3-game-card" data-cursor="hover">
-                      <span className="rm3-game-title">{g.title}</span>
-                      <span className="rm3-game-desc">{g.desc}</span>
-                      <span className="rm3-game-arrow">↗</span>
-                    </a>
-                  ))}
-                </div>
-              )
-            }
-          </div>
-        )}
-
-        {tab === 'docs' && (
-          <div className="rm-tab-content">
-            {node.docs.length === 0
-              ? <p className="rm-empty-state">Documentação em breve.</p>
-              : node.docs.map(d => (
-                  <a key={d.id} href={d.url} target="_blank" rel="noopener noreferrer" className="rm-doc-card" data-cursor="hover">
-                    <span className="rm-doc-title">{d.title}</span>
-                    <span className="rm-doc-desc">{d.desc}</span>
-                    <span className="rm-doc-arrow">↗</span>
-                  </a>
-                ))
-            }
-          </div>
-        )}
-
-        {earned && (
-          <div className="rm-trophy-earned">
-            <span className="rm-trophy-earned-icon">🏆</span>
-            <div>
-              <p className="rm-trophy-earned-title">Conquista desbloqueada!</p>
-              <p className="rm-trophy-earned-sub">Você é {node.trophy}.</p>
+        {node.introVideoId ? (
+          <div className="rm-intro-wrap">
+            {node.introText.split('\n\n').map((p, i) => (
+              <p key={i} className="rm-intro-text">{p}</p>
+            ))}
+            <div className="rm-video-frame">
+              <iframe
+                src={'https://www.youtube.com/embed/' + node.introVideoId}
+                title={node.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                frameBorder="0"
+              />
             </div>
+            <a className="rm-channel-link" href="https://www.youtube.com/@renato.augusto" target="_blank" rel="noopener noreferrer" data-cursor="hover">
+              ↗ Seguir o canal do Renato Augusto
+            </a>
+            <label className={'rm-intro-check' + (done.has('intro-video') ? ' checked' : '')} data-cursor="hover">
+              <input
+                type="checkbox"
+                checked={done.has('intro-video')}
+                onChange={() => onToggle('intro-video')}
+              />
+              <span className="rm-intro-check-text">
+                {done.has('intro-video')
+                  ? '✓ Assisti ao vídeo — pronto para continuar'
+                  : 'Marcar como assistido para desbloquear o roadmap'}
+              </span>
+            </label>
+            {done.has('intro-video') && (
+              <div className="rm-trophy-earned">
+                <span className="rm-trophy-earned-icon">🏆</span>
+                <div>
+                  <p className="rm-trophy-earned-title">Mentalidade desbloqueada!</p>
+                  <p className="rm-trophy-earned-sub">Fundamentos liberados. Hora de colocar a mão na massa.</p>
+                </div>
+              </div>
+            )}
           </div>
+        ) : (
+          <>
+            <div className="rm-detail-tabs">
+              {TABS.map(t => (
+                <button
+                  key={t.id}
+                  className={'rm-detail-tab' + (tab === t.id ? ' active' : '')}
+                  onClick={() => onTabChange(t.id)}
+                  data-cursor="hover"
+                >
+                  {t.label}
+                  {t.count > 0 && <span className="rm-detail-tab-count">{t.count}</span>}
+                </button>
+              ))}
+            </div>
+
+            {tab === 'cursos' && (
+              <div className="rm3-stack">
+                {phases.length === 0
+                  ? <p className="rm-empty-state">Cursos em breve.</p>
+                  : phases.map((phase, i) => {
+                      const prevPhaseIds  = i > 0 ? (PHASES.find(p => p.id === node.phaseIds[i - 1])?.ids || []) : [];
+                      const phaseUnlocked = unlocked && (i === 0 || prevPhaseIds.every(id => done.has(id)));
+                      const doneCount     = phase.ids.filter(id => done.has(id)).length;
+                      const phasePct      = Math.round(doneCount / phase.ids.length * 100);
+                      return (
+                        <PhaseCard
+                          key={phase.id}
+                          phase={phase}
+                          unlocked={phaseUnlocked}
+                          allDone={doneCount === phase.ids.length}
+                          doneCount={doneCount}
+                          phasePct={phasePct}
+                          done={done}
+                          unlocking={unlocking}
+                          onToggle={onToggle}
+                        />
+                      );
+                    })
+                }
+              </div>
+            )}
+
+            {tab === 'jogos' && (
+              <div className="rm-tab-content">
+                {node.games.length === 0
+                  ? <p className="rm-empty-state">Jogos em breve.</p>
+                  : (
+                    <div className="rm3-games-list">
+                      {node.games.map(g => (
+                        <a key={g.id} href={g.url} target="_blank" rel="noopener noreferrer" className="rm3-game-card" data-cursor="hover">
+                          <span className="rm3-game-title">{g.title}</span>
+                          <span className="rm3-game-desc">{g.desc}</span>
+                          <span className="rm3-game-arrow">↗</span>
+                        </a>
+                      ))}
+                    </div>
+                  )
+                }
+              </div>
+            )}
+
+            {tab === 'docs' && (
+              <div className="rm-tab-content">
+                {node.docs.length === 0
+                  ? <p className="rm-empty-state">Documentação em breve.</p>
+                  : node.docs.map(d => (
+                      <a key={d.id} href={d.url} target="_blank" rel="noopener noreferrer" className="rm-doc-card" data-cursor="hover">
+                        <span className="rm-doc-title">{d.title}</span>
+                        <span className="rm-doc-desc">{d.desc}</span>
+                        <span className="rm-doc-arrow">↗</span>
+                      </a>
+                    ))
+                }
+              </div>
+            )}
+
+            {earned && (
+              <div className="rm-trophy-earned">
+                <span className="rm-trophy-earned-icon">🏆</span>
+                <div>
+                  <p className="rm-trophy-earned-title">Conquista desbloqueada!</p>
+                  <p className="rm-trophy-earned-sub">Você é {node.trophy}.</p>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
       <Footer />

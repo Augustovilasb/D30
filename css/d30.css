@@ -736,6 +736,7 @@ nav {
 
 /* level tag colors per node */
 .rm-tree-level { font-size: 9px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; }
+.rm-tree-level--intro       { color: rgba(255,200,60,0.8); }
 .rm-tree-level--fundamentos { color: rgba(100,200,120,0.7); }
 .rm-tree-level--junior      { color: rgba(80,160,240,0.7); }
 .rm-tree-level--pleno       { color: rgba(220,140,60,0.7); }
@@ -757,6 +758,23 @@ nav {
 
 .rm-tree-cta { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.3); white-space: nowrap; }
 .rm-tree-node:not(.locked):hover .rm-tree-cta { color: rgba(255,255,255,0.65); }
+
+/* ── Intro video node ── */
+.rm-intro-wrap { display: flex; flex-direction: column; gap: 1.25rem; margin-top: 0.5rem; }
+.rm-intro-text { font-size: 14px; color: rgba(255,255,255,0.62); line-height: 1.75; margin: 0; }
+
+.rm-video-frame { position: relative; width: 100%; padding-top: 56.25%; border-radius: 12px; overflow: hidden; background: #000; border: 1px solid rgba(255,255,255,0.08); }
+.rm-video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+.rm-channel-link { font-size: 12px; font-weight: 600; color: rgba(255,80,80,0.65); text-decoration: none; transition: color 0.15s; width: fit-content; }
+.rm-channel-link:hover { color: rgba(255,80,80,1); }
+
+.rm-intro-check { display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; cursor: pointer; transition: background 0.18s, border-color 0.18s; }
+.rm-intro-check:hover { background: rgba(255,255,255,0.08); }
+.rm-intro-check.checked { background: rgba(80,220,110,0.07); border-color: rgba(80,220,110,0.3); }
+.rm-intro-check input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #50dc6e; }
+.rm-intro-check-text { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.55); }
+.rm-intro-check.checked .rm-intro-check-text { color: rgba(80,220,110,0.85); }
 
 /* ── NodeDetail ── */
 .rm-back-btn {
