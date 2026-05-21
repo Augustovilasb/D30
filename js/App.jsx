@@ -1,6 +1,6 @@
 /* App.jsx — entry. Wires together Nav, pages, modals, toasts, cursor. */
 
-const PROTECTED = ['forum', 'roadmap', 'palestras', 'profile', 'tracker', 'settings', 'edit-profile', 'ranking', 'vagas'];
+const PROTECTED = ['forum', 'roadmap', 'palestras', 'profile', 'tracker', 'settings', 'edit-profile', 'ranking', 'vagas', 'livros'];
 
 async function buildUserObj(supabaseUser) {
   let profile = null;
@@ -175,6 +175,7 @@ function App() {
           {page === 'edit-profile' && user && <EditProfilePage  key={navKey} user={user} onUpdate={(u) => setUser(u)} onNavigate={navigate} />}
           {page === 'ranking'   && user && <RankingPage   key={navKey} user={user} />}
           {page === 'vagas'     && user && <VagasPage     key={navKey} user={user} toast={pushToast} />}
+          {page === 'livros'    && user && <LivrosPage    key={navKey} user={user} />}
         </div>
 
         <LoginModal   open={modal === 'login'}   onClose={() => setModal(null)} onSignIn={signIn} onSwitch={setModal} toast={pushToast} />
