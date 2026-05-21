@@ -39,7 +39,7 @@ const TREE = [
     ctaLabel: 'Assistir vídeo →',
     phaseIds: ['p0'],
     introVideoId: 'oDXDYjksMds',
-    introText: 'Antes de mais nada você DEVE assistir esse vídeo que resume o mundo ao redor da tecnologia da informação hoje.\n\nO vídeo é do Renato Augusto, um canal muito bom que eu já indico que você siga. Ele mostra o comportamento das tecnologias ao longo do tempo até os dias atuais, fazendo críticas RELEVANTES aos profissionais e o que nos tornamos ao longo do tempo.\n\nESSENCIAL para que não nos deixemos levar com a manada e focemos no que é importante.\n\nPor favor assista o vídeo antes de avançar.',
+    introText: 'Antes de mais nada, você DEVE assistir este vídeo. Ele resume, de forma direta e honesta, o mundo ao redor da tecnologia da informação hoje — e vai calibrar sua mentalidade antes de qualquer linha de código.\n\nO vídeo é uma criação 100% do Renato Augusto, e todos os créditos são inteiramente dele. É um canal que eu já indico há muito tempo e que agrega de verdade para a nossa área. Ele mostra o comportamento das tecnologias ao longo do tempo até os dias atuais, fazendo críticas relevantes sobre o que os profissionais se tornaram — e o que precisamos ser.\n\nESSENCIAL para que não nos deixemos levar pela manada e foquemos no que realmente importa.\n\nAssista antes de avançar. Deixe o like e siga o canal — canais assim nos ajudam a crescer a cada dia.',
     games: [],
     docs: [],
   },
