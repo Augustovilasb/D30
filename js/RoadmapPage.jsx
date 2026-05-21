@@ -205,7 +205,7 @@ function RoadmapPage({ user }) {
 
 function TreeNode({ node, unlocked, progress, earned, onClick }) {
   const cls = 'rm-tree-node'
-    + (!unlocked ? ' locked' : '')
+    + ((!unlocked || node.comingSoon) ? ' locked' : '')
     + (node.comingSoon ? ' coming-soon' : '')
     + (' rm-tree-node--' + node.id);
   return (
