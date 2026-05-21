@@ -76,7 +76,7 @@ function ActivityHeatmap({ sessions }) {
 
   return (
     <div className="trk-section">
-      <p className="trk-chart-title">Atividade — últimos 12 meses</p>
+      <p className="trk-chart-title">Atividade: últimos 12 meses</p>
       <div className="trk-heatmap-scroll">
         <div className="trk-heatmap-grid">
           {weeks.map((week, wi) => (
@@ -116,7 +116,7 @@ function KpiCard({ label, value, sub, trend }) {
       <div className="trk-kpi-meta">
         {trend !== null && trend !== undefined && (
           <span className={'trk-kpi-trend ' + (trend > 0 ? 'up' : trend < 0 ? 'down' : 'flat')}>
-            {trend > 0 ? '↑' : trend < 0 ? '↓' : '—'} {Math.abs(trend)}%
+            {trend > 0 ? '↑' : trend < 0 ? '↓' : '·'} {Math.abs(trend)}%
           </span>
         )}
         {sub && <span className="trk-kpi-sub">{sub}</span>}
@@ -362,7 +362,7 @@ function TrackerDashboard({ onStartTimer, onDemoLoad }) {
           <div className="trk-dashboard-cal">
             {activeFilter && (
               <p className="trk-cal-filter-hint">
-                Dias com <strong>{activeFilter.value}</strong> destacados — clique em um dia para ver o detalhe
+                Dias com <strong>{activeFilter.value}</strong> destacados, clique em um dia para ver o detalhe
               </p>
             )}
             <CalComp sessions={ranged} highlightDates={highlightDates} />
@@ -374,7 +374,7 @@ function TrackerDashboard({ onStartTimer, onDemoLoad }) {
       <div className="trk-kpi-row">
         <KpiCard label="Horas no período"    value={fmtH(kpis.total) + 'h'}                        trend={kpis.trend} />
         <KpiCard label="Sessões"             value={kpis.count}                                      sub={`média ${fmtH(kpis.avgSecs)}h`} />
-        <KpiCard label="Alto rendimento"     value={kpis.count ? Math.round(kpis.high / kpis.count * 100) + '%' : '—'} sub={`${kpis.high} sessões`} />
+        <KpiCard label="Alto rendimento"     value={kpis.count ? Math.round(kpis.high / kpis.count * 100) + '%' : '-'} sub={`${kpis.high} sessões`} />
         <KpiCard label="Streak atual"        value={kpis.streak + ' dias'}                            sub={`recorde: ${kpis.best} dias`} />
         <KpiCard label="Total acumulado"     value={fmtH(kpis.allH) + 'h'}                          sub="histórico completo" />
       </div>

@@ -32,13 +32,13 @@ function IntlJobRow({ job }) {
           <span className="vagas-row-warn" title={'Requer: ' + job.location_restriction}>!</span>
         )}
       </div>
-      <div className="vagas-row-empresa">{job.company || <span className="vagas-muted">—</span>}</div>
+      <div className="vagas-row-empresa">{job.company || <span className="vagas-muted">-</span>}</div>
       <div className="vagas-row-posicao">
         <span className="vagas-row-title">{job.title}</span>
         <span className="vagas-row-sub">{job.source}</span>
       </div>
       <div className="vagas-row-salario">
-        {salary ? <span className="vagas-salary-val">{salary}</span> : <span className="vagas-muted">—</span>}
+        {salary ? <span className="vagas-salary-val">{salary}</span> : <span className="vagas-muted">-</span>}
       </div>
       <div className="vagas-row-data">{timeAgo(job.date)}</div>
       <div>
@@ -62,13 +62,13 @@ function NatlJobRow({ job }) {
       <div>
         <span className={'vagas-pill ' + pillClass}>{pillLabel}</span>
       </div>
-      <div className="vagas-row-empresa">{job.company || <span className="vagas-muted">—</span>}</div>
+      <div className="vagas-row-empresa">{job.company || <span className="vagas-muted">-</span>}</div>
       <div className="vagas-row-posicao">
         <span className="vagas-row-title">{job.title}</span>
         {level && <span className="vagas-row-sub">{level}</span>}
       </div>
       <div className="vagas-row-salario">
-        {salary ? <span className="vagas-salary-val">{salary}</span> : <span className="vagas-muted">—</span>}
+        {salary ? <span className="vagas-salary-val">{salary}</span> : <span className="vagas-muted">-</span>}
       </div>
       <div className="vagas-row-data">{timeAgo(job.created_at)}</div>
       <div>
@@ -249,7 +249,7 @@ function VagasPage({ user, toast }) {
                 : (
                   <React.Fragment>
                     <p>Nenhuma vaga nacional cadastrada ainda.</p>
-                    {!isAdmin && <p style={{fontSize:13,marginTop:6}}>Volte em breve — o Augusto está garimpando as melhores.</p>}
+                    {!isAdmin && <p style={{fontSize:13,marginTop:6}}>Volte em breve, o Augusto está garimpando as melhores.</p>}
                   </React.Fragment>
                 )
               }

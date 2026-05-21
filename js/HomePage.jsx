@@ -113,25 +113,25 @@ function HomePage({ onNavigate, onSignIn }) {
 }
 
 const FEATURES = [
-  { num: '—', title: 'Minha história', isStory: true },
+  { num: '·', title: 'Minha história', isStory: true },
   {
     num: '01', title: 'Fórum ativo',
     backLabel: 'Discussões sobre',
-    desc: 'Um fórum de verdade — não um grupo de WhatsApp cheio de figurinha. Um lugar onde você posta uma dúvida e alguém que já passou por aquilo te responde de verdade. Sem ego, sem julgamento.',
+    desc: 'Um fórum de verdade, não um grupo de WhatsApp cheio de figurinha. Um lugar onde você posta uma dúvida e alguém que já passou por aquilo te responde de verdade. Sem ego, sem julgamento.',
     topics: ['Dúvidas técnicas e de carreira', 'Vida de quem está em transição', 'Dicas de estudo e produtividade', 'Trampo: oportunidades e experiências', 'Desabafos e conquistas do dia a dia'],
     tagline: 'Essa é a essência da D30.',
   },
   {
     num: '02', title: 'Palestras',
     backLabel: 'Profissionais & especialistas',
-    desc: 'Toda mês um convidado diferente. Não são aqueles papos genéricos de YouTube — são conversas reais com pessoas que chegaram lá e que estão dispostas a contar como foi de verdade.',
+    desc: 'Toda mês um convidado diferente. Não são aqueles papos genéricos de YouTube, são conversas reais com pessoas que chegaram lá e que estão dispostas a contar como foi de verdade.',
     topics: ['Devs que fizeram transição de carreira', 'Pessoas que foram contratadas sem faculdade', 'Especialistas em tecnologia, saúde e dinheiro', 'Vagas internacionais: como é trabalhar fora', 'Sessão de perguntas ao vivo com o público'],
     tagline: 'Vai ser demais.',
   },
   {
     num: '03', title: 'Road Map',
     backLabel: 'Roadmap de estudos',
-    desc: 'Sem enrolação: um caminho claro do zero até o primeiro emprego. Com foco em Java no back-end — a linguagem que o mercado ainda contrata muito e que eu uso.',
+    desc: 'Sem enrolação: um caminho claro do zero até o primeiro emprego. Com foco em Java no back-end, a linguagem que o mercado ainda contrata muito e que eu uso.',
     topics: ['Fundamentos: lógica, Git, terminal', 'HTML · CSS · JavaScript do zero', 'Java do zero: sintaxe, POO, coleções', 'Spring Boot: REST API, JPA, segurança', 'Banco de dados: SQL, PostgreSQL, MySQL', 'Portfólio e preparação para entrevistas'],
     tagline: 'O SEU caminho.',
   },
@@ -139,20 +139,20 @@ const FEATURES = [
     num: '04', title: 'Apoio real',
     backLabel: 'Para quem estuda com a vida cheia',
     desc: 'Tem filho, tem conta pra pagar, tem trabalho de dia. Aqui não tem guru falando que é só acordar às 5h da manhã. Tem gente real que entende o que é estudar com a vida cheia.',
-    topics: ['Sem fórmula mágica ou coach motivacional', 'Rotinas reais: 1h por dia já é suficiente', 'Como manter consistência sem se destruir', 'Pessoas que já estavam no seu lugar', 'Erros, travamentos e voltas — normalizados', 'Consistência acima de velocidade'],
+    topics: ['Sem fórmula mágica ou coach motivacional', 'Rotinas reais: 1h por dia já é suficiente', 'Como manter consistência sem se destruir', 'Pessoas que já estavam no seu lugar', 'Erros, travamentos e voltas: normalizados', 'Consistência acima de velocidade'],
     tagline: 'Você não tá sozinho.',
   },
   {
     num: '05', title: 'Sala de estudos',
     backLabel: 'Discord · ao vivo',
-    desc: 'Uma sala de voz sempre aberta no Discord. Liga o microfone ou fica só ouvindo — do jeito que funcionar pra você. Melhor do que estudar em silêncio em casa.',
-    topics: ['Sala de estudos silenciosa (foco)', 'Canal de tira-dúvidas ao vivo', 'Screen share para revisar código junto', 'Grupos por nível: iniciante, intermediário', 'Pomodoro coletivo nas noites de semana', 'Voz · texto · vídeo — você escolhe'],
+    desc: 'Uma sala de voz sempre aberta no Discord. Liga o microfone ou fica só ouvindo, do jeito que funcionar pra você. Melhor do que estudar em silêncio em casa.',
+    topics: ['Sala de estudos silenciosa (foco)', 'Canal de tira-dúvidas ao vivo', 'Screen share para revisar código junto', 'Grupos por nível: iniciante, intermediário', 'Pomodoro coletivo nas noites de semana', 'Voz · texto · vídeo: você escolhe'],
     tagline: 'Estuda junto. Avança junto.',
   },
   {
     num: '06', title: 'Vagas filtradas',
     backLabel: 'Vagas no LinkedIn',
-    desc: 'Chega de perder horas garimpando vaga ruim. A gente filtra, organiza e posta só o que faz sentido pra quem está começando ou em transição — com detalhes, requisitos e link direto.',
+    desc: 'Chega de perder horas garimpando vaga ruim. A gente filtra, organiza e posta só o que faz sentido pra quem está começando ou em transição, com detalhes, requisitos e link direto.',
     topics: ['Vagas júnior e estágio em tech', 'Transição de carreira aceita', 'Remoto, híbrido e presencial', 'Requisitos e faixa salarial quando disponível', 'Link direto para aplicação no LinkedIn', 'Atualizado toda semana'],
     tagline: 'A vaga certa. No lugar certo.',
   },
@@ -178,7 +178,7 @@ function FeaturePanel({ card }) {
         <div className="story-section-top">
           <p className="story-eyebrow">minha história até aqui</p>
           <p className="story-intro">
-            Tentei tudo — Educação Física, Exército, 3 anos de Civil, formei em Produção.
+            Tentei tudo: Educação Física, Exército, 3 anos de Civil, formei em Produção.
             No fundo eu sabia que <strong>nada disso era pra mim.</strong>
           </p>
         </div>
@@ -282,7 +282,7 @@ function AboutWithFeatures() {
               onClick={() => go(i)}
               data-cursor="hover"
             >
-              <span className="folders-nav-num">{f.isStory ? '—' : f.num}</span>
+              <span className="folders-nav-num">{f.isStory ? '·' : f.num}</span>
               <span className="folders-nav-title">{f.title}</span>
             </button>
           ))}

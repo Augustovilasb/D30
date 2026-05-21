@@ -195,7 +195,7 @@ function ForumPage({ user, onSignIn, toast }) {
         <div className="forum-page-header">
           <p className="page-label">Comunidade</p>
           <h1 className="page-title">Fórum</h1>
-          <p className="forum-lede">Dúvidas, conquistas, dicas e conversas — tudo num só lugar.</p>
+          <p className="forum-lede">Dúvidas, conquistas, dicas e conversas: tudo num só lugar.</p>
         </div>
 
         <div className="forum-card">

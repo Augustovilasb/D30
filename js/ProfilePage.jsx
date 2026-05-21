@@ -341,7 +341,7 @@ function StatsDetailModal({ type, user, onClose, onNavigate }) {
 
   const titles = {
     livros: 'Livros Lidos', cursos: 'Cursos Finalizados',
-    sessoes: 'Sessões de Estudo', talks: 'Talks — Presença', forum: 'Tópicos no Fórum',
+    sessoes: 'Sessões de Estudo', talks: 'Talks: Presença', forum: 'Tópicos no Fórum',
   };
 
   function fmtDur(secs) {
@@ -369,7 +369,7 @@ function StatsDetailModal({ type, user, onClose, onNavigate }) {
                   data-cursor={b.id ? 'hover' : undefined}
                   onClick={b.id ? () => { window.__livrosHighlight = b.id; onNavigate('livros'); onClose(); } : undefined}
                 >
-                  <span className="stats-detail-item-title">{b.title || '—'}</span>
+                  <span className="stats-detail-item-title">{b.title || '-'}</span>
                   {b.author && <span className="stats-detail-item-sub">{b.author}</span>}
                 </li>
               ))}
@@ -379,7 +379,7 @@ function StatsDetailModal({ type, user, onClose, onNavigate }) {
                   data-cursor="hover"
                   onClick={() => { window.__roadmapHighlight = c.id; onNavigate('roadmap'); onClose(); }}
                 >
-                  <span className="stats-detail-item-title">{c.title || c.name || '—'}</span>
+                  <span className="stats-detail-item-title">{c.title || c.name || '-'}</span>
                   {c.subtitle && <span className="stats-detail-item-sub">{c.subtitle}</span>}
                 </li>
               ))}
@@ -591,18 +591,18 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
           <StatCard iconSlug="primeiros_passos" value={`${totalHours}h`}   label="estudadas"                />
           <StatCard iconSlug="consistente"      value={sessions.length}     label="sessões de estudo"        />
           <StatCard iconSlug="lendario"         value={livrosLidos}         label="livros lidos"             onClick={() => setDetailModal('livros')}  />
-          <StatCard iconSlug="palestrante_fiel" value={palestrasCount === null ? '—' : palestrasCount} label="talks presença"          onClick={() => setDetailModal('talks')}   />
-          <StatCard iconSlug="primeira_sessao"  value={forumCount === null ? '—' : forumCount}         label="no fórum" onClick={() => setDetailModal('forum')}   />
+          <StatCard iconSlug="palestrante_fiel" value={palestrasCount === null ? '-' : palestrasCount} label="talks presença"          onClick={() => setDetailModal('talks')}   />
+          <StatCard iconSlug="primeira_sessao"  value={forumCount === null ? '-' : forumCount}         label="no fórum" onClick={() => setDetailModal('forum')}   />
           {totalCourses > 0 && (
             <StatCard iconSlug="dedicado" value={`${doneCourses}/${totalCourses}`} label="cursos finalizados" onClick={() => setDetailModal('cursos')} />
           )}
-          <StatCard iconSlug="primeira_chama" value={rankPos === null ? '—' : `#${rankPos}`} label="posição no ranking" onClick={() => { window.__rankingTab = 'hours'; onNavigate('ranking'); }} />
+          <StatCard iconSlug="primeira_chama" value={rankPos === null ? '-' : `#${rankPos}`} label="posição no ranking" onClick={() => { window.__rankingTab = 'hours'; onNavigate('ranking'); }} />
         </div>
 
         {/* ── Atividade full-width ── */}
         {sessions.length > 0 && (
           <div className="pub-section">
-            <p className="pub-section-label">Atividade — últimas 16 semanas</p>
+            <p className="pub-section-label">Atividade: últimas 16 semanas</p>
             <ActivityGrid sessions={sessions} />
             <div className="pub-activity-legend">
               <span>Menos</span>

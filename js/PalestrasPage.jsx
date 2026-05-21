@@ -137,7 +137,7 @@ function PalestrasPage({ toast, user, onIndicCountChange }) {
           <h1 className="page-title">Vozes que já passaram<br/>por <span>esse caminho</span>.</h1>
           <p className="palestras-lede">
             Conversa direta com quem tá fazendo, contratando ou trilhou essa transição antes.
-            Sem palco, sem fórmula — só dev falando com dev em formação.
+            Sem palco, sem fórmula, só dev falando com dev em formação.
           </p>
         </div>
 

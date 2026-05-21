@@ -175,7 +175,7 @@ function NewPostModal({ open, onClose, toast, onAdd, user }) {
     e.preventDefault();
     const next = {};
     if (!title.trim()) next.title = 'Dá um título pro tópico.';
-    if (!content.trim() || content.length < 20) next.content = 'Conta um pouco mais — pelo menos 20 caracteres.';
+    if (!content.trim() || content.length < 20) next.content = 'Conta um pouco mais, pelo menos 20 caracteres.';
     setErrors(next);
     if (Object.keys(next).length === 0) {
       if (onAdd) onAdd({ title: title.trim(), tag: category, firstMessage: content.trim() });
@@ -185,7 +185,7 @@ function NewPostModal({ open, onClose, toast, onAdd, user }) {
   };
 
   return (
-    <Modal open={open} onClose={onClose} label="Fórum" title="Novo tópico" subtitle="Pergunta, conquista, dica — tudo serve.">
+    <Modal open={open} onClose={onClose} label="Fórum" title="Novo tópico" subtitle="Pergunta, conquista, dica: tudo serve.">
       <form onSubmit={submit} noValidate>
         <Field label="Título" error={errors.title}>
           <input type="text" placeholder="Resuma em uma frase" value={title} onChange={(e) => setTitle(e.target.value)} />
@@ -377,7 +377,7 @@ function SuggestSpeakerModal({ open, onClose, onSubmit, toast }) {
     e.preventDefault();
     const next = {};
     if (!name.trim()) next.name = 'Coloca o nome do palestrante.';
-    if (!why.trim() || why.length < 10) next.why = 'Conta um pouco mais — pelo menos 10 caracteres.';
+    if (!why.trim() || why.length < 10) next.why = 'Conta um pouco mais, pelo menos 10 caracteres.';
     setErrors(next);
     if (Object.keys(next).length) return;
     onSubmit({ name: name.trim(), why: why.trim() });
@@ -456,7 +456,7 @@ function DiscordOnboardingModal({ open, user, onClose }) {
         </div>
 
         <p className="discord-modal-body">
-          Agora entra no nosso Discord — é onde a troca acontece ao vivo:
+          Agora entra no nosso Discord, é onde a troca acontece ao vivo:
           salas de estudo, dúvidas em tempo real e as palestras. Seja bem-vindo.
         </p>
 

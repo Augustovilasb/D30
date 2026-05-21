@@ -316,7 +316,7 @@ function NodeDetail({ node, unlocked, progress, done, unlocking, onToggle, tab, 
               />
               <span className="rm-intro-check-text">
                 {done.has('intro-video')
-                  ? '✓ Assisti ao vídeo — pronto para continuar'
+                  ? '✓ Assisti ao vídeo, pronto para continuar'
                   : 'Marcar como assistido para desbloquear o roadmap'}
               </span>
             </label>

@@ -9,7 +9,7 @@ const FORUM_TOPICS = [
     hot: true, replies: 24,
     messages: [
       { who: 'Marcos R.', avatar: 'MR', color: '#7c3aed', time: '2h', text: 'Galera, tô tentando manter constância mas trabalhando 8h e ainda estudando 2-3h por dia tá me destruindo. Como vocês equilibram isso sem surtar?' },
-      { who: 'Carla V.', avatar: 'CV', color: '#059669', time: '1h', text: 'Eu separo blocos de 50min com 10min de pausa. Pomodoro me salvou. E aceitei que <strong>não dá pra estudar todo dia</strong> — sábado eu descanso.' },
+      { who: 'Carla V.', avatar: 'CV', color: '#059669', time: '1h', text: 'Eu separo blocos de 50min com 10min de pausa. Pomodoro me salvou. E aceitei que <strong>não dá pra estudar todo dia</strong>, sábado eu descanso.' },
       { who: 'João M.', avatar: 'JM', color: '#b45309', time: '50min', text: 'Cara, tenta acordar 1h mais cedo. Sei que parece insano mas a mente fresca rende 3x mais que estudo cansado depois do trabalho.' },
       { who: 'Augusto', avatar: 'A', color: '#6d5ce6', time: '20min', text: 'Manda bem o João. Eu também acordo cedo. O segredo é regularidade, não intensidade. 1h por dia > 5h só no domingo.' },
     ]
@@ -41,7 +41,7 @@ const FORUM_TOPICS = [
   },
   {
     id: 't4',
-    title: 'Portfolio sem experiência — o que colocar quando você tá começando?',
+    title: 'Portfolio sem experiência: o que colocar quando você tá começando?',
     author: 'Carol A.', avatar: 'CA', color: '#be185d',
     time: '2d atrás', tag: 'carreira', tagLabel: 'Carreira',
     hot: false, replies: 33,
@@ -72,8 +72,8 @@ const FORUM_TOPICS = [
     hot: true, replies: 19,
     messages: [
       { who: 'Fernanda C.', avatar: 'FC', color: '#0284c7', time: '1d', text: 'Tô aprendendo JavaScript há 3 meses. Todo tutorial fala de TypeScript mas parece complexo. Vale começar já ou espero solidificar o JS primeiro?' },
-      { who: 'Rafael G.', avatar: 'RG', color: '#059669', time: '20h', text: 'Espera. Aprende JS de verdade primeiro — closures, async/await, prototypes. TS é JS com tipos, mas se você não entender o JS por baixo, os erros do TS vão te confundir demais.' },
-      { who: 'Paula M.', avatar: 'PM', color: '#7c3aed', time: '15h', text: 'Concordo com o Rafael. <strong>6 meses de JS sólido > 1 mês de TS confuso</strong>. Mas quando você for pra vagas de emprego, aprende TS rápido — quase todo projeto de empresa usa.' },
+      { who: 'Rafael G.', avatar: 'RG', color: '#059669', time: '20h', text: 'Espera. Aprende JS de verdade primeiro: closures, async/await, prototypes. TS é JS com tipos, mas se você não entender o JS por baixo, os erros do TS vão te confundir demais.' },
+      { who: 'Paula M.', avatar: 'PM', color: '#7c3aed', time: '15h', text: 'Concordo com o Rafael. <strong>6 meses de JS sólido > 1 mês de TS confuso</strong>. Mas quando você for pra vagas de emprego, aprende TS rápido, quase todo projeto de empresa usa.' },
       { who: 'Fernanda C.', avatar: 'FC', color: '#0284c7', time: '10h', text: 'Faz sentido! Vou focar no JS agora. Alguma dica de recursos pra não pular etapas?' },
     ]
   },
@@ -85,7 +85,7 @@ const FORUM_TOPICS = [
     hot: false, replies: 38,
     messages: [
       { who: 'Rodrigo P.', avatar: 'RP', color: '#b45309', time: '4d', text: 'Sei que é uma pergunta eterna mas quero saber a opinião de quem tá no mercado hoje: React ou Vue pra quem quer a primeira vaga?' },
-      { who: 'Camila H.', avatar: 'CH', color: '#be185d', time: '4d', text: '<strong>React, sem dúvida</strong>. Não porque é melhor tecnicamente — é porque 80% das vagas pedem React. Empregabilidade vem em primeiro lugar quando você tá começando.' },
+      { who: 'Camila H.', avatar: 'CH', color: '#be185d', time: '4d', text: '<strong>React, sem dúvida</strong>. Não porque é melhor tecnicamente, é porque 80% das vagas pedem React. Empregabilidade vem em primeiro lugar quando você tá começando.' },
       { who: 'Daniel S.', avatar: 'DS', color: '#059669', time: '3d', text: 'Vue é mais gentil pra aprender, mas a Camila tem razão sobre vagas. Eu usaria Vue pra entender os conceitos mais rápido, depois migrava pro React.' },
     ]
   },

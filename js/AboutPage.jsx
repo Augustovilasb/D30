@@ -4,9 +4,9 @@
    (still works as a standalone route for backwards compat). */
 
 const VALUES = [
-  { num: '01', title: 'Autenticidade',   desc: 'Conteúdo de quem tá no meio do processo — não de quem já chegou lá e esqueceu como foi. A D30 nasceu de uma rotina real, não de uma fórmula de palco.' },
+  { num: '01', title: 'Autenticidade',   desc: 'Conteúdo de quem tá no meio do processo, não de quem já chegou lá e esqueceu como foi. A D30 nasceu de uma rotina real, não de uma fórmula de palco.' },
   { num: '02', title: 'Sem julgamento',  desc: 'Dúvida básica? Sem problema. Aqui todo mundo foi iniciante e ninguém esqueceu como foi. Pergunta livre, julgamento zero.' },
-  { num: '03', title: 'Progresso real',  desc: 'Valorizamos consistência, não velocidade. Um dia ruim não define a jornada — define o que você faz no dia seguinte.' },
+  { num: '03', title: 'Progresso real',  desc: 'Valorizamos consistência, não velocidade. Um dia ruim não define a jornada, define o que você faz no dia seguinte.' },
   { num: '04', title: 'Acesso livre',    desc: 'Gratuito. Sempre. Conhecimento não pode ser barreira pra quem já tem tantas outras na vida.' },
 ];
 
@@ -15,8 +15,8 @@ function AboutIntro() {
     <div className="about-hero" id="sobre">
       <p className="page-label">Sobre a D30</p>
       <h1 className="page-title">Não é mais um curso.<br/>É uma <span>comunidade</span>.</h1>
-      <p className="about-text">A D30 nasceu de uma rotina real. De alguém que acordou cedo, foi dormir tarde e decidiu que ia mudar de carreira — mesmo com tudo contra.</p>
-      <p className="about-text">O nome vem de <strong>Dev aos 30</strong>, mas a comunidade é pra qualquer pessoa em qualquer fase da vida que tomou essa decisão. Porque o que une aqui não é idade — é <strong>propósito</strong>.</p>
+      <p className="about-text">A D30 nasceu de uma rotina real. De alguém que acordou cedo, foi dormir tarde e decidiu que ia mudar de carreira, mesmo com tudo contra.</p>
+      <p className="about-text">O nome vem de <strong>Dev aos 30</strong>, mas a comunidade é pra qualquer pessoa em qualquer fase da vida que tomou essa decisão. Porque o que une aqui não é a idade: é o <strong>propósito</strong>.</p>
       <p className="about-text">Não tem fórmula mágica. Tem consistência, comunidade e coragem de continuar quando fica difícil.</p>
     </div>
   );

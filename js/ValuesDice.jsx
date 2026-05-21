@@ -8,7 +8,7 @@ const DICE_FACES = [
     face: 'right',
     num: '01',
     title: 'Autenticidade',
-    desc: 'Conteúdo de quem tá no meio do processo — não de quem já chegou lá e esqueceu como foi.',
+    desc: 'Conteúdo de quem tá no meio do processo, não de quem já chegou lá e esqueceu como foi.',
   },
   {
     face: 'back',
@@ -20,7 +20,7 @@ const DICE_FACES = [
     face: 'left',
     num: '03',
     title: 'Progresso real',
-    desc: 'Consistência, não velocidade. Um dia ruim não define a jornada — define o que você faz no dia seguinte.',
+    desc: 'Consistência, não velocidade. Um dia ruim não define a jornada, define o que você faz no dia seguinte.',
   },
   {
     face: 'top',

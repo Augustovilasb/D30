@@ -181,9 +181,9 @@ function AiAnalysis({ sessions, type, apiKey, autoRun }) {
   const canAnalyze    = hasWeekOfData && hasEnoughTime && !alreadyUsedToday;
 
   const blockReason = !hasWeekOfData
-    ? `${daysRegistered} dia${daysRegistered !== 1 ? 's' : ''} de dados registrados — mínimo 7 para análise.`
+    ? `${daysRegistered} dia${daysRegistered !== 1 ? 's' : ''} de dados registrados, mínimo 7 para análise.`
     : !hasEnoughTime
-    ? `Hoje: ${Math.round(todayStudiedSecs / 60)}min estudados — mínimo 30min para análise.`
+    ? `Hoje: ${Math.round(todayStudiedSecs / 60)}min estudados, mínimo 30min para análise.`
     : alreadyUsedToday
     ? 'Análise gerada hoje. Volte amanhã para a próxima.'
     : null;
@@ -375,7 +375,7 @@ function AiHistoryTab({ onOpenModal }) {
   return (
     <div className="trk-ai-history">
       {history.map(entry => (
-        <div key={entry.id} className="trk-ai-hist-card" data-cursor="hover" onClick={() => onOpenModal({ title: `${LABELS[entry.type] || 'Análise'} — ${new Date(entry.generatedAt).toLocaleDateString('pt-BR')}`, text: entry.text })}>
+        <div key={entry.id} className="trk-ai-hist-card" data-cursor="hover" onClick={() => onOpenModal({ title: `${LABELS[entry.type] || 'Análise'} · ${new Date(entry.generatedAt).toLocaleDateString('pt-BR')}`, text: entry.text })}>
           <div className="trk-ai-hist-head">
             <span className="trk-ai-hist-type" style={{ color: TYPE_COLOR[entry.type] || '#6366f1' }}>
               {LABELS[entry.type] || 'Análise'}
@@ -641,7 +641,7 @@ function CalDayDetail({ dateStr, sessions, onClose }) {
                   <span className="trk-cal-sess-dur">{mins}min</span>
                   {sessions.length > 1 && <span className="trk-cal-sess-idx">sessão {idx + 1}</span>}
                 </div>
-                <p className="trk-cal-sess-subj">{s.subject || '—'}</p>
+                <p className="trk-cal-sess-subj">{s.subject || '-'}</p>
                 <div className="trk-cal-sess-tags">
                   {s.studyType   && <span className="trk-cal-tag">{s.studyType}</span>}
                   {s.period      && <span className="trk-cal-tag">{s.period}</span>}
@@ -769,7 +769,7 @@ function FullCalendar({ sessions, highlightDates }) {
                 <React.Fragment>
                   <div className="trk-full-cal-divider" />
                   <span className="trk-full-cal-subj" title={firstSubj}>
-                    {firstSubj.length > 15 ? firstSubj.slice(0, 15) + '…' : firstSubj || '—'}
+                    {firstSubj.length > 15 ? firstSubj.slice(0, 15) + '…' : firstSubj || '-'}
                     {totalSess > 1 && <span className="trk-full-cal-more">{' +' + (totalSess - 1)}</span>}
                   </span>
                   <div className="trk-full-cal-meta">
@@ -831,7 +831,7 @@ function HeatCalendar({ sessions, highlightDates }) {
   const navLabel = (() => {
     const a = MONTH_NAMES[months[0].month] + (months[0].year !== now.getFullYear() ? ` ${months[0].year}` : '');
     const b = MONTH_NAMES[months[1].month] + ` ${months[1].year}`;
-    return `${a} — ${b}`;
+    return `${a} · ${b}`;
   })();
 
   return (

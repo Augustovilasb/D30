@@ -35,7 +35,7 @@ const SEED_NOTIFS = [
   {
     id: 'n1', type: 'talk', read: false,
     title: 'Palestra em 30 minutos',
-    body: 'Renata Linhares — "O que recrutador realmente lê num currículo júnior" começa às 20h.',
+    body: 'Renata Linhares: "O que recrutador realmente lê num currículo júnior" começa às 20h.',
     time: 'agora', link: 'palestras',
   },
   {
