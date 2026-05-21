@@ -26,6 +26,24 @@ const PHASES = [
 ];
 
 const COURSE_MAP = Object.fromEntries(COURSES.map(c => [c.id, c]));
+
+const GAMES_BY_PHASE = {
+  p1: [
+    { id: 'linux',      title: 'Linux Survival',      desc: 'Aprenda comandos Linux',         url: 'https://linuxsurvival.com/linux-tutorial-introduction/' },
+    { id: 'cmdchall',   title: 'CMD Challenge',        desc: 'Desafios de linha de comando',   url: 'https://cmdchallenge.com/#/last_lines' },
+  ],
+  p2: [
+    { id: 'learngit',   title: 'Learn Git Branching',  desc: 'Git visual e interativo',        url: 'https://learngitbranching.js.org/' },
+  ],
+  p3: [
+    { id: 'codedex',    title: 'Codedex Python',       desc: 'Aprenda Python com missões',     url: 'https://www.codedex.io/python/03-pattern' },
+    { id: 'jsquiz',     title: 'JavaScript Quiz',      desc: 'Teste seu JS na prática',        url: 'https://javascriptquiz.com/' },
+  ],
+  p4: [
+    { id: 'sqlbolt',    title: 'SQLBolt',              desc: 'Lições interativas de SQL',      url: 'https://sqlbolt.com/' },
+    { id: 'sqlmystery', title: 'SQL Murder Mystery',   desc: 'Resolva um crime usando SQL',    url: 'https://mystery.knightlab.com/' },
+  ],
+};
 function RoadmapPage({ user }) {
   const userId = user?.id || null;
 
@@ -107,6 +125,7 @@ function RoadmapPage({ user }) {
                 done={done}
                 unlocking={unlocking}
                 onToggle={toggle}
+                games={GAMES_BY_PHASE[phase.id] || []}
               />
             );
           })}
@@ -121,7 +140,7 @@ function RoadmapPage({ user }) {
   );
 }
 
-function PhaseCard({ phase, unlocked, allDone, doneCount, phasePct, done, unlocking, onToggle }) {
+function PhaseCard({ phase, unlocked, allDone, doneCount, phasePct, done, unlocking, onToggle, games }) {
   const cls = 'rm3-card' + (!unlocked ? ' locked' : allDone ? ' all-done' : '');
   return (
     <div className="rm3-entry">
@@ -178,6 +197,31 @@ function PhaseCard({ phase, unlocked, allDone, doneCount, phasePct, done, unlock
                 </div>
               );
             })
+          )}
+
+          {unlocked && games.length > 0 && (
+            <div className="rm3-games-section">
+              <div className="rm3-games-header">
+                <span className="rm3-games-icon">🎮</span>
+                <span className="rm3-games-label">Aprendendo com jogos</span>
+              </div>
+              <div className="rm3-games-list">
+                {games.map(g => (
+                  <a
+                    key={g.id}
+                    href={g.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rm3-game-card"
+                    data-cursor="hover"
+                  >
+                    <span className="rm3-game-title">{g.title}</span>
+                    <span className="rm3-game-desc">{g.desc}</span>
+                    <span className="rm3-game-arrow">↗</span>
+                  </a>
+                ))}
+              </div>
+            </div>
           )}
         </div>
       </div>

@@ -711,6 +711,35 @@ nav {
 
 .rm3-congrats { text-align: center; padding: 2rem 1rem; font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.6); margin-top: 0.5rem; }
 
+/* ── Roadmap — games section ── */
+.rm3-games-section { border-top: 1px solid rgba(255,255,255,0.07); padding-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+.rm3-games-header  { display: flex; align-items: center; gap: 6px; }
+.rm3-games-icon    { font-size: 13px; line-height: 1; }
+.rm3-games-label   { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; color: rgba(255,255,255,0.28); text-transform: uppercase; }
+.rm3-games-list    { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.rm3-game-card {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 0.18s, border-color 0.18s;
+  flex: 1 1 180px; min-width: 160px;
+}
+.rm3-game-card:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.22); }
+.rm3-game-title { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.72); flex: 1; }
+.rm3-game-desc  { font-size: 11px; color: rgba(255,255,255,0.32); display: none; }
+.rm3-game-arrow { font-size: 11px; color: rgba(255,255,255,0.28); flex-shrink: 0; transition: color 0.18s; }
+.rm3-game-card:hover .rm3-game-arrow { color: rgba(255,255,255,0.65); }
+
+@media (min-width: 520px) {
+  .rm3-game-card { flex-direction: column; align-items: flex-start; gap: 3px; }
+  .rm3-game-desc  { display: block; }
+  .rm3-game-arrow { align-self: flex-end; margin-top: -16px; }
+}
+
 /* ── MODAL ── */
 .modal-backdrop {
   position: fixed; inset: 0; z-index: 200;
