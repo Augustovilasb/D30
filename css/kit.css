@@ -4714,6 +4714,110 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
 }
 .pub-share-btn:hover { border-color: var(--border); color: var(--text); }
 
+/* ── Vagas Page ── */
+.vagas-wrap { max-width: 1100px; margin: 0 auto; padding: 48px 24px 64px; }
+.vagas-header { margin-bottom: 32px; }
+.vagas-title { font-size: 32px; font-weight: 800; color: var(--text); margin: 0 0 8px; }
+.vagas-sub   { font-size: 14px; color: var(--muted); margin: 0 0 20px; }
+
+/* Admin form */
+.vagas-admin-toggle {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: 10px;
+  border: 1px dashed var(--border2); background: transparent;
+  font-size: 13px; font-weight: 600; color: var(--muted);
+  cursor: none; transition: border-color .15s, color .15s;
+}
+.vagas-admin-toggle:hover { border-color: var(--purple); color: var(--purple); }
+.vagas-admin-form {
+  margin-top: 16px; padding: 20px; border-radius: 14px;
+  border: 1px solid var(--border2); background: var(--bg2);
+}
+.vagas-admin-form-header {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 16px;
+}
+.vagas-admin-close {
+  width: 28px; height: 28px; border-radius: 8px;
+  border: 1px solid var(--border2); background: transparent;
+  font-size: 12px; color: var(--muted); cursor: none;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color .15s, color .15s;
+}
+.vagas-admin-close:hover { border-color: var(--border); color: var(--text); }
+.vagas-admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.vagas-admin-field { display: flex; flex-direction: column; gap: 4px; }
+.vagas-admin-field label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+.vagas-admin-field--full { grid-column: 1 / -1; }
+
+/* Filters */
+.vagas-filters { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+.vagas-filter-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.vagas-filter-chip {
+  padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;
+  border: 1px solid var(--border2); background: var(--bg2); color: var(--muted);
+  cursor: none; transition: border-color .15s, color .15s, background .15s;
+}
+.vagas-filter-chip:hover  { border-color: var(--border); color: var(--text); }
+.vagas-filter-chip.active { border-color: var(--purple); background: rgba(109,92,230,.1); color: var(--purple); }
+.vagas-filter-select {
+  padding: 6px 12px; border-radius: 10px; font-size: 13px; font-weight: 600;
+  border: 1px solid var(--border2); background: var(--bg2); color: var(--muted);
+  cursor: none; outline: none;
+}
+
+/* Grid */
+.vagas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+
+/* Card */
+.vaga-card {
+  display: flex; flex-direction: column; gap: 8px;
+  padding: 18px; border-radius: 14px;
+  border: 1px solid var(--border2); background: var(--bg2);
+  transition: border-color .15s, transform .15s;
+}
+.vaga-card:hover { border-color: var(--border); transform: translateY(-2px); }
+.vaga-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.vaga-card-badges { display: flex; flex-wrap: wrap; gap: 5px; }
+.vaga-badge {
+  font-size: 10px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase;
+  padding: 2px 7px; border-radius: 5px;
+}
+.vaga-badge--curated  { background: rgba(109,92,230,.15); color: var(--purple); }
+.vaga-badge--cat      { background: var(--bg); border: 1px solid var(--border2); color: var(--muted); }
+.vaga-badge--level    { background: var(--bg); border: 1px solid var(--border2); color: var(--muted); }
+.vaga-badge--type     { background: var(--bg); border: 1px solid var(--border2); color: var(--muted); }
+.vaga-card-time { font-size: 11px; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
+.vaga-card-title   { font-size: 15px; font-weight: 700; color: var(--text); margin: 0; line-height: 1.3; }
+.vaga-card-company { font-size: 13px; color: var(--muted); margin: 0; }
+.vaga-card-salary  { font-size: 13px; font-weight: 600; color: #22c55e; margin: 0; }
+.vaga-card-desc    { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.5; flex: 1; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.vaga-card-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  margin-top: 4px; padding: 8px 14px; border-radius: 10px;
+  border: 1px solid var(--border2); background: var(--bg);
+  font-size: 13px; font-weight: 600; color: var(--muted);
+  text-decoration: none; transition: border-color .15s, color .15s;
+  align-self: flex-start;
+}
+.vaga-card-btn:hover { border-color: var(--purple); color: var(--purple); }
+
+/* Skeleton */
+.vaga-card--skeleton { height: 180px; animation: pulse 1.4s ease-in-out infinite; }
+@keyframes pulse { 0%,100% { opacity: .6; } 50% { opacity: .3; } }
+
+.vagas-loading { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.vagas-empty   { text-align: center; padding: 64px 0; color: var(--muted); font-size: 14px; }
+.vagas-adzuna-err { text-align: center; font-size: 13px; color: var(--muted); margin-top: 16px; }
+
+@media (max-width: 600px) {
+  .vagas-wrap { padding: 24px 16px 80px; }
+  .vagas-grid { grid-template-columns: 1fr; }
+  .vagas-admin-grid { grid-template-columns: 1fr; }
+  .vagas-filter-row--secondary { flex-direction: column; }
+  .vagas-filter-select { width: 100%; }
+}
+
 /* ── Share Card Modal ── */
 .share-card-overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,0.75);
