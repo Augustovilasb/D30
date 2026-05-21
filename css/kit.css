@@ -4698,6 +4698,16 @@ nav.nav--floating .user-menu-info strong{ color: var(--text); }
 }
 button:focus { outline: none; }
 button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
+.pub-card-btn {
+  width: 34px; height: 34px; border-radius: 10px;
+  border: 1px solid var(--border2); background: var(--bg2);
+  color: var(--muted);
+  display: flex; align-items: center; justify-content: center;
+  cursor: none; outline: none;
+  transition: border-color .15s, color .15s;
+}
+.pub-card-btn:hover { border-color: var(--border); color: var(--text); }
+
 .pub-share-btn {
   width: 34px; height: 34px; border-radius: 10px;
   border: 1px solid var(--border2); background: var(--bg2);
@@ -4707,6 +4717,86 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
   transition: border-color .15s, color .15s;
 }
 .pub-share-btn:hover { border-color: var(--border); color: var(--text); }
+
+/* ── Share Card Modal ── */
+.share-card-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+  z-index: 999; display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.share-card-modal {
+  background: var(--bg2); border: 1px solid var(--border2); border-radius: 20px;
+  padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 14px;
+  max-width: 420px; width: 100%;
+}
+.share-card-modal-head {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+}
+.share-card-modal-title { font-size: 15px; font-weight: 700; color: var(--text); }
+.share-card-close {
+  width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--border2);
+  background: transparent; color: var(--muted); font-size: 14px;
+  display: flex; align-items: center; justify-content: center; cursor: none;
+}
+.share-card-download-btn {
+  width: 100%; padding: 12px; border-radius: 12px;
+  background: #6d5ce6; color: #fff; font-size: 14px; font-weight: 700;
+  border: none; cursor: none; transition: opacity .15s;
+}
+.share-card-download-btn:hover { opacity: 0.88; }
+.share-card-download-btn:disabled { opacity: 0.5; }
+.share-card-hint { font-size: 11px; color: var(--muted2); margin: 0; }
+
+/* ── D30 Card (the image) ── */
+.d30-share-card {
+  width: 360px; height: 360px;
+  background: #0d0d0d;
+  border-radius: 16px;
+  display: flex; flex-direction: column;
+  justify-content: space-between;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+.d30-share-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 80% 20%, rgba(109,92,230,0.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+.d30-card-top {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.d30-card-logo {
+  font-size: 22px; font-weight: 900; color: #fff; letter-spacing: -1px;
+}
+.d30-card-tag {
+  font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
+  border: 1px solid; border-radius: 6px; padding: 3px 8px; line-height: 1;
+}
+.d30-card-center {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.d30-card-avatar {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: #6d5ce6; display: flex; align-items: center; justify-content: center;
+  font-size: 24px; font-weight: 800; color: #fff; overflow: hidden; flex-shrink: 0;
+}
+.d30-card-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.d30-card-name {
+  font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.5px; text-align: center;
+}
+.d30-card-handle { font-size: 13px; color: #666; }
+.d30-card-bottom {
+  display: flex; align-items: flex-end; justify-content: space-between;
+}
+.d30-card-tagline {
+  font-size: 20px; font-weight: 800; color: #fff; line-height: 1.2; margin: 0;
+  letter-spacing: -0.5px;
+}
+.d30-card-tagline strong { color: #6d5ce6; }
+.d30-card-url { font-size: 11px; color: #444; font-weight: 600; letter-spacing: 0.5px; }
 
 /* Public profile join CTA */
 .pub-join-cta {

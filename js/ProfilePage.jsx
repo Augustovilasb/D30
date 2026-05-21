@@ -201,8 +201,72 @@ function SharePopup({ url, onClose }) {
   );
 }
 
+function ShareCardModal({ user, onClose }) {
+  const cardRef = React.useRef(null);
+  const [downloading, setDownloading] = React.useState(false);
+
+  const badgeLabel = user.email === 'augustovilasb@hotmail.com'
+    ? 'FOUNDER'
+    : user.is_founding_member
+    ? 'DEV 00'
+    : 'MEMBRO';
+  const badgeColor = user.email === 'augustovilasb@hotmail.com' ? '#6d5ce6' : user.is_founding_member ? '#888' : '#555';
+
+  const handleDownload = async () => {
+    if (!cardRef.current || !window.html2canvas) return;
+    setDownloading(true);
+    try {
+      const canvas = await window.html2canvas(cardRef.current, { scale: 3, useCORS: true, backgroundColor: null, logging: false });
+      const link = document.createElement('a');
+      link.download = `d30-${(user.username || user.name).toLowerCase().replace(/\s+/g, '-')}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch(e) { console.error(e); }
+    setDownloading(false);
+  };
+
+  return (
+    <div className="share-card-overlay" onClick={onClose}>
+      <div className="share-card-modal" onClick={e => e.stopPropagation()}>
+        <div className="share-card-modal-head">
+          <span className="share-card-modal-title">Seu card D30</span>
+          <button className="share-card-close" data-cursor="hover" onClick={onClose}>✕</button>
+        </div>
+
+        <div ref={cardRef} className="d30-share-card">
+          <div className="d30-card-top">
+            <span className="d30-card-logo">D30</span>
+            <span className="d30-card-tag" style={{ color: badgeColor, borderColor: badgeColor + '55', background: badgeColor + '18' }}>{badgeLabel}</span>
+          </div>
+
+          <div className="d30-card-center">
+            <div className="d30-card-avatar">
+              {user.avatar_url
+                ? <img src={user.avatar_url} alt={user.name} crossOrigin="anonymous" />
+                : <span>{user.initials}</span>}
+            </div>
+            <div className="d30-card-name">{user.name}</div>
+            {user.username && <div className="d30-card-handle">@{user.username}</div>}
+          </div>
+
+          <div className="d30-card-bottom">
+            <p className="d30-card-tagline">Faço parte<br/>da <strong>D30.</strong></p>
+            <span className="d30-card-url">d30.dev</span>
+          </div>
+        </div>
+
+        <button className="share-card-download-btn" data-cursor="hover" onClick={handleDownload} disabled={downloading}>
+          {downloading ? 'Gerando...' : 'Baixar imagem →'}
+        </button>
+        <p className="share-card-hint">1080×1080 · pronto para Instagram e WhatsApp</p>
+      </div>
+    </div>
+  );
+}
+
 function ProfilePage({ user, onSignOut, onNavigate }) {
   const [showShare,      setShowShare]      = React.useState(false);
+  const [showCard,       setShowCard]       = React.useState(false);
   const [forumCount,     setForumCount]     = React.useState(null);
   const [palestrasCount, setPalestrasCount] = React.useState(null);
 
@@ -294,6 +358,11 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
           <div className="pub-hero-side pub-share-popup-wrap">
             <div className="pub-hero-actions">
               <button className="pub-edit-btn" data-cursor="hover" onClick={() => onNavigate('edit-profile')}>Editar perfil</button>
+              <button className="pub-card-btn" data-cursor="hover" onClick={() => setShowCard(true)} title="Gerar card">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/><path d="M9 21V9"/>
+                </svg>
+              </button>
               <button className="pub-share-btn" data-cursor="hover" onClick={openShare} title="Compartilhar perfil">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
@@ -370,6 +439,7 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
 
       </div>
       <Footer />
+      {showCard && <ShareCardModal user={user} onClose={() => setShowCard(false)} />}
     </div>
   );
 }
