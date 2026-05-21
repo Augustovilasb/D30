@@ -138,6 +138,7 @@ function App() {
   const signOut = async () => {
     try { await window.Auth.signOut(); } catch {}
     setUser(null);
+    navigate('home');
     pushToast('info', 'Até a próxima.');
   };
 
