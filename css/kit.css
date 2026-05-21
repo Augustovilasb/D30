@@ -4439,7 +4439,7 @@ nav.nav--floating .user-menu-info strong{ color: var(--text); }
 }
 .pub-hero-body { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .pub-name { font-size: 26px; font-weight: 800; color: var(--text); margin: 0; line-height: 1.1; letter-spacing: -0.5px; }
-.pub-founder-badge .pub-pioneer-label { color: #6d5ce6 !important; }
+.pub-founder-badge .pub-pioneer-label { color: #6d5ce6 !important; font-size: 6px !important; letter-spacing: 2px !important; }
 .pub-identity-row { display: flex; align-items: center; gap: 10px; }
 .pub-identity-text { display: flex; flex-direction: column; gap: 2px; }
 .pub-username { font-size: 13px; font-weight: 600; color: var(--muted); }
