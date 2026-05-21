@@ -46,9 +46,9 @@ function WebIcon() {
 }
 
 /* Stat card com ícone SVG */
-function StatCard({ iconSlug, value, label, color }) {
+function StatCard({ iconSlug, value, label, color, onClick }) {
   return (
-    <div className="pub-stat-card">
+    <div className="pub-stat-card" onClick={onClick} style={onClick ? { cursor: 'pointer' } : undefined} data-cursor={onClick ? 'hover' : undefined}>
       <div className="pub-stat-card-icon" style={{ color: color || 'var(--muted)' }}>
         <BadgeIcon slug={iconSlug} color={color || 'var(--muted)'} size={18} />
       </div>
@@ -314,6 +314,7 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
   const [showCard,       setShowCard]       = React.useState(false);
   const [forumCount,     setForumCount]     = React.useState(null);
   const [palestrasCount, setPalestrasCount] = React.useState(null);
+  const [rankPos,        setRankPos]        = React.useState(null);
 
   const profileUrl = user.username
     ? `${window.location.origin}/perfil/${user.username}`
@@ -340,9 +341,13 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
     Promise.all([
       window.sb.from('forum_activity').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('type', 'topic'),
       window.sb.from('palestra_attendance').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
-    ]).then(([{ count: fc }, { count: pc }]) => {
+      window.sb.from('profiles').select('total_hours').eq('id', user.id).single(),
+    ]).then(([{ count: fc }, { count: pc }, { data: myProf }]) => {
       setForumCount(fc || 0);
       setPalestrasCount(pc || 0);
+      const myHours = myProf?.total_hours || 0;
+      return window.sb.from('profiles').select('id', { count: 'exact', head: true }).gt('total_hours', myHours)
+        .then(({ count: above }) => setRankPos((above || 0) + 1));
     }).catch(() => { setForumCount(0); setPalestrasCount(0); });
   }, [user.id]);
 
@@ -445,15 +450,15 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
 
         {/* ── Stats com ícones SVG ── */}
         <div className="pub-stats-row">
-          <StatCard iconSlug="primeiros_passos" value={`${totalHours}h`}   label="estudadas"    />
-          <StatCard iconSlug="consistente"      value={sessions.length}     label="sessões"      />
-          <StatCard iconSlug="primeira_chama"   value={streak}              label="streak atual" />
-          <StatCard iconSlug="lendario"         value={bestStreak}          label="recorde"      />
-          <StatCard iconSlug="palestrante_fiel" value={palestrasCount === null ? '—' : palestrasCount} label="palestras" />
-          <StatCard iconSlug="primeira_sessao"  value={forumCount === null ? '—' : forumCount}         label="tópicos"   />
+          <StatCard iconSlug="primeiros_passos" value={`${totalHours}h`}   label="estudadas"              />
+          <StatCard iconSlug="consistente"      value={sessions.length}     label="sessões de estudo"      />
+          <StatCard iconSlug="lendario"         value={bestStreak}          label="record streak"          />
+          <StatCard iconSlug="palestrante_fiel" value={palestrasCount === null ? '—' : palestrasCount} label="palestras assistidas"      />
+          <StatCard iconSlug="primeira_sessao"  value={forumCount === null ? '—' : forumCount}         label="tópicos criados no fórum"  />
           {totalCourses > 0 && (
-            <StatCard iconSlug="dedicado" value={`${doneCourses}/${totalCourses}`} label="cursos" />
+            <StatCard iconSlug="dedicado" value={`${doneCourses}/${totalCourses}`} label="cursos finalizados" />
           )}
+          <StatCard iconSlug="primeira_chama" value={rankPos === null ? '—' : `#${rankPos}`} label="posição no ranking" onClick={() => onNavigate('ranking')} />
         </div>
 
         {/* ── Atividade full-width ── */}
