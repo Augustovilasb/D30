@@ -55,17 +55,14 @@ function timeAgo(dateStr) {
 
 /* ── Job Card ── */
 function JobCard({ job }) {
-  const isCurated  = job.source === 'manual';
-  const isRemoteOK = job.source === 'remoteok';
+  const isCurated = job.source === 'manual';
+  const sourceLabel = { RemoteOK: 'RemoteOK', Remotive: 'Remotive', Jobicy: 'Jobicy' }[job.source];
   return (
     <div className="vaga-card">
       <div className="vaga-card-top">
         <div className="vaga-card-badges">
-          {isCurated  && <span className="vaga-badge vaga-badge--curated">D30 Curado</span>}
-          {isRemoteOK && <span className="vaga-badge vaga-badge--remote">Remoto Global</span>}
-          {job.category && CAT_LABELS[job.category] && (
-            <span className="vaga-badge vaga-badge--cat">{CAT_LABELS[job.category]}</span>
-          )}
+          {isCurated   && <span className="vaga-badge vaga-badge--curated">D30 Curado</span>}
+          {sourceLabel && <span className="vaga-badge vaga-badge--source">{sourceLabel}</span>}
           {job.level && job.level !== 'any' && LEVEL_LABELS[job.level] && (
             <span className="vaga-badge vaga-badge--level">{LEVEL_LABELS[job.level]}</span>
           )}
@@ -73,12 +70,25 @@ function JobCard({ job }) {
             <span className="vaga-badge vaga-badge--type">{TYPE_LABELS[job.location_type]}</span>
           )}
         </div>
-        <span className="vaga-card-time">{timeAgo(job.created_at)}</span>
+        <span className="vaga-card-time">{timeAgo(job.created_at || job.date)}</span>
       </div>
 
       <h3 className="vaga-card-title">{job.title}</h3>
       {job.company && <p className="vaga-card-company">{job.company}</p>}
-      {job.salary_range && <p className="vaga-card-salary">{job.salary_range}</p>}
+
+      <div className="vaga-card-meta">
+        {(job.salary || job.salary_range) && (
+          <span className="vaga-card-salary">{job.salary || job.salary_range}</span>
+        )}
+        {job.location && <span className="vaga-card-location">📍 {job.location}</span>}
+      </div>
+
+      {job.tags && job.tags.length > 0 && (
+        <div className="vaga-card-tags">
+          {job.tags.slice(0, 6).map((t, i) => <span key={i} className="vaga-tag">{t}</span>)}
+        </div>
+      )}
+
       {job.description && <p className="vaga-card-desc">{job.description}</p>}
 
       <a
@@ -212,21 +222,7 @@ function VagasPage({ user, toast }) {
       const json = await res.json();
       /* Gupy response: { data: [...] } */
       const list = json.results || [];
-      const jobs = list.map(j => ({
-        id:           String(j.id),
-        title:        j.position || '',
-        company:      j.company || '',
-        description:  (j.description || '').replace(/<[^>]+>/g, '').slice(0, 160) + '…',
-        link:         j.url || `https://remoteok.com/remote-jobs/${j.slug}`,
-        created_at:   j.date || new Date().toISOString(),
-        source:       'remoteok',
-        location_type: 'remote',
-        category:     cat === 'all' ? null : cat,
-        level:        null,
-        salary_range: (j.salary_min && j.salary_max)
-          ? `$${Math.round(j.salary_min/1000)}k – $${Math.round(j.salary_max/1000)}k`
-          : null,
-      }));
+      const jobs = list.map(j => ({ ...j, category: cat === 'all' ? null : cat }));
       setAdzunaJobs(jobs);
     } catch {
       setAdzunaError(true);
