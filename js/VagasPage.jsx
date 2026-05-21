@@ -1,18 +1,7 @@
-/* VagasPage.jsx — remote global jobs + manual curation */
+/* VagasPage.jsx — Vagas Internacionais + Nacionais */
 
 const OWNER_EMAIL = 'augustovilasb@hotmail.com';
 
-const CATEGORIES = [
-  { id: 'all',      label: 'Todas' },
-  { id: 'dev',      label: 'Dev' },
-  { id: 'devops',   label: 'DevOps' },
-  { id: 'security', label: 'Segurança' },
-  { id: 'support',  label: 'Suporte TI' },
-  { id: 'data',     label: 'Dados' },
-  { id: 'design',   label: 'Design' },
-];
-
-const CAT_LABELS = { dev: 'Dev', devops: 'DevOps', security: 'Segurança', support: 'Suporte TI', data: 'Dados', design: 'Design', other: 'Outros' };
 const LEVEL_LABELS = { intern: 'Estágio', junior: 'Júnior', mid: 'Pleno', senior: 'Sênior', any: 'Qualquer' };
 
 function timeAgo(dateStr) {
@@ -26,52 +15,36 @@ function timeAgo(dateStr) {
   return `${Math.floor(d/30)}m atrás`;
 }
 
-/* ── Job Card ── */
-function JobCard({ job }) {
-  const isCurated   = job.source === 'manual';
+/* ── Card Internacional ── */
+function IntlJobCard({ job }) {
   const sourceLabel = { RemoteOK: 'RemoteOK', Remotive: 'Remotive', Jobicy: 'Jobicy' }[job.source];
-  const isRemote    = job.location_type === 'remote' || job.is_remote !== false;
-  const needsEn     = job.requires_english !== false; // externas = true por padrão
   const salary      = job.salary || job.salary_range;
   const restriction = job.location_restriction;
 
   return (
     <div className="vaga-card">
-      {/* Topo: fonte + data */}
       <div className="vaga-card-top">
         <div className="vaga-card-badges">
-          {isCurated   && <span className="vaga-badge vaga-badge--curated">D30 Curado</span>}
           {sourceLabel && <span className="vaga-badge vaga-badge--source">{sourceLabel}</span>}
-          {job.level && job.level !== 'any' && LEVEL_LABELS[job.level] && (
-            <span className="vaga-badge vaga-badge--level">{LEVEL_LABELS[job.level]}</span>
-          )}
         </div>
-        <span className="vaga-card-time">{timeAgo(job.created_at || job.date)}</span>
+        <span className="vaga-card-time">{timeAgo(job.date)}</span>
       </div>
 
-      {/* Título + empresa */}
       <h3 className="vaga-card-title">{job.title}</h3>
       {job.company && <p className="vaga-card-company">{job.company}</p>}
 
-      {/* 3 campos fixos: tipo · idioma · salário */}
       <div className="vaga-card-pillars">
-        <div className={'vaga-pillar' + (isRemote ? ' vaga-pillar--green' : ' vaga-pillar--yellow')}>
-          {isRemote ? '🌐 Remoto' : '🏢 Presencial'}
-        </div>
-        <div className={'vaga-pillar' + (needsEn ? ' vaga-pillar--blue' : ' vaga-pillar--green')}>
-          {needsEn ? '🇺🇸 Inglês' : '🇧🇷 Português'}
-        </div>
+        <div className="vaga-pillar vaga-pillar--green">🌐 Remoto</div>
+        <div className="vaga-pillar vaga-pillar--blue">🇺🇸 Inglês</div>
         <div className={'vaga-pillar' + (salary ? ' vaga-pillar--salary' : '')}>
           {salary || '— salário'}
         </div>
       </div>
 
-      {/* Restrição geográfica */}
       {restriction && (
         <p className="vaga-card-restriction">⚠️ Requer: {restriction}</p>
       )}
 
-      {/* Stack tags */}
       {job.tags && job.tags.length > 0 && (
         <div className="vaga-card-tags">
           {job.tags.slice(0, 6).map((t, i) => <span key={i} className="vaga-tag">{t}</span>)}
@@ -85,14 +58,53 @@ function JobCard({ job }) {
   );
 }
 
+/* ── Card Nacional ── */
+function NatlJobCard({ job }) {
+  const salary  = job.salary_range;
+  const isRemote = job.location_type === 'remote';
+  const isHybrid = job.location_type === 'hybrid';
+
+  return (
+    <div className="vaga-card vaga-card--national">
+      <div className="vaga-card-top">
+        <div className="vaga-card-badges">
+          <span className="vaga-badge vaga-badge--curated">D30 Curado</span>
+          {job.level && job.level !== 'any' && LEVEL_LABELS[job.level] && (
+            <span className="vaga-badge vaga-badge--level">{LEVEL_LABELS[job.level]}</span>
+          )}
+        </div>
+        <span className="vaga-card-time">{timeAgo(job.created_at)}</span>
+      </div>
+
+      <h3 className="vaga-card-title">{job.title}</h3>
+      {job.company && <p className="vaga-card-company">{job.company}</p>}
+
+      <div className="vaga-card-pillars">
+        <div className={'vaga-pillar' + (isRemote ? ' vaga-pillar--green' : isHybrid ? ' vaga-pillar--yellow' : ' vaga-pillar--muted')}>
+          {isRemote ? '🌐 Remoto' : isHybrid ? '🔀 Híbrido' : '🏢 Presencial'}
+        </div>
+        <div className="vaga-pillar vaga-pillar--green">🇧🇷 Português</div>
+        <div className={'vaga-pillar' + (salary ? ' vaga-pillar--salary' : '')}>
+          {salary || '— salário'}
+        </div>
+      </div>
+
+      {job.description && <p className="vaga-card-desc">{job.description}</p>}
+
+      <a className="vaga-card-btn" href={job.link} target="_blank" rel="noopener noreferrer" data-cursor="hover">
+        Ver vaga →
+      </a>
+    </div>
+  );
+}
+
 /* ── Admin Form ── */
 function AdminJobForm({ onSaved, toast }) {
   const empty = {
     title: '', company: '', location_type: 'remote', category: 'dev',
     level: 'junior', salary_range: '', description: '', link: '',
-    requires_english: true,
   };
-  const [form, setForm] = React.useState(empty);
+  const [form,   setForm]   = React.useState(empty);
   const [saving, setSaving] = React.useState(false);
   const [open,   setOpen]   = React.useState(false);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
@@ -113,13 +125,13 @@ function AdminJobForm({ onSaved, toast }) {
   };
 
   if (!open) return (
-    <button className="vagas-admin-toggle" data-cursor="hover" onClick={() => setOpen(true)}>+ Adicionar vaga</button>
+    <button className="vagas-admin-toggle" data-cursor="hover" onClick={() => setOpen(true)}>+ Adicionar vaga nacional</button>
   );
 
   return (
     <div className="vagas-admin-form">
       <div className="vagas-admin-form-header">
-        <span>Nova vaga</span>
+        <span>Nova vaga nacional</span>
         <button className="vagas-admin-close" data-cursor="hover" onClick={() => setOpen(false)}>✕</button>
       </div>
       <div className="vagas-admin-grid">
@@ -134,13 +146,6 @@ function AdminJobForm({ onSaved, toast }) {
         <div className="vagas-admin-field">
           <label>Salário</label>
           <input className="settings-input" value={form.salary_range} onChange={e => set('salary_range', e.target.value)} placeholder="Ex: R$ 3.000 – 5.000" />
-        </div>
-        <div className="vagas-admin-field">
-          <label>Categoria</label>
-          <select className="settings-input" value={form.category} onChange={e => set('category', e.target.value)}>
-            {CATEGORIES.filter(c => c.id !== 'all').map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
-            <option value="other">Outros</option>
-          </select>
         </div>
         <div className="vagas-admin-field">
           <label>Nível</label>
@@ -160,20 +165,13 @@ function AdminJobForm({ onSaved, toast }) {
             <option value="presential">Presencial</option>
           </select>
         </div>
-        <div className="vagas-admin-field">
-          <label>Idioma exigido</label>
-          <select className="settings-input" value={form.requires_english} onChange={e => set('requires_english', e.target.value === 'true')}>
-            <option value="true">Inglês</option>
-            <option value="false">Português</option>
-          </select>
-        </div>
         <div className="vagas-admin-field vagas-admin-field--full">
           <label>Link da vaga *</label>
           <input className="settings-input" type="url" value={form.link} onChange={e => set('link', e.target.value)} placeholder="https://linkedin.com/jobs/..." />
         </div>
         <div className="vagas-admin-field vagas-admin-field--full">
-          <label>Descrição curta</label>
-          <textarea className="settings-input settings-textarea" rows={2} value={form.description} onChange={e => set('description', e.target.value)} placeholder="Contexto sobre a vaga (opcional)" />
+          <label>Contexto</label>
+          <textarea className="settings-input settings-textarea" rows={2} value={form.description} onChange={e => set('description', e.target.value)} placeholder="Aceita transição? Remoto real? Qualquer contexto útil..." />
         </div>
       </div>
       <button className="settings-save-btn" data-cursor="hover" onClick={save} disabled={saving}>
@@ -187,12 +185,9 @@ function AdminJobForm({ onSaved, toast }) {
 function VagasPage({ user, toast }) {
   const isAdmin = user?.email === OWNER_EMAIL;
 
-  const [catFilter,  setCatFilter]  = React.useState('all');
-  const [typeFilter, setTypeFilter] = React.useState('all'); // all | remote | presential
-  const [langFilter, setLangFilter] = React.useState('all'); // all | english | portuguese
-
-  const [manualJobs,    setManualJobs]    = React.useState([]);
-  const [externalJobs,  setExternalJobs]  = React.useState([]);
+  const [tab,          setTab]          = React.useState('intl'); // intl | natl
+  const [manualJobs,   setManualJobs]   = React.useState([]);
+  const [externalJobs, setExternalJobs] = React.useState([]);
   const [loadingManual, setLoadingManual] = React.useState(true);
   const [loadingExt,    setLoadingExt]    = React.useState(false);
   const [extError,      setExtError]      = React.useState(false);
@@ -207,45 +202,24 @@ function VagasPage({ user, toast }) {
     finally { setLoadingManual(false); }
   }, []);
 
-  const fetchExternal = React.useCallback(async (cat) => {
+  const fetchExternal = React.useCallback(async () => {
     setLoadingExt(true);
     setExtError(false);
     try {
-      const res  = await fetch(`/api/vagas?cat=${cat}`);
+      const res  = await fetch('/api/vagas?cat=all');
       if (!res.ok) throw new Error('error');
       const json = await res.json();
-      const jobs = (json.results || []).map(j => ({ ...j, category: cat === 'all' ? null : cat }));
-      setExternalJobs(jobs);
+      setExternalJobs(json.results || []);
     } catch {
       setExtError(true);
       setExternalJobs([]);
     } finally { setLoadingExt(false); }
   }, []);
 
-  React.useEffect(() => { fetchManual(); },            [fetchManual]);
-  React.useEffect(() => { fetchExternal(catFilter); }, [catFilter, fetchExternal]);
+  React.useEffect(() => { fetchManual();   }, [fetchManual]);
+  React.useEffect(() => { fetchExternal(); }, [fetchExternal]);
 
-  const filtered = React.useMemo(() => {
-    const all = [
-      ...manualJobs.filter(j => catFilter === 'all' || j.category === catFilter),
-      ...externalJobs,
-    ];
-    return all.filter(j => {
-      /* tipo: manual jobs têm location_type, externas são sempre remote */
-      const jType = j.location_type || 'remote';
-      if (typeFilter === 'remote'     && jType !== 'remote')     return false;
-      if (typeFilter === 'presential' && jType !== 'presential') return false;
-
-      /* idioma: externas = inglês por padrão, manuais conforme campo */
-      const jLang = j.requires_english === false ? 'portuguese' : 'english';
-      if (langFilter === 'english'    && jLang !== 'english')    return false;
-      if (langFilter === 'portuguese' && jLang !== 'portuguese') return false;
-
-      return true;
-    });
-  }, [manualJobs, externalJobs, catFilter, typeFilter, langFilter]);
-
-  const loading = loadingManual || loadingExt;
+  const loading = tab === 'intl' ? loadingExt : loadingManual;
 
   return (
     <div className="page active fade-in">
@@ -253,77 +227,57 @@ function VagasPage({ user, toast }) {
 
         <div className="vagas-header">
           <h1 className="vagas-title">Vagas</h1>
-          <p className="vagas-sub">Remotas do mundo todo + curadas pela D30. Link direto, sem enrolação.</p>
-          {isAdmin && <AdminJobForm onSaved={fetchManual} toast={toast} />}
+          <p className="vagas-sub">Remotas do mundo todo e curadas pela D30 para o mercado brasileiro.</p>
+          {isAdmin && tab === 'natl' && <AdminJobForm onSaved={fetchManual} toast={toast} />}
         </div>
 
-        {/* Filtros */}
-        <div className="vagas-filters">
-          {/* Categoria */}
-          <div className="vagas-filter-row">
-            {CATEGORIES.map(c => (
-              <button
-                key={c.id}
-                className={'vagas-filter-chip' + (catFilter === c.id ? ' active' : '')}
-                data-cursor="hover"
-                onClick={() => setCatFilter(c.id)}
-              >{c.label}</button>
-            ))}
-          </div>
-
-          {/* Tipo + Idioma */}
-          <div className="vagas-filter-row">
-            <div className="vagas-filter-group">
-              {[
-                { id: 'all',        label: 'Remoto + Presencial' },
-                { id: 'remote',     label: '🌐 Só Remoto' },
-                { id: 'presential', label: '🏢 Só Presencial' },
-              ].map(o => (
-                <button
-                  key={o.id}
-                  className={'vagas-filter-chip' + (typeFilter === o.id ? ' active' : '')}
-                  data-cursor="hover"
-                  onClick={() => setTypeFilter(o.id)}
-                >{o.label}</button>
-              ))}
-            </div>
-            <div className="vagas-filter-group">
-              {[
-                { id: 'all',        label: 'Qualquer idioma' },
-                { id: 'english',    label: '🇺🇸 Inglês' },
-                { id: 'portuguese', label: '🇧🇷 Português' },
-              ].map(o => (
-                <button
-                  key={o.id}
-                  className={'vagas-filter-chip' + (langFilter === o.id ? ' active' : '')}
-                  data-cursor="hover"
-                  onClick={() => setLangFilter(o.id)}
-                >{o.label}</button>
-              ))}
-            </div>
-          </div>
+        {/* Abas */}
+        <div className="vagas-tabs">
+          <button
+            className={'vagas-tab' + (tab === 'intl' ? ' active' : '')}
+            data-cursor="hover"
+            onClick={() => setTab('intl')}
+          >
+            🌐 Internacionais
+            {!loadingExt && <span className="vagas-tab-count">{externalJobs.length}</span>}
+          </button>
+          <button
+            className={'vagas-tab' + (tab === 'natl' ? ' active' : '')}
+            data-cursor="hover"
+            onClick={() => setTab('natl')}
+          >
+            🇧🇷 Nacionais
+            {!loadingManual && <span className="vagas-tab-count">{manualJobs.length}</span>}
+          </button>
         </div>
 
-        {/* Grid */}
+        {/* Conteúdo */}
         {loading && (
           <div className="vagas-loading">
             {[1,2,3,4,5,6].map(i => <div key={i} className="vaga-card vaga-card--skeleton" />)}
           </div>
         )}
 
-        {!loading && filtered.length === 0 && (
-          <div className="vagas-empty">
-            <p>Nenhuma vaga encontrada com esses filtros.</p>
-          </div>
+        {/* Internacionais */}
+        {!loading && tab === 'intl' && (
+          externalJobs.length === 0
+            ? <div className="vagas-empty"><p>Nenhuma vaga encontrada.</p></div>
+            : <div className="vagas-grid">{externalJobs.map(j => <IntlJobCard key={j.id} job={j} />)}</div>
         )}
 
-        {!loading && filtered.length > 0 && (
-          <div className="vagas-grid">
-            {filtered.map(j => <JobCard key={j.id} job={j} />)}
-          </div>
+        {/* Nacionais */}
+        {!loading && tab === 'natl' && (
+          manualJobs.length === 0
+            ? (
+              <div className="vagas-empty">
+                <p>Nenhuma vaga nacional cadastrada ainda.</p>
+                {!isAdmin && <p style={{ fontSize: 13, marginTop: 6 }}>Volte em breve — o Augusto está garimpando as melhores.</p>}
+              </div>
+            )
+            : <div className="vagas-grid">{manualJobs.map(j => <NatlJobCard key={j.id} job={j} />)}</div>
         )}
 
-        {extError && (
+        {extError && tab === 'intl' && (
           <p className="vagas-adzuna-err">Não foi possível carregar vagas automáticas agora.</p>
         )}
 
