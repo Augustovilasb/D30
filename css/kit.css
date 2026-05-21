@@ -4571,33 +4571,37 @@ nav.nav--floating .user-menu-info strong{ color: var(--text); }
 /* Stats detail modal */
 .stats-detail-overlay {
   position: fixed; inset: 0; z-index: 9500;
-  background: rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,.80); backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
   padding: 20px;
 }
 .stats-detail-panel {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
-  width: 100%; max-width: 420px; max-height: 70vh;
+  background: #111; border: 1px solid rgba(255,255,255,0.10); border-radius: 16px;
+  width: 100%; max-width: 420px; max-height: 72vh;
   display: flex; flex-direction: column; overflow: hidden;
 }
 .stats-detail-head {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 20px; border-bottom: 1px solid var(--border);
-  font-size: 14px; font-weight: 700; color: var(--text);
+  padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.08);
+  font-size: 14px; font-weight: 700; color: #f0f0f0;
 }
 .stats-detail-close {
-  background: none; border: none; color: var(--muted); font-size: 16px;
+  background: none; border: none; color: #666; font-size: 16px;
   cursor: pointer; line-height: 1; padding: 2px 4px;
 }
+.stats-detail-close:hover { color: #f0f0f0; }
 .stats-detail-body { overflow-y: auto; padding: 12px 20px 20px; }
-.stats-detail-empty { font-size: 13px; color: var(--muted); text-align: center; padding: 24px 0; }
+.stats-detail-empty { font-size: 13px; color: #666; text-align: center; padding: 24px 0; }
+.stats-detail-section { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #555; margin: 14px 0 6px; padding: 0 12px; }
+.stats-detail-section:first-child { margin-top: 4px; }
 .stats-detail-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
 .stats-detail-item {
   display: flex; flex-direction: column; gap: 2px;
   padding: 10px 12px; border-radius: 8px; transition: background .12s;
 }
-.stats-detail-item:hover { background: var(--hover); }
-.stats-detail-item-title { font-size: 13px; font-weight: 600; color: var(--text); }
-.stats-detail-item-sub   { font-size: 11px; color: var(--muted); }
+.stats-detail-item:hover { background: rgba(255,255,255,0.05); }
+.stats-detail-item-title { font-size: 13px; font-weight: 600; color: #f0f0f0; }
+.stats-detail-item-sub   { font-size: 11px; color: #666; }
 
 /* Activity grid — full-width heatmap */
 .pub-activity-grid {

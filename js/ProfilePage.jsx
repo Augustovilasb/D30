@@ -332,12 +332,13 @@ function StatsDetailModal({ type, user, onClose }) {
         .order('created_at', { ascending: false })
         .then(({ data }) => setItems(data || []));
     } else if (type === 'forum') {
-      if (!window.sb) { setItems([]); return; }
-      window.sb.from('forum_topics')
-        .select('id, title, created_at')
-        .eq('author_id', user.id)
-        .order('created_at', { ascending: false })
-        .then(({ data }) => setItems(data || []));
+      if (!window.sb) { setItems({ topics: [], replies: [] }); return; }
+      Promise.all([
+        window.sb.from('forum_topics').select('id, title, created_at').eq('author_id', user.id).order('created_at', { ascending: false }),
+        window.sb.from('forum_messages').select('id, text, created_at').eq('author_id', user.id).order('created_at', { ascending: false }),
+      ]).then(([{ data: topics }, { data: msgs }]) => {
+        setItems({ topics: topics || [], replies: msgs || [] });
+      }).catch(() => setItems({ topics: [], replies: [] }));
     }
   }, [type]);
 
@@ -360,8 +361,10 @@ function StatsDetailModal({ type, user, onClose }) {
         </div>
         <div className="stats-detail-body">
           {items === null && <p className="stats-detail-empty">Carregando…</p>}
-          {items !== null && items.length === 0 && <p className="stats-detail-empty">Nenhum item ainda.</p>}
-          {items !== null && items.length > 0 && (
+          {type !== 'forum' && items !== null && items.length === 0 && <p className="stats-detail-empty">Nenhum item ainda.</p>}
+          {type === 'forum'  && items !== null && items.topics?.length === 0 && items.replies?.length === 0 && <p className="stats-detail-empty">Nenhum item ainda.</p>}
+
+          {type !== 'forum' && items !== null && items.length > 0 && (
             <ul className="stats-detail-list">
               {type === 'livros' && items.map((b, i) => (
                 <li key={b.id || i} className="stats-detail-item">
@@ -387,13 +390,38 @@ function StatsDetailModal({ type, user, onClose }) {
                   {t.talks?.when_text && <span className="stats-detail-item-sub">{t.talks.when_text}</span>}
                 </li>
               ))}
-              {type === 'forum' && items.map((f, i) => (
-                <li key={f.id || i} className="stats-detail-item">
-                  <span className="stats-detail-item-title">{f.title || f.content?.slice(0, 60) || `Tópico #${i + 1}`}</span>
-                  {f.created_at && <span className="stats-detail-item-sub">{f.created_at.slice(0, 10)}</span>}
-                </li>
-              ))}
             </ul>
+          )}
+
+          {type === 'forum' && items !== null && (
+            <React.Fragment>
+              {items.topics?.length > 0 && (
+                <React.Fragment>
+                  <p className="stats-detail-section">Tópicos criados</p>
+                  <ul className="stats-detail-list">
+                    {items.topics.map((f, i) => (
+                      <li key={f.id || i} className="stats-detail-item">
+                        <span className="stats-detail-item-title">{f.title || `Tópico #${i + 1}`}</span>
+                        {f.created_at && <span className="stats-detail-item-sub">{f.created_at.slice(0, 10)}</span>}
+                      </li>
+                    ))}
+                  </ul>
+                </React.Fragment>
+              )}
+              {items.replies?.length > 0 && (
+                <React.Fragment>
+                  <p className="stats-detail-section">Respostas</p>
+                  <ul className="stats-detail-list">
+                    {items.replies.map((m, i) => (
+                      <li key={m.id || i} className="stats-detail-item">
+                        <span className="stats-detail-item-title">{m.text?.slice(0, 80) || `Resposta #${i + 1}`}</span>
+                        {m.created_at && <span className="stats-detail-item-sub">{m.created_at.slice(0, 10)}</span>}
+                      </li>
+                    ))}
+                  </ul>
+                </React.Fragment>
+              )}
+            </React.Fragment>
           )}
         </div>
       </div>
@@ -435,10 +463,11 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
     if (!window.sb || !user.id) return;
     Promise.all([
       window.sb.from('forum_topics').select('id', { count: 'exact', head: true }).eq('author_id', user.id),
+      window.sb.from('forum_messages').select('id', { count: 'exact', head: true }).eq('author_id', user.id),
       window.sb.from('talk_rsvp').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
       window.sb.from('profiles').select('total_hours').eq('id', user.id).single(),
-    ]).then(([{ count: fc }, { count: pc }, { data: myProf }]) => {
-      setForumCount(fc || 0);
+    ]).then(([{ count: tc }, { count: rc }, { count: pc }, { data: myProf }]) => {
+      setForumCount((tc || 0) + (rc || 0));
       setPalestrasCount(pc || 0);
       const myHours = myProf?.total_hours || 0;
       return window.sb.from('profiles').select('id', { count: 'exact', head: true }).gt('total_hours', myHours)
@@ -549,7 +578,7 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
           <StatCard iconSlug="consistente"      value={sessions.length}     label="sessões de estudo"        />
           <StatCard iconSlug="lendario"         value={livrosLidos}         label="livros lidos"             onClick={() => setDetailModal('livros')}  />
           <StatCard iconSlug="palestrante_fiel" value={palestrasCount === null ? '—' : palestrasCount} label="talks presença"          onClick={() => setDetailModal('talks')}   />
-          <StatCard iconSlug="primeira_sessao"  value={forumCount === null ? '—' : forumCount}         label="tópicos criados no fórum" onClick={() => setDetailModal('forum')}   />
+          <StatCard iconSlug="primeira_sessao"  value={forumCount === null ? '—' : forumCount}         label="participações no fórum" onClick={() => setDetailModal('forum')}   />
           {totalCourses > 0 && (
             <StatCard iconSlug="dedicado" value={`${doneCourses}/${totalCourses}`} label="cursos finalizados" onClick={() => setDetailModal('cursos')} />
           )}
