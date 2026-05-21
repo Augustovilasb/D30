@@ -210,12 +210,14 @@ function LivrosPage({ user, toast }) {
   }, [lang]);
 
   const fetchRecom = React.useCallback(async () => {
-    if (!window.sb) return;
+    if (!window.sb) { console.warn('[D30] window.sb not ready'); return; }
     setLoadingRecom(true);
     try {
-      const { data } = await window.sb.from('livros_recomendados').select('*').eq('active', true).order('created_at', { ascending: false });
+      const { data, error } = await window.sb.from('livros_recomendados').select('*').eq('active', true).order('created_at', { ascending: false });
+      if (error) console.error('[D30] livros_recomendados error:', error);
       setRecom(data || []);
-    } catch {} finally { setLoadingRecom(false); }
+    } catch (e) { console.error('[D30] livros fetch threw:', e); }
+    finally { setLoadingRecom(false); }
   }, []);
 
   React.useEffect(() => { fetchRecom(); }, [fetchRecom]);

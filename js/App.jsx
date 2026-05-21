@@ -175,7 +175,7 @@ function App() {
           {page === 'edit-profile' && user && <EditProfilePage  key={navKey} user={user} onUpdate={(u) => setUser(u)} onNavigate={navigate} />}
           {page === 'ranking'   && user && <RankingPage   key={navKey} user={user} />}
           {page === 'vagas'     && user && <VagasPage     key={navKey} user={user} toast={pushToast} />}
-          {page === 'livros'    && user && <LivrosPage    key={navKey} user={user} />}
+          {page === 'livros'    && user && <LivrosPage    key={navKey} user={user} toast={pushToast} />}
         </div>
 
         <LoginModal   open={modal === 'login'}   onClose={() => setModal(null)} onSignIn={signIn} onSwitch={setModal} toast={pushToast} />
