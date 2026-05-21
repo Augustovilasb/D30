@@ -13,9 +13,31 @@ function EditProfilePage({ user, onUpdate, onNavigate }) {
     twitter_url:   user.twitter_url    || '',
     website_url:   user.website_url    || '',
   });
-  const [saving, setSaving] = React.useState(false);
-  const [saved,  setSaved]  = React.useState(false);
-  const [error,  setError]  = React.useState('');
+  const [saving,    setSaving]    = React.useState(false);
+  const [saved,     setSaved]     = React.useState(false);
+  const [error,     setError]     = React.useState('');
+  const [uploading, setUploading] = React.useState(false);
+  const fileInputRef = React.useRef(null);
+
+  const handleFileSelect = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { setError('Selecione uma imagem válida.'); return; }
+    if (file.size > 3 * 1024 * 1024) { setError('Imagem muito grande. Máximo 3MB.'); return; }
+    setUploading(true); setError('');
+    try {
+      const ext  = file.name.split('.').pop().toLowerCase() || 'jpg';
+      const path = `${user.id}.${ext}`;
+      const { error: upErr } = await window.sb.storage
+        .from('avatars')
+        .upload(path, file, { upsert: true, contentType: file.type });
+      if (upErr) throw upErr;
+      const { data: { publicUrl } } = window.sb.storage.from('avatars').getPublicUrl(path);
+      set('avatar_url', publicUrl + '?t=' + Date.now());
+    } catch (err) {
+      setError('Erro ao enviar foto: ' + (err.message || 'tente novamente.'));
+    } finally { setUploading(false); e.target.value = ''; }
+  };
 
   const set = (field, val) => setForm(f => ({ ...f, [field]: val }));
 
@@ -92,16 +114,34 @@ function EditProfilePage({ user, onUpdate, onNavigate }) {
         <div className="settings-section">
           <p className="settings-section-label">Foto de perfil</p>
           <div className="settings-avatar-row">
-            <div className="settings-avatar-preview">
+            <div
+              className={'settings-avatar-preview settings-avatar-clickable' + (uploading ? ' uploading' : '')}
+              onClick={() => !uploading && fileInputRef.current?.click()}
+              data-cursor="hover"
+              title="Clique para trocar a foto"
+            >
               {form.avatar_url
                 ? <img src={form.avatar_url} alt="Avatar" className="settings-avatar-img" onError={e => { e.target.style.display = 'none'; }} />
                 : <div className="settings-avatar-init" style={{ background: user.color || '#6d5ce6' }}>{previewInitials}</div>
               }
+              <div className="settings-avatar-overlay">
+                {uploading ? <span className="settings-avatar-spinner" /> : <span>📷</span>}
+              </div>
             </div>
+            <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileSelect} />
             <div className="settings-avatar-input">
-              <label className="settings-label" htmlFor="ep-avatar">URL da imagem</label>
+              <button
+                className="settings-avatar-upload-btn"
+                data-cursor="hover"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                type="button"
+              >
+                {uploading ? 'Enviando…' : 'Enviar foto do dispositivo'}
+              </button>
+              <p className="settings-hint">JPG, PNG ou GIF · Máx 3MB</p>
+              <label className="settings-label" htmlFor="ep-avatar" style={{ marginTop: '0.75rem', display: 'block' }}>Ou cole uma URL</label>
               <input id="ep-avatar" name="avatar_url" className="settings-input" type="url" placeholder="https://..." value={form.avatar_url} onChange={e => set('avatar_url', e.target.value)} />
-              <p className="settings-hint">Cole o link de uma imagem pública (ex: GitHub avatar)</p>
             </div>
           </div>
         </div>
