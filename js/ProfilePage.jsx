@@ -451,17 +451,22 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
         </div>
 
         {/* ── Stats com ícones SVG ── */}
-        <div className="pub-stats-row">
-          <StatCard iconSlug="primeiros_passos" value={`${totalHours}h`}   label="estudadas"              />
-          <StatCard iconSlug="consistente"      value={sessions.length}     label="sessões de estudo"      />
-          <StatCard iconSlug="lendario"         value={livrosLidos}         label="livros lidos"           />
-          <StatCard iconSlug="palestrante_fiel" value={palestrasCount === null ? '—' : palestrasCount} label="palestras assistidas"      />
-          <StatCard iconSlug="primeira_sessao"  value={forumCount === null ? '—' : forumCount}         label="tópicos criados no fórum"  />
-          {totalCourses > 0 && (
-            <StatCard iconSlug="dedicado" value={`${doneCourses}/${totalCourses}`} label="cursos finalizados" />
-          )}
-          <StatCard iconSlug="primeira_chama" value={rankPos === null ? '—' : `#${rankPos}`} label="posição no ranking" onClick={() => onNavigate('ranking')} />
-        </div>
+        {(() => {
+          const goRank = (tab) => { window.__rankingTab = tab; onNavigate('ranking'); };
+          return (
+            <div className="pub-stats-row">
+              <StatCard iconSlug="primeiros_passos" value={`${totalHours}h`}   label="estudadas"             onClick={() => goRank('hours')}   />
+              <StatCard iconSlug="consistente"      value={sessions.length}     label="sessões de estudo"     onClick={() => goRank('sessions')} />
+              <StatCard iconSlug="lendario"         value={livrosLidos}         label="livros lidos"          onClick={() => goRank('books')}    />
+              <StatCard iconSlug="palestrante_fiel" value={palestrasCount === null ? '—' : palestrasCount} label="palestras assistidas"     onClick={() => goRank('talks')}    />
+              <StatCard iconSlug="primeira_sessao"  value={forumCount === null ? '—' : forumCount}         label="tópicos criados no fórum" onClick={() => goRank('forum')}    />
+              {totalCourses > 0 && (
+                <StatCard iconSlug="dedicado" value={`${doneCourses}/${totalCourses}`} label="cursos finalizados" onClick={() => goRank('courses')} />
+              )}
+              <StatCard iconSlug="primeira_chama" value={rankPos === null ? '—' : `#${rankPos}`} label="posição no ranking" onClick={() => goRank('hours')} />
+            </div>
+          );
+        })()}
 
         {/* ── Atividade full-width ── */}
         {sessions.length > 0 && (

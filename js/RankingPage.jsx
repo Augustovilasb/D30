@@ -29,7 +29,9 @@ const RANK_TABS = [
 ];
 
 function RankingPage({ user }) {
-  const [tab,     setTab]     = React.useState('hours');
+  const [tab,     setTab]     = React.useState(() => {
+    const t = window.__rankingTab; window.__rankingTab = null; return t || 'hours';
+  });
   const [rows,    setRows]    = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [myRank,  setMyRank]  = React.useState(null);
