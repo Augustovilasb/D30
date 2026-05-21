@@ -197,9 +197,8 @@ function AdminJobForm({ onSaved, toast }) {
 function VagasPage({ user, toast }) {
   const isAdmin = user?.email === OWNER_EMAIL;
 
-  const [catFilter,   setCatFilter]   = React.useState('all');
-  const [levelFilter, setLevelFilter] = React.useState('all');
-  const [typeFilter,  setTypeFilter]  = React.useState('all');
+  const [catFilter, setCatFilter] = React.useState('all');
+  const [search,    setSearch]    = React.useState('');
 
   const [manualJobs, setManualJobs] = React.useState([]);
   const [adzunaJobs, setAdzunaJobs] = React.useState([]);
@@ -238,23 +237,26 @@ function VagasPage({ user, toast }) {
   React.useEffect(() => { fetchManual(); }, [fetchManual]);
   React.useEffect(() => { fetchAdzuna(catFilter); }, [catFilter, fetchAdzuna]);
 
+  const applySearch = (j) => {
+    if (!search.trim()) return true;
+    const q = search.toLowerCase();
+    return (
+      (j.title    || '').toLowerCase().includes(q) ||
+      (j.company  || '').toLowerCase().includes(q) ||
+      (j.tags     || []).some(t => t.toLowerCase().includes(q))
+    );
+  };
+
   const filteredManual = React.useMemo(() => {
     return manualJobs.filter(j => {
-      if (catFilter   !== 'all' && j.category      !== catFilter)   return false;
-      if (levelFilter !== 'all' && j.level         !== levelFilter) return false;
-      if (typeFilter  !== 'all' && j.location_type !== typeFilter)  return false;
-      return true;
+      if (catFilter !== 'all' && j.category !== catFilter) return false;
+      return applySearch(j);
     });
-  }, [manualJobs, catFilter, levelFilter, typeFilter]);
+  }, [manualJobs, catFilter, search]);
 
   const filteredAdzuna = React.useMemo(() => {
-    return adzunaJobs.filter(j => {
-      // só filtra por tipo/nível se o job tiver esse dado — senão mantém
-      if (typeFilter  !== 'all' && j.location_type && j.location_type !== typeFilter) return false;
-      if (levelFilter !== 'all' && j.level         && j.level         !== levelFilter) return false;
-      return true;
-    });
-  }, [adzunaJobs, levelFilter, typeFilter]);
+    return adzunaJobs.filter(applySearch);
+  }, [adzunaJobs, search]);
 
   const allJobs = [...filteredManual, ...filteredAdzuna];
   const loading = loadingManual || loadingAdzuna;
@@ -281,14 +283,13 @@ function VagasPage({ user, toast }) {
               >{c.label}</button>
             ))}
           </div>
-          <div className="vagas-filter-row vagas-filter-row--secondary">
-            <select className="vagas-filter-select" value={levelFilter} onChange={e => setLevelFilter(e.target.value)}>
-              {LEVELS.map(l => <option key={l.id} value={l.id}>{l.label}</option>)}
-            </select>
-            <select className="vagas-filter-select" value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
-              {TYPES.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
-            </select>
-          </div>
+          <input
+            className="vagas-search"
+            type="text"
+            placeholder="Buscar por título, empresa ou tecnologia..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
         </div>
 
         {/* Grid */}
