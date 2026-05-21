@@ -4784,6 +4784,7 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
   padding: 2px 7px; border-radius: 5px;
 }
 .vaga-badge--curated  { background: rgba(109,92,230,.15); color: var(--purple); }
+.vaga-badge--remote   { background: rgba(34,197,94,.12); color: #16a34a; }
 .vaga-badge--cat      { background: var(--bg); border: 1px solid var(--border2); color: var(--muted); }
 .vaga-badge--level    { background: var(--bg); border: 1px solid var(--border2); color: var(--muted); }
 .vaga-badge--type     { background: var(--bg); border: 1px solid var(--border2); color: var(--muted); }

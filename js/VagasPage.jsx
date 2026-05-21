@@ -55,12 +55,14 @@ function timeAgo(dateStr) {
 
 /* ── Job Card ── */
 function JobCard({ job }) {
-  const isCurated = job.source === 'manual';
+  const isCurated  = job.source === 'manual';
+  const isRemoteOK = job.source === 'remoteok';
   return (
     <div className="vaga-card">
       <div className="vaga-card-top">
         <div className="vaga-card-badges">
-          {isCurated && <span className="vaga-badge vaga-badge--curated">D30 Curado</span>}
+          {isCurated  && <span className="vaga-badge vaga-badge--curated">D30 Curado</span>}
+          {isRemoteOK && <span className="vaga-badge vaga-badge--remote">Remoto Global</span>}
           {job.category && CAT_LABELS[job.category] && (
             <span className="vaga-badge vaga-badge--cat">{CAT_LABELS[job.category]}</span>
           )}
@@ -209,19 +211,21 @@ function VagasPage({ user, toast }) {
       if (!res.ok) throw new Error('gupy error');
       const json = await res.json();
       /* Gupy response: { data: [...] } */
-      const list = json.data || json.results || [];
+      const list = json.results || [];
       const jobs = list.map(j => ({
-        id:           j.id || j.jobCode || String(Math.random()),
-        title:        j.name || j.title || '',
-        company:      j.careerPageName || j.company?.name || '',
+        id:           String(j.id),
+        title:        j.position || '',
+        company:      j.company || '',
         description:  (j.description || '').replace(/<[^>]+>/g, '').slice(0, 160) + '…',
-        link:         j.jobUrl || j.redirect_url || '#',
-        created_at:   j.publishedDate || j.created || new Date().toISOString(),
-        source:       'gupy',
-        location_type: j.isRemoteWork ? 'remote' : (j.workplaceType === 'hybrid' ? 'hybrid' : null),
+        link:         j.url || `https://remoteok.com/remote-jobs/${j.slug}`,
+        created_at:   j.date || new Date().toISOString(),
+        source:       'remoteok',
+        location_type: 'remote',
         category:     cat === 'all' ? null : cat,
         level:        null,
-        salary_range: null,
+        salary_range: (j.salary_min && j.salary_max)
+          ? `$${Math.round(j.salary_min/1000)}k – $${Math.round(j.salary_max/1000)}k`
+          : null,
       }));
       setAdzunaJobs(jobs);
     } catch {
