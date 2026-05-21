@@ -205,9 +205,7 @@ function VagasPage({ user, toast }) {
     setLoadingAdzuna(true);
     setAdzunaError(false);
     try {
-      const query = encodeURIComponent(ADZUNA_QUERIES[cat] || ADZUNA_QUERIES.all);
-      const url = `https://api.adzuna.com/v1/api/jobs/br/search/1?app_id=${ADZUNA_ID}&app_key=${ADZUNA_KEY}&results_per_page=12&what=${query}&content-type=application/json`;
-      const res  = await fetch(url);
+      const res = await fetch(`/api/vagas?cat=${cat}`);
       if (!res.ok) throw new Error('adzuna error');
       const json = await res.json();
       const jobs = (json.results || []).map(j => ({
