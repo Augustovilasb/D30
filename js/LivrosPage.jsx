@@ -82,16 +82,18 @@ function BookCover({ title, category, staticSrc }) {
   );
 }
 
-/* ── Livros lidos (localStorage) ── */
+/* ── Livros lidos (localStorage v2 — guarda título/autor) ── */
 function useLivrosLidos() {
-  const [ids, setIds] = React.useState(() => {
-    try { return new Set(JSON.parse(localStorage.getItem('d30_livros_lidos') || '[]')); }
-    catch { return new Set(); }
+  const [books, setBooks] = React.useState(() => {
+    try { return JSON.parse(localStorage.getItem('d30_livros_lidos_v2') || '[]'); }
+    catch { return []; }
   });
-  const toggle = (id) => setIds(prev => {
-    const next = new Set(prev);
-    if (next.has(id)) next.delete(id); else next.add(id);
-    try { localStorage.setItem('d30_livros_lidos', JSON.stringify([...next])); } catch {}
+  const ids = React.useMemo(() => new Set(books.map(b => b.id)), [books]);
+  const toggle = (id, info) => setBooks(prev => {
+    const next = prev.some(b => b.id === id)
+      ? prev.filter(b => b.id !== id)
+      : [...prev, { id, title: info?.title || '', author: info?.author || '' }];
+    try { localStorage.setItem('d30_livros_lidos_v2', JSON.stringify(next)); } catch {}
     return next;
   });
   return [ids, toggle];
@@ -118,7 +120,7 @@ function BookCard({ book, readIds, onToggle }) {
           {book.author && <p className="livro-card-author">{book.author}</p>}
         </div>
       </a>
-      <button className={'livro-read-btn' + (read ? ' active' : '')} data-cursor="hover" onClick={() => onToggle(id)} title={read ? 'Marcar como não lido' : 'Marcar como lido'}>
+      <button className={'livro-read-btn' + (read ? ' active' : '')} data-cursor="hover" onClick={() => onToggle(id, { title: book.title, author: book.author })} title={read ? 'Marcar como não lido' : 'Marcar como lido'}>
         <CheckIcon />
       </button>
     </div>
@@ -140,7 +142,7 @@ function RecomCard({ book, readIds, onToggle }) {
           {book.description && <p className="livro-card-desc">{book.description}</p>}
         </div>
       </a>
-      <button className={'livro-read-btn' + (read ? ' active' : '')} data-cursor="hover" onClick={() => onToggle(id)} title={read ? 'Marcar como não lido' : 'Marcar como lido'}>
+      <button className={'livro-read-btn' + (read ? ' active' : '')} data-cursor="hover" onClick={() => onToggle(id, { title: book.title, author: book.author })} title={read ? 'Marcar como não lido' : 'Marcar como lido'}>
         <CheckIcon />
       </button>
     </div>

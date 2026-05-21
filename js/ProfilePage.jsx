@@ -309,12 +309,100 @@ function ShareCardModal({ user, onClose }) {
   );
 }
 
+function StatsDetailModal({ type, user, onClose }) {
+  const [items, setItems] = React.useState(null);
+
+  React.useEffect(() => {
+    if (type === 'livros') {
+      try { setItems(JSON.parse(localStorage.getItem('d30_livros_lidos_v2') || '[]')); }
+      catch { setItems([]); }
+    } else if (type === 'cursos') {
+      try {
+        const done = new Set(JSON.parse(localStorage.getItem('d30_roadmap_v3') || '[]'));
+        const list = typeof COURSES !== 'undefined' && COURSES ? COURSES.filter(c => done.has(c.id)) : [];
+        setItems(list);
+      } catch { setItems([]); }
+    } else if (type === 'sessoes') {
+      const s = window.Data ? [...window.Data.load()].reverse().slice(0, 30) : [];
+      setItems(s);
+    } else if (type === 'talks') {
+      if (!window.sb) { setItems([]); return; }
+      window.sb.from('palestra_attendance').select('*').eq('user_id', user.id).order('created_at', { ascending: false })
+        .then(({ data }) => setItems(data || []));
+    } else if (type === 'forum') {
+      if (!window.sb) { setItems([]); return; }
+      window.sb.from('forum_activity').select('*').eq('user_id', user.id).eq('type', 'topic').order('created_at', { ascending: false })
+        .then(({ data }) => setItems(data || []));
+    }
+  }, [type]);
+
+  const titles = {
+    livros: 'Livros Lidos', cursos: 'Cursos Finalizados',
+    sessoes: 'Sessões de Estudo', talks: 'Talks — Presença', forum: 'Tópicos no Fórum',
+  };
+
+  function fmtDur(secs) {
+    const h = Math.floor(secs / 3600), m = Math.floor((secs % 3600) / 60);
+    return h > 0 ? `${h}h${m > 0 ? m + 'm' : ''}` : `${m}m`;
+  }
+
+  return (
+    <div className="stats-detail-overlay" onClick={onClose}>
+      <div className="stats-detail-panel" onClick={e => e.stopPropagation()}>
+        <div className="stats-detail-head">
+          <span>{titles[type]}</span>
+          <button className="stats-detail-close" data-cursor="hover" onClick={onClose}>✕</button>
+        </div>
+        <div className="stats-detail-body">
+          {items === null && <p className="stats-detail-empty">Carregando…</p>}
+          {items !== null && items.length === 0 && <p className="stats-detail-empty">Nenhum item ainda.</p>}
+          {items !== null && items.length > 0 && (
+            <ul className="stats-detail-list">
+              {type === 'livros' && items.map((b, i) => (
+                <li key={b.id || i} className="stats-detail-item">
+                  <span className="stats-detail-item-title">{b.title || '—'}</span>
+                  {b.author && <span className="stats-detail-item-sub">{b.author}</span>}
+                </li>
+              ))}
+              {type === 'cursos' && items.map((c, i) => (
+                <li key={c.id || i} className="stats-detail-item">
+                  <span className="stats-detail-item-title">{c.title || c.name || '—'}</span>
+                  {c.category && <span className="stats-detail-item-sub">{c.category}</span>}
+                </li>
+              ))}
+              {type === 'sessoes' && items.map((s, i) => (
+                <li key={i} className="stats-detail-item">
+                  <span className="stats-detail-item-title">{s.subject || 'Sessão'}</span>
+                  <span className="stats-detail-item-sub">{s.date} · {fmtDur(s.duration || 0)}</span>
+                </li>
+              ))}
+              {type === 'talks' && items.map((t, i) => (
+                <li key={t.id || i} className="stats-detail-item">
+                  <span className="stats-detail-item-title">{t.title || t.palestra_title || t.name || `Talk #${i + 1}`}</span>
+                  {t.created_at && <span className="stats-detail-item-sub">{t.created_at.slice(0, 10)}</span>}
+                </li>
+              ))}
+              {type === 'forum' && items.map((f, i) => (
+                <li key={f.id || i} className="stats-detail-item">
+                  <span className="stats-detail-item-title">{f.title || f.content?.slice(0, 60) || `Tópico #${i + 1}`}</span>
+                  {f.created_at && <span className="stats-detail-item-sub">{f.created_at.slice(0, 10)}</span>}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ProfilePage({ user, onSignOut, onNavigate }) {
   const [showShare,      setShowShare]      = React.useState(false);
   const [showCard,       setShowCard]       = React.useState(false);
   const [forumCount,     setForumCount]     = React.useState(null);
   const [palestrasCount, setPalestrasCount] = React.useState(null);
   const [rankPos,        setRankPos]        = React.useState(null);
+  const [detailModal,    setDetailModal]    = React.useState(null);
 
   const profileUrl = user.username
     ? `${window.location.origin}/perfil/${user.username}`
@@ -328,7 +416,7 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
   const totalHours  = (totalSecs / 3600).toFixed(1);
   const bestStreak  = window.Data.getBestStreak();
   const livrosLidos = React.useMemo(() => {
-    try { return JSON.parse(localStorage.getItem('d30_livros_lidos') || '[]').length; } catch { return 0; }
+    try { return JSON.parse(localStorage.getItem('d30_livros_lidos_v2') || '[]').length; } catch { return 0; }
   }, []);
 
   const rmDone = React.useMemo(() => {
@@ -451,22 +539,17 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
         </div>
 
         {/* ── Stats com ícones SVG ── */}
-        {(() => {
-          const goRank = (tab) => { window.__rankingTab = tab; onNavigate('ranking'); };
-          return (
-            <div className="pub-stats-row">
-              <StatCard iconSlug="primeiros_passos" value={`${totalHours}h`}   label="estudadas"             onClick={() => goRank('hours')}   />
-              <StatCard iconSlug="consistente"      value={sessions.length}     label="sessões de estudo"     onClick={() => goRank('sessions')} />
-              <StatCard iconSlug="lendario"         value={livrosLidos}         label="livros lidos"          onClick={() => goRank('books')}    />
-              <StatCard iconSlug="palestrante_fiel" value={palestrasCount === null ? '—' : palestrasCount} label="talks presença"     onClick={() => goRank('talks')}    />
-              <StatCard iconSlug="primeira_sessao"  value={forumCount === null ? '—' : forumCount}         label="tópicos criados no fórum" onClick={() => goRank('forum')}    />
-              {totalCourses > 0 && (
-                <StatCard iconSlug="dedicado" value={`${doneCourses}/${totalCourses}`} label="cursos finalizados" onClick={() => goRank('courses')} />
-              )}
-              <StatCard iconSlug="primeira_chama" value={rankPos === null ? '—' : `#${rankPos}`} label="posição no ranking" onClick={() => goRank('hours')} />
-            </div>
-          );
-        })()}
+        <div className="pub-stats-row">
+          <StatCard iconSlug="primeiros_passos" value={`${totalHours}h`}   label="estudadas"                onClick={() => setDetailModal('sessoes')} />
+          <StatCard iconSlug="consistente"      value={sessions.length}     label="sessões de estudo"        onClick={() => setDetailModal('sessoes')} />
+          <StatCard iconSlug="lendario"         value={livrosLidos}         label="livros lidos"             onClick={() => setDetailModal('livros')}  />
+          <StatCard iconSlug="palestrante_fiel" value={palestrasCount === null ? '—' : palestrasCount} label="talks presença"          onClick={() => setDetailModal('talks')}   />
+          <StatCard iconSlug="primeira_sessao"  value={forumCount === null ? '—' : forumCount}         label="tópicos criados no fórum" onClick={() => setDetailModal('forum')}   />
+          {totalCourses > 0 && (
+            <StatCard iconSlug="dedicado" value={`${doneCourses}/${totalCourses}`} label="cursos finalizados" onClick={() => setDetailModal('cursos')} />
+          )}
+          <StatCard iconSlug="primeira_chama" value={rankPos === null ? '—' : `#${rankPos}`} label="posição no ranking" onClick={() => { window.__rankingTab = 'hours'; onNavigate('ranking'); }} />
+        </div>
 
         {/* ── Atividade full-width ── */}
         {sessions.length > 0 && (
@@ -502,6 +585,7 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
       </div>
       <Footer />
       {showCard && <ShareCardModal user={user} onClose={() => setShowCard(false)} />}
+      {detailModal && <StatsDetailModal type={detailModal} user={user} onClose={() => setDetailModal(null)} />}
     </div>
   );
 }
