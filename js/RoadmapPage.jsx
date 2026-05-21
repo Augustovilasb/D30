@@ -88,6 +88,21 @@ function RoadmapPage({ user }) {
   const [unlocking,    setUnlocking]    = React.useState(new Set());
   const [selectedNode, setSelectedNode] = React.useState(null);
   const [detailTab,    setDetailTab]    = React.useState('cursos');
+  const selectedNodeRef = React.useRef(null);
+
+  React.useEffect(() => { selectedNodeRef.current = selectedNode; }, [selectedNode]);
+
+  // intercept browser back button while inside a node detail
+  React.useEffect(() => {
+    const onPop = () => {
+      if (selectedNodeRef.current) {
+        setSelectedNode(null);
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
 
   React.useEffect(() => {
     DB.roadmap.getProgress(userId).then(setDone).catch(() => {});
@@ -150,7 +165,7 @@ function RoadmapPage({ user }) {
         onToggle={toggle}
         tab={detailTab}
         onTabChange={setDetailTab}
-        onBack={() => { setSelectedNode(null); window.scrollTo({ top: 0, behavior: 'instant' }); }}
+        onBack={() => window.history.back()}
       />
     );
   }
@@ -173,7 +188,7 @@ function RoadmapPage({ user }) {
                   unlocked={unlocked}
                   progress={progress}
                   earned={earned}
-                  onClick={() => { if (!node.comingSoon) { setSelectedNode(node.id); setDetailTab('cursos'); window.scrollTo({ top: 0, behavior: 'instant' }); } }}
+                  onClick={() => { if (!node.comingSoon && isNodeUnlocked(idx)) { setSelectedNode(node.id); setDetailTab('cursos'); window.history.pushState({ page: 'roadmap', rmNode: node.id }, '', '#roadmap'); window.scrollTo({ top: 0, behavior: 'instant' }); } }}
                 />
                 {idx < TREE.length - 1 && (
                   <div className={'rm-tree-connector' + (unlocked ? ' done' : '')} />
