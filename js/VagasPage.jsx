@@ -55,10 +55,15 @@ function timeAgo(dateStr) {
 
 /* ── Job Card ── */
 function JobCard({ job }) {
-  const isCurated = job.source === 'manual';
+  const isCurated   = job.source === 'manual';
   const sourceLabel = { RemoteOK: 'RemoteOK', Remotive: 'Remotive', Jobicy: 'Jobicy' }[job.source];
+  const isRemote    = job.is_remote !== false; // todas as APIs externas são remote-only
+  const salary      = job.salary || job.salary_range;
+  const restriction = job.location_restriction; // ex: "USA only", "Europe", "Worldwide"
+
   return (
     <div className="vaga-card">
+      {/* Linha 1 — fonte + data */}
       <div className="vaga-card-top">
         <div className="vaga-card-badges">
           {isCurated   && <span className="vaga-badge vaga-badge--curated">D30 Curado</span>}
@@ -66,38 +71,40 @@ function JobCard({ job }) {
           {job.level && job.level !== 'any' && LEVEL_LABELS[job.level] && (
             <span className="vaga-badge vaga-badge--level">{LEVEL_LABELS[job.level]}</span>
           )}
-          {job.location_type && TYPE_LABELS[job.location_type] && (
-            <span className="vaga-badge vaga-badge--type">{TYPE_LABELS[job.location_type]}</span>
-          )}
         </div>
         <span className="vaga-card-time">{timeAgo(job.created_at || job.date)}</span>
       </div>
 
+      {/* Linha 2 — título + empresa */}
       <h3 className="vaga-card-title">{job.title}</h3>
       {job.company && <p className="vaga-card-company">{job.company}</p>}
 
-      <div className="vaga-card-meta">
-        {(job.salary || job.salary_range) && (
-          <span className="vaga-card-salary">{job.salary || job.salary_range}</span>
-        )}
-        {job.location && <span className="vaga-card-location">📍 {job.location}</span>}
+      {/* Linha 3 — 3 pilares fixos: tipo · localização da empresa · salário */}
+      <div className="vaga-card-pillars">
+        <div className={'vaga-pillar' + (isRemote ? ' vaga-pillar--remote' : ' vaga-pillar--presential')}>
+          {isRemote ? '🌐 Remoto' : '🏢 Presencial'}
+        </div>
+        <div className="vaga-pillar">
+          📍 {job.company_location || 'N/D'}
+        </div>
+        <div className={'vaga-pillar' + (salary ? ' vaga-pillar--salary' : '')}>
+          💰 {salary || 'Salário não informado'}
+        </div>
       </div>
 
+      {/* Restrição geográfica — só mostra se diferente de Worldwide */}
+      {restriction && restriction.toLowerCase() !== 'worldwide' && (
+        <p className="vaga-card-restriction">⚠️ Requer: {restriction}</p>
+      )}
+
+      {/* Tags de stack */}
       {job.tags && job.tags.length > 0 && (
         <div className="vaga-card-tags">
           {job.tags.slice(0, 6).map((t, i) => <span key={i} className="vaga-tag">{t}</span>)}
         </div>
       )}
 
-      {job.description && <p className="vaga-card-desc">{job.description}</p>}
-
-      <a
-        className="vaga-card-btn"
-        href={job.link}
-        target="_blank"
-        rel="noopener noreferrer"
-        data-cursor="hover"
-      >
+      <a className="vaga-card-btn" href={job.link} target="_blank" rel="noopener noreferrer" data-cursor="hover">
         Ver vaga →
       </a>
     </div>

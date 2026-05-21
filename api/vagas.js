@@ -41,15 +41,17 @@ async function fetchRemoteOK(cat) {
     return (Array.isArray(raw) ? raw.filter(j => j.id && j.position) : [])
       .slice(0, 25)
       .map(j => ({
-        id:       'rok-' + j.id,
-        title:    j.position,
-        company:  j.company || '',
-        tags:     Array.isArray(j.tags) ? j.tags.slice(0, 5) : [],
-        location: j.location || 'Worldwide',
-        salary:   (j.salary_min && j.salary_max) ? `$${Math.round(j.salary_min/1000)}k–$${Math.round(j.salary_max/1000)}k` : null,
-        link:     j.url || `https://remoteok.com/remote-jobs/${j.slug}`,
-        date:     j.date || new Date().toISOString(),
-        source:   'RemoteOK',
+        id:                   'rok-' + j.id,
+        title:                j.position,
+        company:              j.company || '',
+        company_location:     j.company_headquarters || null,
+        location_restriction: j.location && j.location !== '' ? j.location : 'Worldwide',
+        is_remote:            true,
+        tags:                 Array.isArray(j.tags) ? j.tags.slice(0, 6) : [],
+        salary:               (j.salary_min && j.salary_max) ? `$${Math.round(j.salary_min/1000)}k–$${Math.round(j.salary_max/1000)}k` : null,
+        link:                 j.url || `https://remoteok.com/remote-jobs/${j.slug}`,
+        date:                 j.date || new Date().toISOString(),
+        source:               'RemoteOK',
       }));
   } catch { return []; }
 }
@@ -61,15 +63,17 @@ async function fetchRemotive(cat) {
     if (!r.ok) return [];
     const raw = await r.json();
     return (raw.jobs || []).slice(0, 25).map(j => ({
-      id:       'rem-' + j.id,
-      title:    j.title,
-      company:  j.company_name || '',
-      tags:     (j.tags || '').split(',').map(t => t.trim()).filter(Boolean).slice(0, 5),
-      location: j.candidate_required_location || 'Worldwide',
-      salary:   j.salary || null,
-      link:     j.url,
-      date:     j.publication_date || new Date().toISOString(),
-      source:   'Remotive',
+      id:                   'rem-' + j.id,
+      title:                j.title,
+      company:              j.company_name || '',
+      company_location:     null,
+      location_restriction: j.candidate_required_location || 'Worldwide',
+      is_remote:            true,
+      tags:                 (j.tags || '').split(',').map(t => t.trim()).filter(Boolean).slice(0, 6),
+      salary:               j.salary || null,
+      link:                 j.url,
+      date:                 j.publication_date || new Date().toISOString(),
+      source:               'Remotive',
     }));
   } catch { return []; }
 }
@@ -81,15 +85,17 @@ async function fetchJobicy(cat) {
     if (!r.ok) return [];
     const raw = await r.json();
     return (raw.jobs || []).slice(0, 25).map(j => ({
-      id:       'jcy-' + j.id,
-      title:    j.jobTitle,
-      company:  j.companyName || '',
-      tags:     Array.isArray(j.jobIndustry) ? j.jobIndustry.slice(0, 5) : [],
-      location: j.jobGeo || 'Worldwide',
-      salary:   j.annualSalaryMin ? `$${Math.round(j.annualSalaryMin/1000)}k–$${Math.round(j.annualSalaryMax/1000)}k` : null,
-      link:     j.url,
-      date:     j.pubDate || new Date().toISOString(),
-      source:   'Jobicy',
+      id:                   'jcy-' + j.id,
+      title:                j.jobTitle,
+      company:              j.companyName || '',
+      company_location:     j.jobLocation || null,
+      location_restriction: j.jobGeo || 'Worldwide',
+      is_remote:            true,
+      tags:                 Array.isArray(j.jobIndustry) ? j.jobIndustry.slice(0, 6) : [],
+      salary:               j.annualSalaryMin ? `$${Math.round(j.annualSalaryMin/1000)}k–$${Math.round(j.annualSalaryMax/1000)}k` : null,
+      link:                 j.url,
+      date:                 j.pubDate || new Date().toISOString(),
+      source:               'Jobicy',
     }));
   } catch { return []; }
 }
