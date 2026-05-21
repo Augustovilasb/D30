@@ -138,11 +138,23 @@ const Data = {
   async updateProfileStats(userId) {
     if (!userId || !window.sb) return;
     try {
+      const livrosLidos = (() => { try { return JSON.parse(localStorage.getItem('d30_livros_lidos') || '[]').length; } catch { return 0; } })();
+      const coursesDone = (() => { try { return JSON.parse(localStorage.getItem('d30_roadmap_v3') || '[]').length; } catch { return 0; } })();
+
+      const [{ count: talks }, { count: forum }] = await Promise.all([
+        window.sb.from('palestra_attendance').select('id', { count: 'exact', head: true }).eq('user_id', userId),
+        window.sb.from('forum_activity').select('id', { count: 'exact', head: true }).eq('user_id', userId).eq('type', 'topic'),
+      ]);
+
       await window.sb.from('profiles').update({
-        total_hours:     Math.round(Data.getTotalSeconds() / 3600 * 10) / 10,
-        current_streak:  Data.getCurrentStreak(),
-        best_streak:     Data.getBestStreak(),
-        total_sessions:  Data.load().length,
+        total_hours:         Math.round(Data.getTotalSeconds() / 3600 * 10) / 10,
+        current_streak:      Data.getCurrentStreak(),
+        best_streak:         Data.getBestStreak(),
+        total_sessions:      Data.load().length,
+        total_livros_lidos:  livrosLidos,
+        total_courses_done:  coursesDone,
+        total_talks:         talks  || 0,
+        total_forum_topics:  forum  || 0,
       }).eq('id', userId);
     } catch (e) {
       console.warn('[Data] profile stats update failed:', e.message);

@@ -15,19 +15,30 @@ function RankBadge({ rank }) {
   return <span className="rank-num">#{rank}</span>;
 }
 
+const RANK_TABS = [
+  { key: 'hours',   col: 'total_hours',        label: 'Horas',    fmt: r => (r.total_hours    || 0).toFixed(1) + 'h'     },
+  { key: 'books',   col: 'total_livros_lidos',  label: 'Livros',   fmt: r => (r.total_livros_lidos || 0) + ' livros'      },
+  { key: 'talks',   col: 'total_talks',         label: 'Talks',    fmt: r => (r.total_talks    || 0) + ' talks'            },
+  { key: 'forum',   col: 'total_forum_topics',  label: 'Fórum',    fmt: r => (r.total_forum_topics || 0) + ' tópicos'     },
+  { key: 'sessions',col: 'total_sessions',      label: 'Sessões',  fmt: r => (r.total_sessions  || 0) + ' sessões'        },
+  { key: 'courses', col: 'total_courses_done',  label: 'Cursos',   fmt: r => (r.total_courses_done || 0) + ' cursos'      },
+];
+
 function RankingPage({ user }) {
   const [tab,     setTab]     = React.useState('hours');
   const [rows,    setRows]    = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [myRank,  setMyRank]  = React.useState(null);
 
+  const currentTab = RANK_TABS.find(t => t.key === tab) || RANK_TABS[0];
+
   React.useEffect(() => {
     async function load() {
       setLoading(true);
-      const col = tab === 'hours' ? 'total_hours' : tab === 'streak' ? 'best_streak' : 'total_sessions';
+      const col = currentTab.col;
       const { data, error } = await window.sb
         .from('profiles')
-        .select('id, full_name, username, avatar_url, total_hours, current_streak, best_streak, total_sessions, is_founding_member')
+        .select('id, full_name, username, avatar_url, total_hours, total_sessions, total_livros_lidos, total_talks, total_forum_topics, total_courses_done, is_founding_member')
         .not(col, 'is', null)
         .gt(col, 0)
         .order(col, { ascending: false })
@@ -43,11 +54,7 @@ function RankingPage({ user }) {
     load();
   }, [tab]);
 
-  function displayVal(row) {
-    if (tab === 'hours')    return ((row.total_hours    || 0).toFixed(1)) + 'h';
-    if (tab === 'streak')   return (row.best_streak     || 0) + ' dias';
-    return                         (row.total_sessions  || 0) + ' sessões';
-  }
+  function displayVal(row) { return currentTab.fmt(row); }
 
   function initials(name) {
     return (name || '?').trim().split(/\s+/).map(s => s[0]).slice(0, 2).join('').toUpperCase();
@@ -71,8 +78,8 @@ function RankingPage({ user }) {
         </div>
 
         <div className="ranking-tabs">
-          {[['hours','Horas estudadas'],['streak','Maior streak'],['sessions','Sessões']].map(([k,l]) => (
-            <button key={k} className={'ranking-tab' + (tab === k ? ' active' : '')} data-cursor="hover" onClick={() => setTab(k)}>{l}</button>
+          {RANK_TABS.map(t => (
+            <button key={t.key} className={'ranking-tab' + (tab === t.key ? ' active' : '')} data-cursor="hover" onClick={() => setTab(t.key)}>{t.label}</button>
           ))}
         </div>
 
@@ -111,9 +118,9 @@ function RankingPage({ user }) {
                   </div>
 
                   <div className="ranking-secondary">
-                    {tab !== 'hours'    && row.total_hours    > 0 && <span>{(row.total_hours).toFixed(0)}h</span>}
-                    {tab !== 'streak'   && row.best_streak    > 0 && <span>{row.best_streak}d streak</span>}
-                    {tab !== 'sessions' && row.total_sessions > 0 && <span>{row.total_sessions} sessões</span>}
+                    {tab !== 'hours'    && (row.total_hours    || 0) > 0 && <span>{(row.total_hours).toFixed(0)}h</span>}
+                    {tab !== 'sessions' && (row.total_sessions || 0) > 0 && <span>{row.total_sessions} sessões</span>}
+                    {tab !== 'talks'    && (row.total_talks    || 0) > 0 && <span>{row.total_talks} talks</span>}
                   </div>
 
                   <div className={'ranking-val' + (i < 3 ? ' top3-val' : '')}>{displayVal(row)}</div>
