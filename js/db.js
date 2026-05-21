@@ -32,15 +32,29 @@ const DB = {
     async getTopics() {
       const { data, error } = await window.sb
         .from('forum_topics')
-        .select('*, forum_messages(count)')
+        .select('*')
         .order('created_at', { ascending: false });
       if (error) throw error;
-      return data.map(t => ({
+      const topics = (data || []).map(t => ({
         ...t,
-        reply_count: t.forum_messages?.[0]?.count ?? 0,
+        reply_count: 0,
         time:        DB._timeAgo(t.created_at),
         tagLabel:    DB.forum._tagLabel(t.tag),
       }));
+      // fetch reply counts in one query
+      if (topics.length) {
+        const ids = topics.map(t => t.id);
+        const { data: counts } = await window.sb
+          .from('forum_messages')
+          .select('topic_id')
+          .in('topic_id', ids);
+        if (counts) {
+          const map = {};
+          counts.forEach(r => { map[r.topic_id] = (map[r.topic_id] || 0) + 1; });
+          topics.forEach(t => { t.reply_count = map[t.id] || 0; });
+        }
+      }
+      return topics;
     },
 
     async getMessages(topicId) {
