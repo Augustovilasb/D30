@@ -48,6 +48,17 @@ function PalestrasPage({ toast, user, onIndicCountChange }) {
     return () => { cancelled = true; };
   }, [user?.id, isAdmin]);
 
+  /* ── highlight from profile ─────────────────────────────────── */
+  React.useEffect(() => {
+    const id = window.__palestrasHighlight;
+    if (!id || loading) return;
+    window.__palestrasHighlight = null;
+    setTimeout(() => {
+      const el = document.querySelector(`[data-highlight-id="${id}"]`);
+      if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.classList.add('highlight-flash'); }
+    }, 300);
+  }, [loading]);
+
   /* ── actions ────────────────────────────────────────────────── */
   const handleRsvp = React.useCallback(async (talkId) => {
     if (!user) return;
@@ -205,7 +216,7 @@ function PalestrasPage({ toast, user, onIndicCountChange }) {
 
 function UpcomingTalk({ talk, rsvpd, onRsvp }) {
   return (
-    <div className="talk-card" data-cursor="hover">
+    <div className="talk-card" data-cursor="hover" data-highlight-id={talk.id}>
       <div className="talk-when">{talk.when_text}</div>
       <div className="talk-guest">
         <div className="talk-guest-name">{talk.guest_name}</div>
@@ -233,7 +244,7 @@ function UpcomingTalk({ talk, rsvpd, onRsvp }) {
 
 function PastTalk({ talk }) {
   return (
-    <div className="past-talk" data-cursor="hover">
+    <div className="past-talk" data-cursor="hover" data-highlight-id={talk.id}>
       <div className="past-talk-when">{talk.when_text}</div>
       <div className="past-talk-body">
         <div className="past-talk-title">{talk.title}</div>

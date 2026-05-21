@@ -4602,6 +4602,13 @@ nav.nav--floating .user-menu-info strong{ color: var(--text); }
 .stats-detail-item:hover { background: rgba(255,255,255,0.05); }
 .stats-detail-item--link { cursor: pointer; }
 .stats-detail-item--link:hover .stats-detail-item-title { color: #fff; }
+
+@keyframes highlight-pulse {
+  0%   { box-shadow: 0 0 0 0px rgba(109,92,230,.8); }
+  40%  { box-shadow: 0 0 0 8px rgba(109,92,230,.15); }
+  100% { box-shadow: 0 0 0 0px rgba(109,92,230,0); }
+}
+.highlight-flash { animation: highlight-pulse 2s ease; }
 .stats-detail-item-title { font-size: 13px; font-weight: 600; color: #f0f0f0; }
 .stats-detail-item-sub   { font-size: 11px; color: #666; }
 

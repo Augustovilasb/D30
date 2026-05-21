@@ -41,6 +41,16 @@ function RoadmapPage({ user }) {
     }).catch(() => setLoaded(true));
   }, [userId]);
 
+  React.useEffect(() => {
+    const id = window.__roadmapHighlight;
+    if (!id) return;
+    window.__roadmapHighlight = null;
+    setTimeout(() => {
+      const el = document.querySelector(`[data-highlight-id="${id}"]`);
+      if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.classList.add('highlight-flash'); }
+    }, 200);
+  }, []);
+
   const toggle = React.useCallback((id) => {
     setDone(prev => {
       const next = new Set(prev);
@@ -142,7 +152,7 @@ function PhaseCard({ phase, unlocked, allDone, doneCount, phasePct, done, unlock
               const isAnim         = unlocking.has(id);
               const isCourseLocked = idx > 0 && !done.has(phase.ids[idx - 1]);
               return (
-                <div key={id} className={'rm3-course' + (isDone ? ' done' : '') + (isCourseLocked ? ' course-locked' : '')}>
+                <div key={id} data-highlight-id={id} className={'rm3-course' + (isDone ? ' done' : '') + (isCourseLocked ? ' course-locked' : '')}>
                   <div className="rm3-course-info">
                     <span className="rm3-course-title">{c.title}</span>
                     <span className="rm3-course-sub">{c.subtitle}</span>

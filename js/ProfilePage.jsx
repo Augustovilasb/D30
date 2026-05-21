@@ -327,7 +327,7 @@ function StatsDetailModal({ type, user, onClose, onNavigate }) {
     } else if (type === 'talks') {
       if (!window.sb) { setItems([]); return; }
       window.sb.from('talk_rsvp')
-        .select('id, created_at, talks(title, when_text, guest_name, video_url)')
+        .select('id, talk_id, created_at, talks(title, when_text, guest_name)')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .then(({ data }) => setItems(data || []));
@@ -370,7 +370,7 @@ function StatsDetailModal({ type, user, onClose, onNavigate }) {
                 <li key={b.id || i}
                   className={'stats-detail-item' + (b.id ? ' stats-detail-item--link' : '')}
                   data-cursor={b.id ? 'hover' : undefined}
-                  onClick={b.id ? () => window.open(b.id, '_blank') : undefined}
+                  onClick={b.id ? () => { window.__livrosHighlight = b.id; onNavigate('livros'); onClose(); } : undefined}
                 >
                   <span className="stats-detail-item-title">{b.title || '—'}</span>
                   {b.author && <span className="stats-detail-item-sub">{b.author}</span>}
@@ -378,9 +378,9 @@ function StatsDetailModal({ type, user, onClose, onNavigate }) {
               ))}
               {type === 'cursos' && items.map((c, i) => (
                 <li key={c.id || i}
-                  className={'stats-detail-item' + (c.url ? ' stats-detail-item--link' : '')}
-                  data-cursor={c.url ? 'hover' : undefined}
-                  onClick={c.url ? () => window.open(c.url, '_blank') : undefined}
+                  className="stats-detail-item stats-detail-item--link"
+                  data-cursor="hover"
+                  onClick={() => { window.__roadmapHighlight = c.id; onNavigate('roadmap'); onClose(); }}
                 >
                   <span className="stats-detail-item-title">{c.title || c.name || '—'}</span>
                   {c.subtitle && <span className="stats-detail-item-sub">{c.subtitle}</span>}
@@ -396,10 +396,7 @@ function StatsDetailModal({ type, user, onClose, onNavigate }) {
                 <li key={t.id || i}
                   className="stats-detail-item stats-detail-item--link"
                   data-cursor="hover"
-                  onClick={() => {
-                    if (t.talks?.video_url) { window.open(t.talks.video_url, '_blank'); }
-                    else { onNavigate && onNavigate('palestras'); onClose(); }
-                  }}
+                  onClick={() => { window.__palestrasHighlight = t.talk_id; onNavigate && onNavigate('palestras'); onClose(); }}
                 >
                   <span className="stats-detail-item-title">{t.talks?.title || `Talk #${i + 1}`}</span>
                   {t.talks?.when_text && <span className="stats-detail-item-sub">{t.talks.when_text}</span>}
@@ -597,7 +594,7 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
           <StatCard iconSlug="consistente"      value={sessions.length}     label="sessões de estudo"        />
           <StatCard iconSlug="lendario"         value={livrosLidos}         label="livros lidos"             onClick={() => setDetailModal('livros')}  />
           <StatCard iconSlug="palestrante_fiel" value={palestrasCount === null ? '—' : palestrasCount} label="talks presença"          onClick={() => setDetailModal('talks')}   />
-          <StatCard iconSlug="primeira_sessao"  value={forumCount === null ? '—' : forumCount}         label="participações no fórum" onClick={() => setDetailModal('forum')}   />
+          <StatCard iconSlug="primeira_sessao"  value={forumCount === null ? '—' : forumCount}         label="engajamento no fórum" onClick={() => setDetailModal('forum')}   />
           {totalCourses > 0 && (
             <StatCard iconSlug="dedicado" value={`${doneCourses}/${totalCourses}`} label="cursos finalizados" onClick={() => setDetailModal('cursos')} />
           )}

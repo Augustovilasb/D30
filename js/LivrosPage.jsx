@@ -112,7 +112,7 @@ function BookCard({ book, readIds, onToggle }) {
   const id   = book.url;
   const read = readIds.has(id);
   return (
-    <div className="livro-card-wrap">
+    <div className="livro-card-wrap" data-highlight-id={book.url}>
       <a className={'livro-card' + (read ? ' livro-card--read' : '')} href={book.url} target="_blank" rel="noopener noreferrer" data-cursor="hover">
         <BookCover title={book.title} category={book.category} />
         <div className="livro-card-info">
@@ -132,7 +132,7 @@ function RecomCard({ book, readIds, onToggle }) {
   const id   = book.id;
   const read = readIds.has(id);
   return (
-    <div className="livro-card-wrap">
+    <div className="livro-card-wrap" data-highlight-id={book.id}>
       <a className={'livro-card' + (read ? ' livro-card--read' : '')} href={book.link} target="_blank" rel="noopener noreferrer" data-cursor="hover">
         <BookCover title={book.title} category={book.category} staticSrc={book.cover_url || null} />
         <div className="livro-card-info">
@@ -261,6 +261,18 @@ function LivrosPage({ user, toast }) {
   }, []);
 
   React.useEffect(() => { fetchRecom(); }, [fetchRecom]);
+
+  React.useEffect(() => {
+    const id = window.__livrosHighlight;
+    if (!id || loading || loadingRecom) return;
+    window.__livrosHighlight = null;
+    if (id.startsWith('http')) { setTab('free'); setBucket('all'); }
+    else { setTab('recom'); setRecomBucket('all'); }
+    setTimeout(() => {
+      const el = Array.from(document.querySelectorAll('[data-highlight-id]')).find(e => e.dataset.highlightId === id);
+      if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.classList.add('highlight-flash'); }
+    }, 300);
+  }, [loading, loadingRecom]);
 
   /* Contagens */
   const freeCounts = React.useMemo(() => {
