@@ -35,10 +35,6 @@ const GAMES_BY_PHASE = {
   p2: [
     { id: 'learngit',   title: 'Learn Git Branching',  desc: 'Git visual e interativo',        url: 'https://learngitbranching.js.org/' },
   ],
-  p3: [
-    { id: 'codedex',    title: 'Codedex Python',       desc: 'Aprenda Python com missões',     url: 'https://www.codedex.io/python/03-pattern' },
-    { id: 'jsquiz',     title: 'JavaScript Quiz',      desc: 'Teste seu JS na prática',        url: 'https://javascriptquiz.com/' },
-  ],
   p4: [
     { id: 'sqlbolt',    title: 'SQLBolt',              desc: 'Lições interativas de SQL',      url: 'https://sqlbolt.com/' },
     { id: 'sqlmystery', title: 'SQL Murder Mystery',   desc: 'Resolva um crime usando SQL',    url: 'https://mystery.knightlab.com/' },
