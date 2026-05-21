@@ -264,9 +264,10 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
                     <svg width="30" height="34" viewBox="0 0 34 38" fill="none" style={{ color: '#6d5ce6' }}>
                       <path d="M17 1.5L32.5 10V28L17 36.5L1.5 28V10Z" stroke="currentColor" strokeWidth="1.5"/>
                       <path d="M17 6L28 12.5V25.5L17 32L6 25.5V12.5Z" stroke="currentColor" strokeWidth="0.6" strokeOpacity="0.4"/>
-                      {/* machado viking */}
-                      <line x1="17" y1="29" x2="17" y2="13" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"/>
-                      <path d="M17 10 L21 10 C27 11 29 17 26 22 C24 26 20 28 17 26 L17 10Z" fill="currentColor"/>
+                      <g transform="rotate(-38, 17, 19)">
+                        <rect x="9" y="12" width="14" height="5.5" rx="1.5" fill="currentColor"/>
+                        <rect x="14" y="17.5" width="3.5" height="9" rx="1.5" fill="currentColor"/>
+                      </g>
                     </svg>
                     <span className="pub-pioneer-label">FOUNDER</span>
                   </div>
