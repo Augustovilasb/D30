@@ -27,7 +27,7 @@ function IntlJobRow({ job }) {
   return (
     <div className="vagas-row">
       <div style={{display:'flex',alignItems:'center'}}>
-        <span className="vagas-pill vagas-pill--intl"><PlaneIcon /> Internacional</span>
+        <span className="vagas-pill vagas-pill--intl"><PlaneIcon /> Remoto</span>
         {job.location_restriction && (
           <span className="vagas-row-warn" title={'Requer: ' + job.location_restriction}>!</span>
         )}
