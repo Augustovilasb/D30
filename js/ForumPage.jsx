@@ -42,7 +42,13 @@ function ForumPage({ user, onSignIn, toast }) {
       .then(data => {
         if (cancelled) return;
         setTopics(data);
-        if (data.length) setActiveId(data[0].id);
+        const deepLink = window.__forumOpenTopic;
+        if (deepLink && data.find(t => t.id === deepLink)) {
+          window.__forumOpenTopic = null;
+          setActiveId(deepLink);
+        } else if (data.length) {
+          setActiveId(data[0].id);
+        }
       })
       .catch(() => t('error', 'Erro ao carregar o fórum.'))
       .finally(() => { if (!cancelled) setLoadingTopics(false); });

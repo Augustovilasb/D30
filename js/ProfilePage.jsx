@@ -309,7 +309,7 @@ function ShareCardModal({ user, onClose }) {
   );
 }
 
-function StatsDetailModal({ type, user, onClose }) {
+function StatsDetailModal({ type, user, onClose, onNavigate }) {
   const [items, setItems] = React.useState(null);
 
   React.useEffect(() => {
@@ -327,7 +327,7 @@ function StatsDetailModal({ type, user, onClose }) {
     } else if (type === 'talks') {
       if (!window.sb) { setItems([]); return; }
       window.sb.from('talk_rsvp')
-        .select('id, created_at, talks(title, when_text, guest_name)')
+        .select('id, created_at, talks(title, when_text, guest_name, video_url)')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .then(({ data }) => setItems(data || []));
@@ -335,7 +335,7 @@ function StatsDetailModal({ type, user, onClose }) {
       if (!window.sb) { setItems({ topics: [], replies: [] }); return; }
       Promise.all([
         window.sb.from('forum_topics').select('id, title, created_at').eq('author_id', user.id).order('created_at', { ascending: false }),
-        window.sb.from('forum_messages').select('id, text, created_at').eq('author_id', user.id).order('created_at', { ascending: false }),
+        window.sb.from('forum_messages').select('id, text, created_at, topic_id').eq('author_id', user.id).order('created_at', { ascending: false }),
       ]).then(([{ data: topics }, { data: msgs }]) => {
         setItems({ topics: topics || [], replies: msgs || [] });
       }).catch(() => setItems({ topics: [], replies: [] }));
@@ -367,15 +367,23 @@ function StatsDetailModal({ type, user, onClose }) {
           {type !== 'forum' && items !== null && items.length > 0 && (
             <ul className="stats-detail-list">
               {type === 'livros' && items.map((b, i) => (
-                <li key={b.id || i} className="stats-detail-item">
+                <li key={b.id || i}
+                  className={'stats-detail-item' + (b.id ? ' stats-detail-item--link' : '')}
+                  data-cursor={b.id ? 'hover' : undefined}
+                  onClick={b.id ? () => window.open(b.id, '_blank') : undefined}
+                >
                   <span className="stats-detail-item-title">{b.title || '—'}</span>
                   {b.author && <span className="stats-detail-item-sub">{b.author}</span>}
                 </li>
               ))}
               {type === 'cursos' && items.map((c, i) => (
-                <li key={c.id || i} className="stats-detail-item">
+                <li key={c.id || i}
+                  className={'stats-detail-item' + (c.url ? ' stats-detail-item--link' : '')}
+                  data-cursor={c.url ? 'hover' : undefined}
+                  onClick={c.url ? () => window.open(c.url, '_blank') : undefined}
+                >
                   <span className="stats-detail-item-title">{c.title || c.name || '—'}</span>
-                  {c.category && <span className="stats-detail-item-sub">{c.category}</span>}
+                  {c.subtitle && <span className="stats-detail-item-sub">{c.subtitle}</span>}
                 </li>
               ))}
               {type === 'sessoes' && items.map((s, i) => (
@@ -385,7 +393,14 @@ function StatsDetailModal({ type, user, onClose }) {
                 </li>
               ))}
               {type === 'talks' && items.map((t, i) => (
-                <li key={t.id || i} className="stats-detail-item">
+                <li key={t.id || i}
+                  className="stats-detail-item stats-detail-item--link"
+                  data-cursor="hover"
+                  onClick={() => {
+                    if (t.talks?.video_url) { window.open(t.talks.video_url, '_blank'); }
+                    else { onNavigate && onNavigate('palestras'); onClose(); }
+                  }}
+                >
                   <span className="stats-detail-item-title">{t.talks?.title || `Talk #${i + 1}`}</span>
                   {t.talks?.when_text && <span className="stats-detail-item-sub">{t.talks.when_text}</span>}
                 </li>
@@ -400,7 +415,9 @@ function StatsDetailModal({ type, user, onClose }) {
                   <p className="stats-detail-section">Tópicos criados</p>
                   <ul className="stats-detail-list">
                     {items.topics.map((f, i) => (
-                      <li key={f.id || i} className="stats-detail-item">
+                      <li key={f.id || i} className="stats-detail-item stats-detail-item--link" data-cursor="hover"
+                        onClick={() => { window.__forumOpenTopic = f.id; onNavigate && onNavigate('forum'); onClose(); }}
+                      >
                         <span className="stats-detail-item-title">{f.title || `Tópico #${i + 1}`}</span>
                         {f.created_at && <span className="stats-detail-item-sub">{f.created_at.slice(0, 10)}</span>}
                       </li>
@@ -413,7 +430,9 @@ function StatsDetailModal({ type, user, onClose }) {
                   <p className="stats-detail-section">Respostas</p>
                   <ul className="stats-detail-list">
                     {items.replies.map((m, i) => (
-                      <li key={m.id || i} className="stats-detail-item">
+                      <li key={m.id || i} className="stats-detail-item stats-detail-item--link" data-cursor="hover"
+                        onClick={() => { window.__forumOpenTopic = m.topic_id; onNavigate && onNavigate('forum'); onClose(); }}
+                      >
                         <span className="stats-detail-item-title">{m.text?.slice(0, 80) || `Resposta #${i + 1}`}</span>
                         {m.created_at && <span className="stats-detail-item-sub">{m.created_at.slice(0, 10)}</span>}
                       </li>
@@ -619,7 +638,7 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
       </div>
       <Footer />
       {showCard && <ShareCardModal user={user} onClose={() => setShowCard(false)} />}
-      {detailModal && <StatsDetailModal type={detailModal} user={user} onClose={() => setDetailModal(null)} />}
+      {detailModal && <StatsDetailModal type={detailModal} user={user} onClose={() => setDetailModal(null)} onNavigate={onNavigate} />}
     </div>
   );
 }

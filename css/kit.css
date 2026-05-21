@@ -4600,6 +4600,8 @@ nav.nav--floating .user-menu-info strong{ color: var(--text); }
   padding: 10px 12px; border-radius: 8px; transition: background .12s;
 }
 .stats-detail-item:hover { background: rgba(255,255,255,0.05); }
+.stats-detail-item--link { cursor: pointer; }
+.stats-detail-item--link:hover .stats-detail-item-title { color: #fff; }
 .stats-detail-item-title { font-size: 13px; font-weight: 600; color: #f0f0f0; }
 .stats-detail-item-sub   { font-size: 11px; color: #666; }
 
