@@ -99,11 +99,6 @@ function App() {
     }
   }, [user, page, authReady]);
 
-  /* Marca auth como resolvido quando o usuário carregar */
-  React.useEffect(() => {
-    if (user) setAuthReady(true);
-  }, [user]);
-
   React.useEffect(() => {
     const { data } = window.Auth.onAuthChange(async (event, supabaseUser) => {
       if (event === 'SIGNED_OUT') {
@@ -114,13 +109,11 @@ function App() {
       if (event === 'TOKEN_REFRESHED') return;
 
       if (supabaseUser) {
-        setUser(prev => {
-          if (prev?.id === supabaseUser.id) return prev;
-          buildUserObj(supabaseUser).then(u => setUser(u));
-          return prev;
+        buildUserObj(supabaseUser).then(u => {
+          setUser(u);
+          setAuthReady(true);
         });
       } else {
-        // INITIAL_SESSION sem usuário — confirmado que não está logado
         setAuthReady(true);
       }
     });
