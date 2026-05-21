@@ -4766,90 +4766,114 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
 .vagas-admin-field label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
 .vagas-admin-field--full { grid-column: 1 / -1; }
 
-/* Filters */
-.vagas-filters { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
-.vagas-filter-row { display: flex; flex-wrap: wrap; gap: 8px; }
-.vagas-search {
-  width: 100%; padding: 10px 14px; border-radius: 10px;
-  border: 1px solid var(--border2); background: var(--bg2);
-  font-size: 14px; color: var(--text); outline: none;
-  transition: border-color .15s;
-  box-sizing: border-box;
-}
-.vagas-search::placeholder { color: var(--muted); }
-.vagas-search:focus { border-color: var(--purple); }
-.vagas-filter-chip {
-  padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;
-  border: 1px solid var(--border2); background: var(--bg2); color: var(--muted);
-  cursor: none; transition: border-color .15s, color .15s, background .15s;
-}
-.vagas-filter-chip:hover  { border-color: var(--border); color: var(--text); }
-.vagas-filter-chip.active { border-color: var(--purple); background: rgba(109,92,230,.1); color: var(--purple); }
-.vagas-filter-select {
-  padding: 6px 12px; border-radius: 10px; font-size: 13px; font-weight: 600;
-  border: 1px solid var(--border2); background: var(--bg2); color: var(--muted);
-  cursor: none; outline: none;
-}
+/* ── List ── */
+--vagas-cols: 120px 160px 1fr 130px 68px 80px;
 
-/* Grid */
-.vagas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.vagas-list {
+  border: 1px solid var(--border2); border-radius: 14px; overflow: hidden;
+}
+.vagas-list-head {
+  display: grid;
+  grid-template-columns: 120px 160px 1fr 130px 68px 80px;
+  gap: 16px; padding: 10px 20px;
+  background: var(--bg2); border-bottom: 1px solid var(--border2);
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .5px; color: var(--muted);
+}
+.vagas-row {
+  display: grid;
+  grid-template-columns: 120px 160px 1fr 130px 68px 80px;
+  gap: 16px; padding: 13px 20px;
+  align-items: center;
+  border-bottom: 1px solid var(--border2);
+  transition: background .12s;
+}
+.vagas-row:last-child { border-bottom: none; }
+.vagas-row:hover { background: var(--bg2); }
 
-/* Card */
-.vaga-card {
-  display: flex; flex-direction: column; gap: 8px;
-  padding: 18px; border-radius: 14px;
-  border: 1px solid var(--border2); background: var(--bg2);
-  transition: border-color .15s, transform .15s;
+/* Pill (tipo) */
+.vagas-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 9px; border-radius: 20px;
+  font-size: 11px; font-weight: 700; white-space: nowrap;
+  border: 1px solid transparent;
 }
-.vaga-card:hover { border-color: var(--border); transform: translateY(-2px); }
-.vaga-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
-.vaga-card-badges { display: flex; flex-wrap: wrap; gap: 5px; }
-.vaga-badge {
-  font-size: 10px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase;
-  padding: 2px 7px; border-radius: 5px;
-}
-.vaga-badge--curated  { background: rgba(109,92,230,.15); color: var(--purple); }
-.vaga-badge--source   { background: var(--bg); border: 1px solid var(--border2); color: var(--muted); }
-.vaga-badge--level    { background: var(--bg); border: 1px solid var(--border2); color: var(--muted); }
-.vaga-badge--type     { background: var(--bg); border: 1px solid var(--border2); color: var(--muted); }
-.vaga-card-time     { font-size: 11px; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
-.vaga-card-title    { font-size: 15px; font-weight: 700; color: var(--text); margin: 0; line-height: 1.3; }
-.vaga-card-company  { font-size: 13px; color: var(--muted); margin: 0; }
-.vagas-filter-group { display: flex; flex-wrap: wrap; gap: 8px; }
-.vaga-card-pillars    { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
-.vaga-pillar          { font-size: 11px; font-weight: 700; padding: 5px 6px; border-radius: 8px; text-align: center; background: var(--bg); border: 1px solid var(--border2); color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.vaga-pillar--green   { background: rgba(34,197,94,.1); border-color: rgba(34,197,94,.3); color: #16a34a; }
-.vaga-pillar--yellow  { background: rgba(234,179,8,.1);  border-color: rgba(234,179,8,.3);  color: #a16207; }
-.vaga-pillar--blue    { background: rgba(59,130,246,.1); border-color: rgba(59,130,246,.3); color: #2563eb; }
-.vaga-pillar--salary  { color: #16a34a; font-weight: 600; }
-.vaga-card-restriction { font-size: 12px; color: #d97706; margin: 0; }
-.vaga-card-tags       { display: flex; flex-wrap: wrap; gap: 5px; }
-.vaga-tag             { font-size: 11px; padding: 2px 7px; border-radius: 5px; background: var(--bg); border: 1px solid var(--border2); color: var(--muted); }
-.vaga-card-desc       { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.vaga-card-btn {
+.vagas-pill--intl       { background: rgba(59,130,246,.1); border-color: rgba(59,130,246,.25); color: #2563eb; }
+.vagas-pill--remote     { background: rgba(34,197,94,.1);  border-color: rgba(34,197,94,.25);  color: #16a34a; }
+.vagas-pill--hybrid     { background: rgba(234,179,8,.1);  border-color: rgba(234,179,8,.25);  color: #a16207; }
+.vagas-pill--presential { background: var(--bg); border-color: var(--border2); color: var(--muted); }
+
+/* Warn badge */
+.vagas-row-warn {
   display: inline-flex; align-items: center; justify-content: center;
-  margin-top: 4px; padding: 8px 14px; border-radius: 10px;
-  border: 1px solid var(--border2); background: var(--bg);
-  font-size: 13px; font-weight: 600; color: var(--muted);
-  text-decoration: none; transition: border-color .15s, color .15s;
-  align-self: flex-start;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: rgba(217,119,6,.15); color: #d97706;
+  font-size: 10px; font-weight: 800; margin-left: 5px; cursor: help;
 }
-.vaga-card-btn:hover { border-color: var(--purple); color: var(--purple); }
+
+/* Empresa */
+.vagas-row-empresa {
+  font-size: 13px; font-weight: 600; color: var(--muted);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* Posição */
+.vagas-row-posicao {
+  display: flex; flex-direction: column; gap: 2px; overflow: hidden; min-width: 0;
+}
+.vagas-row-title {
+  font-size: 14px; font-weight: 700; color: var(--text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.vagas-row-sub {
+  font-size: 11px; color: var(--muted); white-space: nowrap;
+}
+
+/* Salário */
+.vagas-row-salario { font-size: 13px; font-weight: 600; white-space: nowrap; }
+.vagas-salary-val  { color: #16a34a; }
+.vagas-muted       { color: var(--muted); }
+
+/* Data */
+.vagas-row-data { font-size: 12px; color: var(--muted); white-space: nowrap; }
+
+/* Botão */
+.vagas-row-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 6px 14px; border-radius: 8px;
+  border: 1px solid var(--border2); background: var(--bg);
+  font-size: 12px; font-weight: 600; color: var(--muted);
+  text-decoration: none; white-space: nowrap;
+  transition: border-color .15s, color .15s;
+}
+.vagas-row-btn:hover { border-color: var(--purple); color: var(--purple); }
 
 /* Skeleton */
-.vaga-card--skeleton { height: 180px; animation: pulse 1.4s ease-in-out infinite; }
+.vagas-row--skeleton {
+  height: 46px; border-radius: 0; border-bottom: 1px solid var(--border2);
+  background: var(--bg2); animation: pulse 1.4s ease-in-out infinite;
+}
 @keyframes pulse { 0%,100% { opacity: .6; } 50% { opacity: .3; } }
 
-.vagas-loading { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
-.vagas-empty   { text-align: center; padding: 64px 0; color: var(--muted); font-size: 14px; }
+.vagas-empty      { text-align: center; padding: 64px 0; color: var(--muted); font-size: 14px; }
 .vagas-adzuna-err { text-align: center; font-size: 13px; color: var(--muted); margin-top: 16px; }
 
+@media (max-width: 860px) {
+  .vagas-list-head  { grid-template-columns: 110px 1fr 110px 80px; }
+  .vagas-list-head > :nth-child(2),
+  .vagas-list-head > :nth-child(5) { display: none; }
+  .vagas-row        { grid-template-columns: 110px 1fr 110px 80px; }
+  .vagas-row > .vagas-row-empresa,
+  .vagas-row > .vagas-row-data    { display: none; }
+}
 @media (max-width: 600px) {
-  .vagas-wrap { padding: 24px 16px 80px; }
-  .vagas-grid { grid-template-columns: 1fr; }
+  .vagas-wrap      { padding: 24px 16px 80px; }
+  .vagas-list-head { display: none; }
+  .vagas-row       { grid-template-columns: 100px 1fr 72px; gap: 10px; padding: 12px 14px; }
+  .vagas-row > .vagas-row-empresa,
+  .vagas-row > .vagas-row-data,
+  .vagas-row > .vagas-row-salario { display: none; }
   .vagas-admin-grid { grid-template-columns: 1fr; }
-  .vagas-filter-row--secondary { flex-direction: column; }
-  .vagas-filter-select { width: 100%; }
 }
 
 /* ── Share Card Modal ── */

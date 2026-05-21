@@ -1,7 +1,6 @@
 /* VagasPage.jsx — Vagas Internacionais + Nacionais */
 
 const OWNER_EMAIL = 'augustovilasb@hotmail.com';
-
 const LEVEL_LABELS = { intern: 'Estágio', junior: 'Júnior', mid: 'Pleno', senior: 'Sênior', any: 'Qualquer' };
 
 function timeAgo(dateStr) {
@@ -15,90 +14,66 @@ function timeAgo(dateStr) {
   return `${Math.floor(d/30)}m atrás`;
 }
 
-/* ── Card Internacional ── */
-function IntlJobCard({ job }) {
-  const sourceLabel = { RemoteOK: 'RemoteOK', Remotive: 'Remotive', Jobicy: 'Jobicy' }[job.source];
-  const salary      = job.salary || job.salary_range;
-  const restriction = job.location_restriction;
+const PlaneIcon = () => (
+  <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style={{flexShrink:0}}>
+    <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/>
+  </svg>
+);
+
+/* ── Row Internacional ── */
+function IntlJobRow({ job }) {
+  const salary = job.salary || job.salary_range;
 
   return (
-    <div className="vaga-card">
-      <div className="vaga-card-top">
-        <div className="vaga-card-badges">
-          {sourceLabel && <span className="vaga-badge vaga-badge--source">{sourceLabel}</span>}
-        </div>
-        <span className="vaga-card-time">{timeAgo(job.date)}</span>
+    <div className="vagas-row">
+      <div style={{display:'flex',alignItems:'center'}}>
+        <span className="vagas-pill vagas-pill--intl"><PlaneIcon /> Internacional</span>
+        {job.location_restriction && (
+          <span className="vagas-row-warn" title={'Requer: ' + job.location_restriction}>!</span>
+        )}
       </div>
-
-      <h3 className="vaga-card-title">{job.title}</h3>
-      {job.company && <p className="vaga-card-company">{job.company}</p>}
-
-      <div className="vaga-card-pillars">
-        <div className="vaga-pillar vaga-pillar--green" style={{display:'flex',alignItems:'center',justifyContent:'center',gap:4}}>
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style={{flexShrink:0}}>
-            <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/>
-          </svg>
-          Internacional
-        </div>
-        <div className="vaga-pillar vaga-pillar--blue">🇺🇸 Inglês</div>
-        <div className={'vaga-pillar' + (salary ? ' vaga-pillar--salary' : '')}>
-          {salary || '— salário'}
-        </div>
+      <div className="vagas-row-empresa">{job.company || <span className="vagas-muted">—</span>}</div>
+      <div className="vagas-row-posicao">
+        <span className="vagas-row-title">{job.title}</span>
+        <span className="vagas-row-sub">{job.source}</span>
       </div>
-
-      {restriction && (
-        <p className="vaga-card-restriction">⚠️ Requer: {restriction}</p>
-      )}
-
-      {job.tags && job.tags.length > 0 && (
-        <div className="vaga-card-tags">
-          {job.tags.slice(0, 6).map((t, i) => <span key={i} className="vaga-tag">{t}</span>)}
-        </div>
-      )}
-
-      <a className="vaga-card-btn" href={job.link} target="_blank" rel="noopener noreferrer" data-cursor="hover">
-        Ver vaga →
-      </a>
+      <div className="vagas-row-salario">
+        {salary ? <span className="vagas-salary-val">{salary}</span> : <span className="vagas-muted">—</span>}
+      </div>
+      <div className="vagas-row-data">{timeAgo(job.date)}</div>
+      <div>
+        <a className="vagas-row-btn" href={job.link} target="_blank" rel="noopener noreferrer" data-cursor="hover">Ver →</a>
+      </div>
     </div>
   );
 }
 
-/* ── Card Nacional ── */
-function NatlJobCard({ job }) {
-  const salary  = job.salary_range;
-  const isRemote = job.location_type === 'remote';
-  const isHybrid = job.location_type === 'hybrid';
+/* ── Row Nacional ── */
+function NatlJobRow({ job }) {
+  const salary    = job.salary_range;
+  const isRemote  = job.location_type === 'remote';
+  const isHybrid  = job.location_type === 'hybrid';
+  const pillClass = isRemote ? 'vagas-pill--remote' : isHybrid ? 'vagas-pill--hybrid' : 'vagas-pill--presential';
+  const pillLabel = isRemote ? 'Remoto' : isHybrid ? 'Híbrido' : 'Presencial';
+  const level     = job.level && job.level !== 'any' ? LEVEL_LABELS[job.level] : null;
 
   return (
-    <div className="vaga-card vaga-card--national">
-      <div className="vaga-card-top">
-        <div className="vaga-card-badges">
-          <span className="vaga-badge vaga-badge--curated">D30 Curado</span>
-          {job.level && job.level !== 'any' && LEVEL_LABELS[job.level] && (
-            <span className="vaga-badge vaga-badge--level">{LEVEL_LABELS[job.level]}</span>
-          )}
-        </div>
-        <span className="vaga-card-time">{timeAgo(job.created_at)}</span>
+    <div className="vagas-row">
+      <div>
+        <span className={'vagas-pill ' + pillClass}>{pillLabel}</span>
       </div>
-
-      <h3 className="vaga-card-title">{job.title}</h3>
-      {job.company && <p className="vaga-card-company">{job.company}</p>}
-
-      <div className="vaga-card-pillars">
-        <div className={'vaga-pillar' + (isRemote ? ' vaga-pillar--green' : isHybrid ? ' vaga-pillar--yellow' : ' vaga-pillar--muted')}>
-          {isRemote ? '🌐 Remoto' : isHybrid ? '🔀 Híbrido' : '🏢 Presencial'}
-        </div>
-        <div className="vaga-pillar vaga-pillar--green">🇧🇷 Português</div>
-        <div className={'vaga-pillar' + (salary ? ' vaga-pillar--salary' : '')}>
-          {salary || '— salário'}
-        </div>
+      <div className="vagas-row-empresa">{job.company || <span className="vagas-muted">—</span>}</div>
+      <div className="vagas-row-posicao">
+        <span className="vagas-row-title">{job.title}</span>
+        {level && <span className="vagas-row-sub">{level}</span>}
       </div>
-
-      {job.description && <p className="vaga-card-desc">{job.description}</p>}
-
-      <a className="vaga-card-btn" href={job.link} target="_blank" rel="noopener noreferrer" data-cursor="hover">
-        Ver vaga →
-      </a>
+      <div className="vagas-row-salario">
+        {salary ? <span className="vagas-salary-val">{salary}</span> : <span className="vagas-muted">—</span>}
+      </div>
+      <div className="vagas-row-data">{timeAgo(job.created_at)}</div>
+      <div>
+        <a className="vagas-row-btn" href={job.link} target="_blank" rel="noopener noreferrer" data-cursor="hover">Ver →</a>
+      </div>
     </div>
   );
 }
@@ -190,12 +165,12 @@ function AdminJobForm({ onSaved, toast }) {
 function VagasPage({ user, toast }) {
   const isAdmin = user?.email === OWNER_EMAIL;
 
-  const [tab,          setTab]          = React.useState('intl'); // intl | natl
-  const [manualJobs,   setManualJobs]   = React.useState([]);
-  const [externalJobs, setExternalJobs] = React.useState([]);
+  const [tab,           setTab]          = React.useState('intl');
+  const [manualJobs,    setManualJobs]   = React.useState([]);
+  const [externalJobs,  setExternalJobs] = React.useState([]);
   const [loadingManual, setLoadingManual] = React.useState(true);
-  const [loadingExt,    setLoadingExt]    = React.useState(false);
-  const [extError,      setExtError]      = React.useState(false);
+  const [loadingExt,    setLoadingExt]   = React.useState(false);
+  const [extError,      setExtError]     = React.useState(false);
 
   const fetchManual = React.useCallback(async () => {
     if (!window.sb) return;
@@ -225,6 +200,9 @@ function VagasPage({ user, toast }) {
   React.useEffect(() => { fetchExternal(); }, [fetchExternal]);
 
   const loading = tab === 'intl' ? loadingExt : loadingManual;
+  const jobs    = tab === 'intl' ? externalJobs : manualJobs;
+
+  const skeletons = [1,2,3,4,5,6,7,8];
 
   return (
     <div className="page active fade-in">
@@ -238,49 +216,49 @@ function VagasPage({ user, toast }) {
 
         {/* Abas */}
         <div className="vagas-tabs">
-          <button
-            className={'vagas-tab' + (tab === 'intl' ? ' active' : '')}
-            data-cursor="hover"
-            onClick={() => setTab('intl')}
-          >
-            🌐 Internacionais
+          <button className={'vagas-tab' + (tab === 'intl' ? ' active' : '')} data-cursor="hover" onClick={() => setTab('intl')}>
+            <PlaneIcon /> Internacionais
             {!loadingExt && <span className="vagas-tab-count">{externalJobs.length}</span>}
           </button>
-          <button
-            className={'vagas-tab' + (tab === 'natl' ? ' active' : '')}
-            data-cursor="hover"
-            onClick={() => setTab('natl')}
-          >
+          <button className={'vagas-tab' + (tab === 'natl' ? ' active' : '')} data-cursor="hover" onClick={() => setTab('natl')}>
             🇧🇷 Nacionais
             {!loadingManual && <span className="vagas-tab-count">{manualJobs.length}</span>}
           </button>
         </div>
 
-        {/* Conteúdo */}
-        {loading && (
-          <div className="vagas-loading">
-            {[1,2,3,4,5,6].map(i => <div key={i} className="vaga-card vaga-card--skeleton" />)}
+        {/* Lista */}
+        <div className="vagas-list">
+          {/* Header */}
+          <div className="vagas-list-head">
+            <span>Tipo</span>
+            <span>Empresa</span>
+            <span>Posição</span>
+            <span>Salário</span>
+            <span>Data</span>
+            <span></span>
           </div>
-        )}
 
-        {/* Internacionais */}
-        {!loading && tab === 'intl' && (
-          externalJobs.length === 0
-            ? <div className="vagas-empty"><p>Nenhuma vaga encontrada.</p></div>
-            : <div className="vagas-grid">{externalJobs.map(j => <IntlJobCard key={j.id} job={j} />)}</div>
-        )}
+          {/* Skeleton */}
+          {loading && skeletons.map(i => <div key={i} className="vagas-row--skeleton" />)}
 
-        {/* Nacionais */}
-        {!loading && tab === 'natl' && (
-          manualJobs.length === 0
-            ? (
-              <div className="vagas-empty">
-                <p>Nenhuma vaga nacional cadastrada ainda.</p>
-                {!isAdmin && <p style={{ fontSize: 13, marginTop: 6 }}>Volte em breve — o Augusto está garimpando as melhores.</p>}
-              </div>
-            )
-            : <div className="vagas-grid">{manualJobs.map(j => <NatlJobCard key={j.id} job={j} />)}</div>
-        )}
+          {/* Rows */}
+          {!loading && jobs.length === 0 && (
+            <div className="vagas-empty">
+              {tab === 'intl'
+                ? <p>Nenhuma vaga encontrada.</p>
+                : (
+                  <React.Fragment>
+                    <p>Nenhuma vaga nacional cadastrada ainda.</p>
+                    {!isAdmin && <p style={{fontSize:13,marginTop:6}}>Volte em breve — o Augusto está garimpando as melhores.</p>}
+                  </React.Fragment>
+                )
+              }
+            </div>
+          )}
+
+          {!loading && tab === 'intl' && jobs.map(j => <IntlJobRow key={j.id} job={j} />)}
+          {!loading && tab === 'natl' && jobs.map(j => <NatlJobRow key={j.id} job={j} />)}
+        </div>
 
         {extError && tab === 'intl' && (
           <p className="vagas-adzuna-err">Não foi possível carregar vagas automáticas agora.</p>
