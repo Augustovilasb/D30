@@ -251,19 +251,24 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
           </div>
 
           <div className="pub-hero-body">
-            <h1 className="pub-name">
-              {user.name}
-              {user.email === 'augustovilasb@hotmail.com' && (
-                <span className="pub-owner-tag">D30 Founder</span>
-              )}
-            </h1>
+            <h1 className="pub-name">{user.name}</h1>
 
-            {(user.is_founding_member || user.username || user.profession) && (
+            {(user.is_founding_member || user.username || user.profession || user.email === 'augustovilasb@hotmail.com') && (
               <div className="pub-identity-row">
                 <div className="pub-identity-text">
                   {user.username   && <span className="pub-username">@{user.username}</span>}
                   {user.profession && <span className="pub-profession">{user.profession}</span>}
                 </div>
+                {user.email === 'augustovilasb@hotmail.com' && (
+                  <div className="pub-pioneer-badge pub-founder-badge">
+                    <svg width="30" height="34" viewBox="0 0 34 38" fill="none" style={{ color: '#6d5ce6' }}>
+                      <path d="M17 1.5L32.5 10V28L17 36.5L1.5 28V10Z" stroke="currentColor" strokeWidth="1.5"/>
+                      <path d="M17 6L28 12.5V25.5L17 32L6 25.5V12.5Z" stroke="currentColor" strokeWidth="0.6" strokeOpacity="0.4"/>
+                      <path d="M9 26h16M9 26v-8l5 4.5 3-9 3 9 5-4.5v8" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round"/>
+                    </svg>
+                    <span className="pub-pioneer-label">D30 FOUNDER</span>
+                  </div>
+                )}
                 {user.is_founding_member && (
                   <div className="pub-pioneer-badge">
                     <svg width="30" height="34" viewBox="0 0 34 38" fill="none" style={{ color: '#999' }}>
