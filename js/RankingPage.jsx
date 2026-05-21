@@ -111,17 +111,18 @@ function RankingPage({ user }) {
                   <div className="ranking-info">
                     <div className="ranking-name">
                       {row.full_name || row.username || 'Anônimo'}
-                      {row.id === user.id && user.email === 'augustovilasb@hotmail.com' ? (
+                      {row.id === user.id && user.email === 'augustovilasb@hotmail.com' && (
                         <span className="ranking-founder-badge ranking-founder-badge--founder" title="Founder">
                           <HammerIcon size={11} />
                           <span>FOUNDER</span>
                         </span>
-                      ) : row.is_founding_member ? (
-                        <span className="ranking-founder-badge" title="Dev 00 — Membro Fundador">
+                      )}
+                      {row.is_founding_member && (
+                        <span className="ranking-founder-badge" title="Membro Fundador">
                           <HammerIcon size={11} />
                           <span>DEV 00</span>
                         </span>
-                      ) : null}
+                      )}
                       {isMe && <span className="ranking-you">você</span>}
                     </div>
                     {row.username && <div className="ranking-username">@{row.username}</div>}
