@@ -97,7 +97,7 @@ function Nav({ page, onNavigate, user, onSignIn, onSignOut, indicCount, onNaviga
     <React.Fragment>
       <nav className={[floating ? 'nav--floating' : '', user ? 'nav--app' : ''].filter(Boolean).join(' ')}>
         <div className="nav-slot nav-slot--left">
-          <Logo onClick={() => goAnchor('top')} />
+          <Logo onClick={() => user ? onNavigate('forum') : goAnchor('top')} />
         </div>
         <div className={'nav-slot nav-slot--center' + (user ? ' nav-slot--app' : '')}>
           <div className="nav-links">

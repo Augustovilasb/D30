@@ -50,6 +50,7 @@ function App() {
     const hash = window.location.hash.replace('#', '') || 'home';
     return hash; // não força home aqui — authReady cuida disso
   });
+  const [navKey,    setNavKey]    = React.useState(0);
   const [fading,    setFading]    = React.useState(false);
   const [user,      setUser]      = React.useState(null);
   const [authReady, setAuthReady] = React.useState(false);
@@ -68,6 +69,7 @@ function App() {
     setFading(true);
     setTimeout(function () {
       setPage(target);
+      setNavKey(k => k + 1);
       setFading(false);
       window.scrollTo({ top: 0, behavior: 'instant' });
       if (window.motionScan) setTimeout(window.motionScan, 60);
@@ -168,15 +170,15 @@ function App() {
         <SideRail visible={false} page={page} onNavigate={navigate} />
 
         <div className="page-shell" style={{ opacity: fading ? 0 : 1 }}>
-          {page === 'home'      && <HomePage      onNavigate={navigate} onSignIn={() => setModal(user ? null : 'signup')} />}
-          {page === 'forum'     && user && <ForumPage     user={user} onSignIn={(which) => setModal(which)} toast={pushToast} />}
-          {page === 'roadmap'   && user && <RoadmapPage />}
-          {page === 'palestras' && user && <PalestrasPage toast={pushToast} user={user} onIndicCountChange={setIndicCount} />}
-          {page === 'profile'   && user && <ProfilePage   user={user} onSignOut={signOut} onNavigate={navigate} />}
-          {page === 'tracker'   && user && <StudyTracker  user={user} />}
-          {page === 'settings'     && user && <SettingsPage     user={user} onSignOut={signOut} onNavigate={navigate} />}
-          {page === 'edit-profile' && user && <EditProfilePage  user={user} onUpdate={(u) => setUser(u)} onNavigate={navigate} />}
-          {page === 'ranking'   && user && <RankingPage   user={user} />}
+          {page === 'home'      && <HomePage      key={navKey} onNavigate={navigate} onSignIn={() => setModal(user ? null : 'signup')} />}
+          {page === 'forum'     && user && <ForumPage     key={navKey} user={user} onSignIn={(which) => setModal(which)} toast={pushToast} />}
+          {page === 'roadmap'   && user && <RoadmapPage   key={navKey} />}
+          {page === 'palestras' && user && <PalestrasPage key={navKey} toast={pushToast} user={user} onIndicCountChange={setIndicCount} />}
+          {page === 'profile'   && user && <ProfilePage   key={navKey} user={user} onSignOut={signOut} onNavigate={navigate} />}
+          {page === 'tracker'   && user && <StudyTracker  key={navKey} user={user} />}
+          {page === 'settings'     && user && <SettingsPage     key={navKey} user={user} onSignOut={signOut} onNavigate={navigate} />}
+          {page === 'edit-profile' && user && <EditProfilePage  key={navKey} user={user} onUpdate={(u) => setUser(u)} onNavigate={navigate} />}
+          {page === 'ranking'   && user && <RankingPage   key={navKey} user={user} />}
         </div>
 
         <LoginModal   open={modal === 'login'}   onClose={() => setModal(null)} onSignIn={signIn} onSwitch={setModal} toast={pushToast} />

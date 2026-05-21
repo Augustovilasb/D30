@@ -491,9 +491,9 @@ nav {
 }
 .nav-logo       { color: #fff !important; }
 .nav-logo span  { color: #fff !important; }
-.nav-link        { color: rgba(255,255,255,0.78) !important; font-weight: 600 !important; }
-.nav-link:hover  { color: #fff !important; background: rgba(255,255,255,0.10) !important; }
-.nav-link.active { color: #fff !important; background: rgba(255,255,255,0.15) !important; font-weight: 700 !important; }
+.nav-link        { color: rgba(255,255,255,0.65) !important; font-weight: 600 !important; transition: color .15s, background .15s, box-shadow .15s !important; }
+.nav-link:hover  { color: #fff !important; background: rgba(255,255,255,0.13) !important; box-shadow: inset 0 -2px 0 rgba(255,255,255,0.4) !important; }
+.nav-link.active { color: #fff !important; background: rgba(255,255,255,0.18) !important; box-shadow: inset 0 -2px 0 #fff !important; font-weight: 700 !important; }
 .nav-cta        { background: #fff !important; color: #111 !important; }
 .nav-cta:hover  { background: #e0e0e0 !important; }
 .nav-cta.ghost  { background: transparent !important; color: rgba(255,255,255,0.6) !important; border: 1px solid rgba(255,255,255,0.2) !important; }
@@ -534,10 +534,6 @@ nav {
   to   { opacity: 1; }
 }
 
-/* Cursor: black on light */
-.cursor-dot  { background: #111 !important; }
-.cursor-ring { border-color: rgba(0,0,0,0.25) !important; }
-.cursor-ring.hovering { background: rgba(0,0,0,0.06) !important; border-color: #111 !important; }
 .nav-slot { display: flex; align-items: center; }
 .nav-slot--left   { justify-content: flex-start; }
 .nav-slot--center { justify-content: center; }
@@ -2093,18 +2089,20 @@ nav.nav--floating .nav-logo { color: #fff !important; }
 nav.nav--floating .nav-logo span { color: #fff !important; }
 
 nav.nav--floating .nav-link {
-  color: rgba(255,255,255,0.78) !important;
+  color: rgba(255,255,255,0.65) !important;
   background: transparent;
   font-weight: 600 !important;
-  transition: color .2s, background .2s;
+  transition: color .15s, background .15s, box-shadow .15s;
 }
 nav.nav--floating .nav-link:hover {
   color: #fff !important;
-  background: rgba(255,255,255,0.10) !important;
+  background: rgba(255,255,255,0.13) !important;
+  box-shadow: inset 0 -2px 0 rgba(255,255,255,0.4) !important;
 }
 nav.nav--floating .nav-link.active {
   color: #fff !important;
-  background: rgba(255,255,255,0.15) !important;
+  background: rgba(255,255,255,0.18) !important;
+  box-shadow: inset 0 -2px 0 #fff !important;
   font-weight: 700 !important;
 }
 
@@ -2318,9 +2316,9 @@ nav.nav--floating .user-menu-info strong{ color: var(--text); }
 [data-theme="dark"] nav                        { background: #fff !important; border-bottom-color: rgba(0,0,0,0.08) !important; }
 [data-theme="dark"] .nav-logo                  { color: #111 !important; }
 [data-theme="dark"] .nav-logo span             { color: #111 !important; }
-[data-theme="dark"] .nav-link                  { color: #333 !important; font-weight: 600 !important; }
-[data-theme="dark"] .nav-link:hover            { color: #111 !important; background: rgba(0,0,0,0.07) !important; }
-[data-theme="dark"] .nav-link.active           { color: #111 !important; background: rgba(0,0,0,0.10) !important; font-weight: 700 !important; }
+[data-theme="dark"] .nav-link                  { color: #666 !important; font-weight: 600 !important; }
+[data-theme="dark"] .nav-link:hover            { color: #111 !important; background: rgba(0,0,0,0.08) !important; box-shadow: inset 0 -2px 0 rgba(0,0,0,0.4) !important; }
+[data-theme="dark"] .nav-link.active           { color: #111 !important; background: rgba(0,0,0,0.11) !important; box-shadow: inset 0 -2px 0 #111 !important; font-weight: 700 !important; }
 [data-theme="dark"] .nav-cta                   { background: #111 !important; color: #fff !important; }
 [data-theme="dark"] .nav-cta:hover             { background: #333 !important; }
 [data-theme="dark"] .nav-cta.ghost             { color: #555 !important; border-color: rgba(0,0,0,0.2) !important; background: transparent !important; }
@@ -2332,9 +2330,9 @@ nav.nav--floating .user-menu-info strong{ color: var(--text); }
 [data-theme="dark"] nav.nav--floating          { background: rgba(255,255,255,0.97) !important; border-color: rgba(0,0,0,0.08) !important; box-shadow: 0 8px 32px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.08) !important; }
 [data-theme="dark"] nav.nav--floating .nav-logo      { color: #111 !important; }
 [data-theme="dark"] nav.nav--floating .nav-logo span { color: #111 !important; }
-[data-theme="dark"] nav.nav--floating .nav-link      { color: #333 !important; font-weight: 600 !important; }
-[data-theme="dark"] nav.nav--floating .nav-link:hover { color: #111 !important; background: rgba(0,0,0,0.07) !important; }
-[data-theme="dark"] nav.nav--floating .nav-link.active { color: #111 !important; background: rgba(0,0,0,0.10) !important; font-weight: 700 !important; }
+[data-theme="dark"] nav.nav--floating .nav-link      { color: #666 !important; font-weight: 600 !important; }
+[data-theme="dark"] nav.nav--floating .nav-link:hover { color: #111 !important; background: rgba(0,0,0,0.08) !important; box-shadow: inset 0 -2px 0 rgba(0,0,0,0.4) !important; }
+[data-theme="dark"] nav.nav--floating .nav-link.active { color: #111 !important; background: rgba(0,0,0,0.11) !important; box-shadow: inset 0 -2px 0 #111 !important; font-weight: 700 !important; }
 [data-theme="dark"] nav.nav--floating .nav-cta       { background: #111 !important; color: #fff !important; }
 [data-theme="dark"] nav.nav--floating .nav-cta:hover { background: #333 !important; }
 [data-theme="dark"] nav.nav--floating .nav-cta.ghost { color: #555 !important; border-color: rgba(0,0,0,0.2) !important; background: transparent !important; }
@@ -2354,9 +2352,6 @@ nav.nav--floating .user-menu-info strong{ color: var(--text); }
 [data-theme="dark"] nav.nav--floating .user-menu-divider    { background: rgba(0,0,0,0.08) !important; }
 
 
-[data-theme="dark"] .cursor-dot  { background: #f0f0f0 !important; box-shadow: 0 0 0 1.5px rgba(0,0,0,0.45); }
-[data-theme="dark"] .cursor-ring { border-color: rgba(255,255,255,0.3) !important; }
-[data-theme="dark"] .cursor-ring.hovering { background: rgba(255,255,255,0.08) !important; border-color: #f0f0f0 !important; }
 
 /* Roadmap — dark mode: mesma cor do folder card (#111) */
 [data-theme="dark"] .rm3-card         { background: #111 !important; border-color: rgba(255,255,255,0.08) !important; box-shadow: 0 4px 20px rgba(0,0,0,0.4) !important; }

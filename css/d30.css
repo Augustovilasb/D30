@@ -42,14 +42,15 @@ body {
   transform: translate(-50%, -50%);
   will-change: transform;
 }
-.cursor-dot { width: 6px; height: 6px; background: var(--purple); transition: opacity .15s; }
+.cursor-dot  { width: 6px; height: 6px; background: #fff; mix-blend-mode: difference; transition: opacity .15s; }
 .cursor-ring {
   width: 34px; height: 34px;
-  border: 1.5px solid rgba(139,124,248,0.5);
+  border: 1.5px solid rgba(255,255,255,0.55);
+  mix-blend-mode: difference;
   transition: width .1s, height .1s, background .1s, border-color .1s, opacity .15s;
 }
-.cursor-ring.hovering { width: 44px; height: 44px; background: rgba(139,124,248,0.12); border-color: var(--purple); }
-.cursor-ring.clicking { width: 26px; height: 26px; background: rgba(139,124,248,0.28); }
+.cursor-ring.hovering { width: 44px; height: 44px; background: rgba(255,255,255,0.12); border-color: #fff; }
+.cursor-ring.clicking { width: 26px; height: 26px; background: rgba(255,255,255,0.25); }
 @media (hover: none), (max-width: 768px) {
   body { cursor: auto; }
   .cursor-dot, .cursor-ring { display: none; }
