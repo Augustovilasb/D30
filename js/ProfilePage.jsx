@@ -324,10 +324,12 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
 
   const sessions  = React.useMemo(() => window.Data.load(), []);
 
-  const totalSecs  = sessions.reduce((a, s) => a + (s.duration || 0), 0);
-  const totalHours = (totalSecs / 3600).toFixed(1);
-  const streak     = window.Data.getCurrentStreak();
-  const bestStreak = window.Data.getBestStreak();
+  const totalSecs   = sessions.reduce((a, s) => a + (s.duration || 0), 0);
+  const totalHours  = (totalSecs / 3600).toFixed(1);
+  const bestStreak  = window.Data.getBestStreak();
+  const livrosLidos = React.useMemo(() => {
+    try { return JSON.parse(localStorage.getItem('d30_livros_lidos') || '[]').length; } catch { return 0; }
+  }, []);
 
   const rmDone = React.useMemo(() => {
     try { return new Set(JSON.parse(localStorage.getItem('d30_roadmap_v3') || '[]')); } catch { return new Set(); }
@@ -452,7 +454,7 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
         <div className="pub-stats-row">
           <StatCard iconSlug="primeiros_passos" value={`${totalHours}h`}   label="estudadas"              />
           <StatCard iconSlug="consistente"      value={sessions.length}     label="sessões de estudo"      />
-          <StatCard iconSlug="lendario"         value={bestStreak}          label="record streak"          />
+          <StatCard iconSlug="lendario"         value={livrosLidos}         label="livros lidos"           />
           <StatCard iconSlug="palestrante_fiel" value={palestrasCount === null ? '—' : palestrasCount} label="palestras assistidas"      />
           <StatCard iconSlug="primeira_sessao"  value={forumCount === null ? '—' : forumCount}         label="tópicos criados no fórum"  />
           {totalCourses > 0 && (

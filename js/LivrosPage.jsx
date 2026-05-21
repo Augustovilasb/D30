@@ -82,32 +82,68 @@ function BookCover({ title, category, staticSrc }) {
   );
 }
 
-/* ── Card livro gratuito ── */
-function BookCard({ book }) {
+/* ── Livros lidos (localStorage) ── */
+function useLivrosLidos() {
+  const [ids, setIds] = React.useState(() => {
+    try { return new Set(JSON.parse(localStorage.getItem('d30_livros_lidos') || '[]')); }
+    catch { return new Set(); }
+  });
+  const toggle = (id) => setIds(prev => {
+    const next = new Set(prev);
+    if (next.has(id)) next.delete(id); else next.add(id);
+    try { localStorage.setItem('d30_livros_lidos', JSON.stringify([...next])); } catch {}
+    return next;
+  });
+  return [ids, toggle];
+}
+
+function CheckIcon() {
   return (
-    <a className="livro-card" href={book.url} target="_blank" rel="noopener noreferrer" data-cursor="hover">
-      <BookCover title={book.title} category={book.category} />
-      <div className="livro-card-info">
-        <p className="livro-card-title">{book.title}</p>
-        {book.author && <p className="livro-card-author">{book.author}</p>}
-      </div>
-    </a>
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+  );
+}
+
+/* ── Card livro gratuito ── */
+function BookCard({ book, readIds, onToggle }) {
+  const id   = book.url;
+  const read = readIds.has(id);
+  return (
+    <div className="livro-card-wrap">
+      <a className={'livro-card' + (read ? ' livro-card--read' : '')} href={book.url} target="_blank" rel="noopener noreferrer" data-cursor="hover">
+        <BookCover title={book.title} category={book.category} />
+        <div className="livro-card-info">
+          <p className="livro-card-title">{book.title}</p>
+          {book.author && <p className="livro-card-author">{book.author}</p>}
+        </div>
+      </a>
+      <button className={'livro-read-btn' + (read ? ' active' : '')} data-cursor="hover" onClick={() => onToggle(id)} title={read ? 'Marcar como não lido' : 'Marcar como lido'}>
+        <CheckIcon />
+      </button>
+    </div>
   );
 }
 
 /* ── Card livro recomendado ── */
-function RecomCard({ book }) {
-  const bucketLabel = JOB_BUCKETS.find(b => b.id === book.category)?.label || book.category;
+function RecomCard({ book, readIds, onToggle }) {
+  const id   = book.id;
+  const read = readIds.has(id);
   return (
-    <a className="livro-card" href={book.link} target="_blank" rel="noopener noreferrer" data-cursor="hover">
-      <BookCover title={book.title} category={book.category} staticSrc={book.cover_url || null} />
-      <div className="livro-card-info">
-        <span className="livro-recom-badge">D30 Pick</span>
-        <p className="livro-card-title">{book.title}</p>
-        {book.author && <p className="livro-card-author">{book.author}</p>}
-        {book.description && <p className="livro-card-desc">{book.description}</p>}
-      </div>
-    </a>
+    <div className="livro-card-wrap">
+      <a className={'livro-card' + (read ? ' livro-card--read' : '')} href={book.link} target="_blank" rel="noopener noreferrer" data-cursor="hover">
+        <BookCover title={book.title} category={book.category} staticSrc={book.cover_url || null} />
+        <div className="livro-card-info">
+          <span className="livro-recom-badge">D30 Pick</span>
+          <p className="livro-card-title">{book.title}</p>
+          {book.author && <p className="livro-card-author">{book.author}</p>}
+          {book.description && <p className="livro-card-desc">{book.description}</p>}
+        </div>
+      </a>
+      <button className={'livro-read-btn' + (read ? ' active' : '')} data-cursor="hover" onClick={() => onToggle(id)} title={read ? 'Marcar como não lido' : 'Marcar como lido'}>
+        <CheckIcon />
+      </button>
+    </div>
   );
 }
 
@@ -189,6 +225,8 @@ function AdminLivroForm({ onSaved, toast }) {
 /* ── Main Page ── */
 function LivrosPage({ user, toast }) {
   const isAdmin = user?.email === OWNER_EMAIL;
+
+  const [readIds, toggleRead] = useLivrosLidos();
 
   const [tab,          setTab]          = React.useState('free'); // free | recom
   const [lang,         setLang]         = React.useState('pt');
@@ -290,7 +328,7 @@ function LivrosPage({ user, toast }) {
             {!loading && !error && (
               visibleFree.length === 0
                 ? <div className="vagas-empty"><p>Nenhum livro nessa área.</p></div>
-                : <div className="livros-grid">{visibleFree.map((b, i) => <BookCard key={b.url + i} book={b} />)}</div>
+                : <div className="livros-grid">{visibleFree.map((b, i) => <BookCard key={b.url + i} book={b} readIds={readIds} onToggle={toggleRead} />)}</div>
             )}
           </React.Fragment>
         )}
@@ -324,7 +362,7 @@ function LivrosPage({ user, toast }) {
             )}
 
             {!loadingRecom && visibleRecom.length > 0 && (
-              <div className="livros-grid">{visibleRecom.map(b => <RecomCard key={b.id} book={b} />)}</div>
+              <div className="livros-grid">{visibleRecom.map(b => <RecomCard key={b.id} book={b} readIds={readIds} onToggle={toggleRead} />)}</div>
             )}
           </React.Fragment>
         )}
