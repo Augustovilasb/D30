@@ -4459,9 +4459,10 @@ nav.nav--floating .user-menu-info strong{ color: var(--text); }
 }
 .pub-social:hover { border-color: var(--border); color: var(--text); }
 .pub-edit-btn {
-  padding: 8px 18px; border-radius: 10px;
+  width: 34px; height: 34px; border-radius: 10px;
   border: 1px solid var(--border2); background: var(--bg2);
-  font-size: 12px; font-weight: 600; color: var(--muted);
+  color: var(--muted);
+  display: flex; align-items: center; justify-content: center;
   cursor: none; outline: none;
   transition: border-color .15s, color .15s;
 }
