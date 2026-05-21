@@ -25,13 +25,14 @@ function RankingPage({ user }) {
     async function load() {
       setLoading(true);
       const col = tab === 'hours' ? 'total_hours' : tab === 'streak' ? 'best_streak' : 'total_sessions';
-      const { data } = await window.sb
+      const { data, error } = await window.sb
         .from('profiles')
-        .select('id, full_name, username, avatar_url, color, total_hours, current_streak, best_streak, total_sessions, is_founding_member')
+        .select('id, full_name, username, avatar_url, total_hours, current_streak, best_streak, total_sessions, is_founding_member')
         .not(col, 'is', null)
         .gt(col, 0)
         .order(col, { ascending: false })
         .limit(100);
+      if (error) console.error('[D30] ranking error:', error);
 
       const list = data || [];
       setRows(list);
@@ -92,7 +93,7 @@ function RankingPage({ user }) {
                   <div className="ranking-avatar-wrap">
                     {row.avatar_url
                       ? <img src={row.avatar_url} alt={row.full_name} className="ranking-avatar-img" />
-                      : <div className="ranking-avatar-init" style={{ background: row.color || '#6d5ce6' }}>{initials(row.full_name)}</div>
+                      : <div className="ranking-avatar-init" style={{ background: '#6d5ce6' }}>{initials(row.full_name)}</div>
                     }
                   </div>
 
