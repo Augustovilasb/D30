@@ -17,7 +17,7 @@ async function buildUserObj(supabaseUser) {
   if (!profile) {
     try {
       const cached = JSON.parse(localStorage.getItem('d30_profile_v2') || 'null');
-      if (cached) { console.warn('[D30] Supabase sem dados — usando cache local'); profile = cached; }
+      if (cached && cached.id === supabaseUser.id) { console.warn('[D30] Supabase sem dados — usando cache local'); profile = cached; }
     } catch {}
   }
 
