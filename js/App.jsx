@@ -23,11 +23,12 @@ async function buildUserObj(supabaseUser) {
 
   const name = profile?.full_name || supabaseUser.user_metadata?.full_name || supabaseUser.email.split('@')[0];
   const initials = name.trim().split(/\s+/).map(s => s[0]).slice(0,2).join('').toUpperCase();
-  return { id: supabaseUser.id, email: supabaseUser.email, name, initials, username: profile?.username || '', color: '#6d5ce6', avatar_url: profile?.avatar_url || null, bio: profile?.bio || null, profession: profile?.profession || null, github_url: profile?.github_url || null, linkedin_url: profile?.linkedin_url || null, instagram_url: profile?.instagram_url || null, twitter_url: profile?.twitter_url || null, website_url: profile?.website_url || null, is_founding_member: profile?.is_founding_member || false, is_admin: profile?.is_admin || false };
+  return { id: supabaseUser.id, email: supabaseUser.email, name, initials, username: profile?.username || '', color: '#6d5ce6', avatar_url: profile?.avatar_url || null, bio: profile?.bio || null, profession: profile?.profession || null, github_url: profile?.github_url || null, linkedin_url: profile?.linkedin_url || null, instagram_url: profile?.instagram_url || null, twitter_url: profile?.twitter_url || null, website_url: profile?.website_url || null, is_founding_member: profile?.is_founding_member || false, is_admin: profile?.is_admin || false, discord_onboarded: profile?.discord_onboarded || false };
 }
 
 function App() {
-  const [indicCount, setIndicCount] = React.useState(0);
+  const [indicCount,       setIndicCount]       = React.useState(0);
+  const [showDiscordModal, setShowDiscordModal] = React.useState(false);
 
   const [loaded, setLoaded] = React.useState(() => {
     try { return sessionStorage.getItem('d30-pre-played') === '1'; } catch { return false; }
@@ -129,6 +130,7 @@ function App() {
     if (u?.is_admin && window.DB) {
       window.DB.talks.getSuggestions().then(list => setIndicCount(list.length)).catch(() => {});
     }
+    if (!u.discord_onboarded) setShowDiscordModal(true);
     if (!publicUsername) navigate('forum', u);
   };
 
@@ -186,6 +188,7 @@ function App() {
         <LoginModal   open={modal === 'login'}   onClose={() => setModal(null)} onSignIn={signIn} onSwitch={setModal} toast={pushToast} />
         <SignupModal  open={modal === 'signup'}  onClose={() => setModal(null)} onSignIn={signIn} onSwitch={setModal} toast={pushToast} />
         <NewPostModal open={modal === 'newPost'} onClose={() => setModal(null)} toast={pushToast} />
+        <DiscordOnboardingModal open={showDiscordModal} user={user} onClose={(confirmed) => { setShowDiscordModal(false); if (confirmed) setUser(u => ({ ...u, discord_onboarded: true })); }} />
 
         <ToastStack toasts={toasts} />
       </div>
