@@ -149,6 +149,7 @@ function RoadmapPage({ user }) {
 
   const isNodeUnlocked = (idx) => {
     if (idx === 0) return true;
+    if (!isNodeUnlocked(idx - 1)) return false;
     return _nodeAllIds(TREE[idx - 1]).every(id => done.has(id));
   };
 
