@@ -401,9 +401,13 @@ function ThreadPane({ topic, user, isAdmin, onSignIn, msgs, loadingMsgs, onReply
               <div className="msg-body">
                 <div className="msg-head">
                   <span className="msg-name" data-cursor="hover" style={{ cursor: 'pointer' }} onClick={async () => {
-                    if (!window.sb || !m.author_id) return;
-                    const { data } = await window.sb.from('profiles').select('username').eq('id', m.author_id).single();
-                    if (data?.username) window.location.href = '/perfil/' + data.username;
+                    if (!m.author_id) return;
+                    if (window.sb) {
+                      const { data } = await window.sb.from('profiles').select('username').eq('id', m.author_id).single();
+                      window.location.href = data?.username ? '/perfil/' + data.username : '/perfil/~' + m.author_id;
+                    } else {
+                      window.location.href = '/perfil/~' + m.author_id;
+                    }
                   }}>{m.author_name}</span>
                   <span className="msg-time">{m.time}</span>
                   {isBlocked && <span className="msg-blocked-badge">bloqueado</span>}

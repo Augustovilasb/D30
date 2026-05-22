@@ -8,10 +8,12 @@ function PublicProfilePage({ username, onSignIn }) {
   React.useEffect(() => {
     async function load() {
       if (!username) { setNotFound(true); setLoading(false); return; }
+      const byId = username.startsWith('~');
+      const val  = byId ? username.slice(1) : username;
       const { data } = await window.sb
         .from('profiles')
         .select('id, full_name, username, bio, profession, avatar_url, color, github_url, linkedin_url, instagram_url, twitter_url, website_url, total_hours, current_streak, best_streak, total_sessions, is_founding_member, dev_number')
-        .eq('username', username)
+        .eq(byId ? 'id' : 'username', val)
         .single();
 
       if (!data) { setNotFound(true); } else { setProfile(data); }
@@ -57,7 +59,8 @@ function PublicProfilePage({ username, onSignIn }) {
     </div>
   );
 
-  const name = profile.full_name || profile.username || 'Anônimo';
+  const isPrivate = !profile.username;
+  const name = profile.full_name || profile.username || 'Membro D30';
   const initials = name.trim().split(/\s+/).map(s => s[0]).slice(0,2).join('').toUpperCase();
   const totalHours = ((profile.total_hours || 0)).toFixed(1);
 
@@ -94,20 +97,29 @@ function PublicProfilePage({ username, onSignIn }) {
               </h1>
               {profile.username && <span className="pub-username">@{profile.username}</span>}
             </div>
-            {profile.profession && <p className="pub-profession">{profile.profession}</p>}
-            {profile.bio && <p className="pub-bio">{profile.bio}</p>}
-            <div className="pub-socials">
-              {profile.github_url    && <a href={profile.github_url}    target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><GithubIcon /><span>GitHub</span></a>}
-              {profile.linkedin_url  && <a href={profile.linkedin_url}  target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><LinkedinIcon /><span>LinkedIn</span></a>}
-              {profile.instagram_url && <a href={profile.instagram_url} target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><InstagramIcon /><span>Instagram</span></a>}
-              {profile.twitter_url   && <a href={profile.twitter_url}   target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><TwitterIcon /><span>Twitter</span></a>}
-              {profile.website_url   && <a href={profile.website_url}   target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><WebIcon /><span>Site</span></a>}
-            </div>
+            {!isPrivate && profile.profession && <p className="pub-profession">{profile.profession}</p>}
+            {!isPrivate && profile.bio && <p className="pub-bio">{profile.bio}</p>}
+            {!isPrivate && (
+              <div className="pub-socials">
+                {profile.github_url    && <a href={profile.github_url}    target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><GithubIcon /><span>GitHub</span></a>}
+                {profile.linkedin_url  && <a href={profile.linkedin_url}  target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><LinkedinIcon /><span>LinkedIn</span></a>}
+                {profile.instagram_url && <a href={profile.instagram_url} target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><InstagramIcon /><span>Instagram</span></a>}
+                {profile.twitter_url   && <a href={profile.twitter_url}   target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><TwitterIcon /><span>Twitter</span></a>}
+                {profile.website_url   && <a href={profile.website_url}   target="_blank" rel="noopener noreferrer" className="pub-social" data-cursor="hover"><WebIcon /><span>Site</span></a>}
+              </div>
+            )}
           </div>
         </div>
 
+        {/* Perfil privado */}
+        {isPrivate && (
+          <div style={{ textAlign: 'center', padding: '24px 16px', color: 'var(--muted)', fontSize: 13 }}>
+            <p style={{ margin: 0 }}>Este perfil ainda não foi configurado.</p>
+          </div>
+        )}
+
         {/* Stats */}
-        {(profile.total_hours > 0 || profile.total_sessions > 0) && (
+        {!isPrivate && (profile.total_hours > 0 || profile.total_sessions > 0) && (
           <div className="pub-stats-strip">
             {profile.total_hours > 0 && (
               <React.Fragment>
