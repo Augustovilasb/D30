@@ -519,11 +519,11 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
                   <div className="pub-pioneer-badge pub-founder-badge">
                     <svg width="30" height="34" viewBox="0 0 34 38" fill="none" style={{ color: '#6d5ce6' }}>
                       <path d="M17 1.5L32.5 10V28L17 36.5L1.5 28V10Z" stroke="currentColor" strokeWidth="1.5"/>
-                      <path d="M17 6L28 12.5V25.5L17 32L6 25.5V12.5Z" stroke="currentColor" strokeWidth="0.6" strokeOpacity="0.4"/>
-                      <g transform="rotate(-38, 17, 19)">
-                        <rect x="9" y="12" width="14" height="5.5" rx="1.5" fill="currentColor"/>
-                        <rect x="14" y="17.5" width="3.5" height="9" rx="1.5" fill="currentColor"/>
-                      </g>
+                      <path d="M17 6L28 12.5V25.5L17 32L6 25.5V12.5Z" stroke="currentColor" strokeWidth="0.5" strokeOpacity="0.35"/>
+                      <path d="M9 25V16L13.5 20L17 13L20.5 20L25 16V25H9Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" fill="none"/>
+                      <circle cx="9" cy="15.5" r="1.4" fill="currentColor"/>
+                      <circle cx="17" cy="12.5" r="1.4" fill="currentColor"/>
+                      <circle cx="25" cy="15.5" r="1.4" fill="currentColor"/>
                     </svg>
                     <span className="pub-pioneer-label">FOUNDER</span>
                   </div>
@@ -533,11 +533,8 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
                     <svg width="30" height="34" viewBox="0 0 34 38" fill="none" style={{ color: '#888' }}>
                       <path d="M17 1.5L32.5 10V28L17 36.5L1.5 28V10Z" stroke="currentColor" strokeWidth="1.5"/>
                       <path d="M17 6L28 12.5V25.5L17 32L6 25.5V12.5Z" stroke="currentColor" strokeWidth="0.5" strokeOpacity="0.35"/>
-                      {/* < */}
                       <path d="M12 15L8 19L12 23" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                      {/* / */}
                       <line x1="20" y1="13.5" x2="14" y2="24.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-                      {/* > */}
                       <path d="M22 15L26 19L22 23" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                     <span className="pub-pioneer-label">{devLabel}</span>
