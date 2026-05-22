@@ -124,6 +124,8 @@ function App() {
           if (u?.is_admin && window.DB) {
             window.DB.talks.getSuggestions().then(list => setIndicCount(list.length)).catch(() => {});
           }
+          const discordDone = u.discord_onboarded || localStorage.getItem('d30_discord_done') === '1';
+          if (!discordDone) setShowDiscordModal(true);
         });
       } else {
         setAuthReady(true);
