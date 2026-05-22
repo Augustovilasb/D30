@@ -337,7 +337,9 @@ function StatsDetailModal({ type, user, onClose, onNavigate }) {
         window.sb.from('forum_topics').select('id, title, created_at').eq('author_id', user.id).order('created_at', { ascending: false }),
         window.sb.from('forum_messages').select('id, text, created_at, topic_id').eq('author_id', user.id).order('created_at', { ascending: false }),
       ]).then(([{ data: topics }, { data: msgs }]) => {
-        setItems({ topics: topics || [], replies: msgs || [] });
+        const myTopicIds = new Set((topics || []).map(t => t.id));
+        const replies = (msgs || []).filter(m => !myTopicIds.has(m.topic_id));
+        setItems({ topics: topics || [], replies });
       }).catch(() => setItems({ topics: [], replies: [] }));
     }
   }, [type]);
@@ -480,12 +482,14 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
   React.useEffect(() => {
     if (!window.sb || !user.id) return;
     Promise.all([
-      window.sb.from('forum_topics').select('id', { count: 'exact', head: true }).eq('author_id', user.id),
-      window.sb.from('forum_messages').select('id', { count: 'exact', head: true }).eq('author_id', user.id),
+      window.sb.from('forum_topics').select('id').eq('author_id', user.id),
+      window.sb.from('forum_messages').select('topic_id').eq('author_id', user.id),
       window.sb.from('talk_rsvp').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
       window.sb.from('profiles').select('total_hours').eq('id', user.id).single(),
-    ]).then(([{ count: tc }, { count: rc }, { count: pc }, { data: myProf }]) => {
-      setForumCount((tc || 0) + (rc || 0));
+    ]).then(([{ data: myTopics }, { data: myMsgs }, { count: pc }, { data: myProf }]) => {
+      const myTopicIds = new Set((myTopics || []).map(t => t.id));
+      const replyCount = (myMsgs || []).filter(m => !myTopicIds.has(m.topic_id)).length;
+      setForumCount((myTopics?.length || 0) + replyCount);
       setPalestrasCount(pc || 0);
       const myHours = myProf?.total_hours || 0;
       return window.sb.from('profiles').select('id', { count: 'exact', head: true }).gt('total_hours', myHours)
