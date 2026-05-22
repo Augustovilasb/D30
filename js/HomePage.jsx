@@ -11,18 +11,18 @@ function FpDots() {
   const [active, setActive] = React.useState(0);
 
   React.useEffect(() => {
-    const els = FP_SECTIONS.map(s => document.getElementById(s.id)).filter(Boolean);
-    if (!els.length) return;
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          const idx = FP_SECTIONS.findIndex(s => s.id === e.target.id);
-          if (idx >= 0) setActive(idx);
-        }
+    const onScroll = () => {
+      const mid = window.scrollY + window.innerHeight / 2;
+      let activeIdx = 0;
+      FP_SECTIONS.forEach((s, i) => {
+        const el = document.getElementById(s.id);
+        if (el && el.offsetTop <= mid) activeIdx = i;
       });
-    }, { threshold: 0.5 });
-    els.forEach(el => io.observe(el));
-    return () => io.disconnect();
+      setActive(activeIdx);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   const goTo = (id) => {
@@ -131,17 +131,16 @@ const STORY_BEATS = [
 ];
 
 function StorySection() {
-  const sectionRef = React.useRef(null);
   const [progress, setProgress] = React.useState(0);
 
   React.useEffect(() => {
     const onScroll = () => {
-      const el = sectionRef.current;
+      const el = document.getElementById('fp-story');
       if (!el) return;
+      const rect = el.getBoundingClientRect();
       const scrollable = el.offsetHeight - window.innerHeight;
       if (scrollable <= 0) return;
-      const scrolled = window.scrollY - el.offsetTop;
-      setProgress(Math.max(0, Math.min(1, scrolled / scrollable)));
+      setProgress(Math.max(0, Math.min(1, -rect.top / scrollable)));
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
@@ -150,10 +149,11 @@ function StorySection() {
 
   function beatStyle(range) {
     const [s, e] = range;
-    const FI = 0.05, FO = 0.05;
+    const FI = s === 0 ? 0 : 0.05;
+    const FO = 0.05;
     let opacity = 0, ty = 20;
     if (progress >= s && progress < s + FI) {
-      const t = (progress - s) / FI;
+      const t = FI === 0 ? 1 : (progress - s) / FI;
       opacity = t; ty = 20 * (1 - t);
     } else if (progress >= s + FI && progress < e - FO) {
       opacity = 1; ty = 0;
@@ -165,7 +165,7 @@ function StorySection() {
   }
 
   return (
-    <div ref={sectionRef} className="story-scroll-section">
+    <div className="story-scroll-section">
       {/* Desktop: scroll-driven */}
       <div className="story-scroll-sticky">
         <p className="story-scroll-label">minha história</p>

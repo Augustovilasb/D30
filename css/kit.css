@@ -168,10 +168,6 @@ body[data-cursor-mode="ghost"] *::after { cursor: none !important; }
 /* ════════════════════════════════════════════════════════════
    FULLPAGE SCROLL — snap no html, seções 100vh
    ════════════════════════════════════════════════════════════ */
-html.fp-active {
-  scroll-snap-type: y proximity;
-}
-
 .fp-section {
   scroll-snap-align: start;
   height: 100vh;
@@ -207,6 +203,7 @@ html.fp-active {
 
 .story-scroll-section {
   width: 100%;
+  height: 100%;
 }
 
 .story-scroll-sticky {
