@@ -122,6 +122,14 @@ const DB = {
       if (error) throw error;
     },
 
+    async deleteMessage(msgId) {
+      const { error } = await window.sb
+        .from('forum_messages')
+        .delete()
+        .eq('id', msgId);
+      if (error) throw error;
+    },
+
     async getVoteCounts(messageIds) {
       if (!messageIds.length) return {};
       const { data, error } = await window.sb

@@ -130,6 +130,14 @@ function ForumPage({ user, onSignIn, toast }) {
     } catch { t('error', 'Erro ao excluir tópico.'); }
   }, []);
 
+  const deleteReply = React.useCallback(async (msgId, topicId) => {
+    try {
+      await DB.forum.deleteMessage(msgId);
+      setTopicMsgs(prev => ({ ...prev, [topicId]: (prev[topicId] || []).filter(m => m.id !== msgId) }));
+      setTopics(prev => prev.map(tt => tt.id === topicId ? { ...tt, reply_count: Math.max(0, (tt.reply_count || 1) - 1) } : tt));
+    } catch { t('error', 'Erro ao excluir resposta.'); }
+  }, []);
+
   const voteMsg = React.useCallback(async (msgId, voteType) => {
     if (!user) { onSignIn('login'); return; }
     try {
@@ -235,6 +243,7 @@ function ForumPage({ user, onSignIn, toast }) {
                   onReply={(text) => addReply(active.id, text)}
                   onClose={() => closeTopic(active.id)}
                   onDelete={() => deleteTopic(active.id)}
+                  onDeleteReply={(msgId) => deleteReply(msgId, active.id)}
                   blocked={blocked}
                   onBlock={toggleBlock}
                   voteCounts={voteCounts}
@@ -299,7 +308,21 @@ function TopicsPane({ topics, query, setQuery, activeId, setActiveId, topicMsgs 
   );
 }
 
-function ThreadPane({ topic, user, isAdmin, onSignIn, msgs, loadingMsgs, onReply, onClose, onDelete, blocked, onBlock, voteCounts, myVotes, onVote }) {
+function MsgDeleteBtn({ onConfirm }) {
+  const [conf, setConf] = React.useState(false);
+  return (
+    <button
+      className={'msg-block-btn' + (conf ? ' blocked' : '')}
+      data-cursor="hover"
+      onClick={() => { if (!conf) { setConf(true); return; } onConfirm(); }}
+      onBlur={() => setConf(false)}
+    >
+      {conf ? 'Confirmar?' : 'Excluir'}
+    </button>
+  );
+}
+
+function ThreadPane({ topic, user, isAdmin, onSignIn, msgs, loadingMsgs, onReply, onClose, onDelete, onDeleteReply, blocked, onBlock, voteCounts, myVotes, onVote }) {
   const [reply,      setReply]   = React.useState('');
   const [confirming, setConf]    = React.useState(false);
   const [confirmDel, setConfDel] = React.useState(false);
@@ -377,7 +400,11 @@ function ThreadPane({ topic, user, isAdmin, onSignIn, msgs, loadingMsgs, onReply
               <div className="msg-avatar" style={{ background: m.color }}>{m.avatar}</div>
               <div className="msg-body">
                 <div className="msg-head">
-                  <span className="msg-name">{m.author_name}</span>
+                  <span className="msg-name" data-cursor="hover" style={{ cursor: 'pointer' }} onClick={async () => {
+                    if (!window.sb || !m.author_id) return;
+                    const { data } = await window.sb.from('profiles').select('username').eq('id', m.author_id).single();
+                    if (data?.username) window.location.href = '/perfil/' + data.username;
+                  }}>{m.author_name}</span>
                   <span className="msg-time">{m.time}</span>
                   {isBlocked && <span className="msg-blocked-badge">bloqueado</span>}
                 </div>
@@ -403,6 +430,9 @@ function ThreadPane({ topic, user, isAdmin, onSignIn, msgs, loadingMsgs, onReply
                         {votes.down > 0 && <span>{votes.down}</span>}
                       </button>
                     </React.Fragment>
+                  )}
+                  {isMine && onDeleteReply && (
+                    <MsgDeleteBtn onConfirm={() => onDeleteReply(m.id)} />
                   )}
                   {isAdmin && !isMine && (
                     <button className={'msg-block-btn' + (isBlocked ? ' blocked' : '')} data-cursor="hover" onClick={() => onBlock(m.author_name)}>
