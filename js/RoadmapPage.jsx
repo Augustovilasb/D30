@@ -136,16 +136,15 @@ function RoadmapPage({ user }) {
         const el = document.querySelector(`[data-highlight-id="${courseId}"]`);
         if (!el) return;
         const card = el.closest('.rm3-card');
-        el.scrollIntoView({ behavior: 'instant', block: 'center' });
-        el.classList.remove('highlight-flash');
-        void el.offsetWidth;
+        const target = card || el;
+        target.scrollIntoView({ behavior: 'instant', block: 'center' });
+        target.classList.remove('highlight-flash');
+        void target.offsetWidth;
         document.body.classList.add('book-highlight-active');
-        if (card) card.classList.add('rm3-highlight-card');
-        el.classList.add('highlight-flash');
+        target.classList.add('highlight-flash');
         setTimeout(() => {
           document.body.classList.remove('book-highlight-active');
-          if (card) card.classList.remove('rm3-highlight-card');
-          el.classList.remove('highlight-flash');
+          target.classList.remove('highlight-flash');
         }, 3000);
       }, 800);
     }

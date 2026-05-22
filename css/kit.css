@@ -4890,20 +4890,19 @@ body:not(.book-highlight-active) .past-talk {
   transition: opacity 0.6s ease;
 }
 
-/* Roadmap spotlight: escurece cards inteiros exceto o card do curso destacado */
-body.book-highlight-active .rm3-card:not(.rm3-highlight-card),
-body.book-highlight-active .rm3-entry:not(:has(.rm3-highlight-card)) .rm3-ruler-top,
-body.book-highlight-active .rm3-entry:not(:has(.rm3-highlight-card)) .rm3-ruler-bot {
-  opacity: 0.08;
-  transition: opacity 0.5s ease;
+/* Roadmap spotlight: escurece cards inteiros exceto o card animado */
+body.book-highlight-active .rm3-card:not(.highlight-flash) {
+  opacity: 0.08 !important;
+  transition: opacity 0.5s ease !important;
   pointer-events: none;
 }
-body.book-highlight-active .rm3-highlight-card .rm3-course:not(.highlight-flash),
-body.book-highlight-active .rm3-highlight-card .rm3-card-header {
+body.book-highlight-active .rm3-intro,
+body.book-highlight-active .rm3-overall,
+body.book-highlight-active .rm-intro,
+body.book-highlight-active .rm-channel-link {
   opacity: 0.08;
   transition: opacity 0.5s ease;
 }
-.rm3-highlight-card { overflow: visible !important; }
 body:not(.book-highlight-active) .rm3-card { transition: opacity 0.6s ease; }
 .stats-detail-item-title { font-size: 13px; font-weight: 600; color: #f0f0f0; }
 .stats-detail-item-sub   { font-size: 11px; color: #666; }
