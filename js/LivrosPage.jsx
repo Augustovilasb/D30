@@ -272,18 +272,16 @@ function LivrosPage({ user, toast }) {
     setTimeout(() => {
       const el = Array.from(document.querySelectorAll('[data-highlight-id]')).find(e => e.dataset.highlightId === id);
       if (!el) return;
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.scrollIntoView({ behavior: 'instant', block: 'center' });
+      el.classList.remove('highlight-flash');
+      void el.offsetWidth;
+      document.body.classList.add('book-highlight-active');
+      el.classList.add('highlight-flash');
       setTimeout(() => {
+        document.body.classList.remove('book-highlight-active');
         el.classList.remove('highlight-flash');
-        void el.offsetWidth;
-        document.body.classList.add('book-highlight-active');
-        el.classList.add('highlight-flash');
-        setTimeout(() => {
-          document.body.classList.remove('book-highlight-active');
-          el.classList.remove('highlight-flash');
-        }, 3000);
-      }, 500);
-    }, 700);
+      }, 3000);
+    }, 800);
   }, [loading, loadingRecom]);
 
   /* Contagens */

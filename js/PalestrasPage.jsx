@@ -55,8 +55,17 @@ function PalestrasPage({ toast, user, onIndicCountChange }) {
     window.__palestrasHighlight = null;
     setTimeout(() => {
       const el = document.querySelector(`[data-highlight-id="${id}"]`);
-      if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.classList.add('highlight-flash'); }
-    }, 300);
+      if (!el) return;
+      el.scrollIntoView({ behavior: 'instant', block: 'center' });
+      el.classList.remove('highlight-flash');
+      void el.offsetWidth;
+      document.body.classList.add('book-highlight-active');
+      el.classList.add('highlight-flash');
+      setTimeout(() => {
+        document.body.classList.remove('book-highlight-active');
+        el.classList.remove('highlight-flash');
+      }, 3000);
+    }, 800);
   }, [loading]);
 
   /* ── actions ────────────────────────────────────────────────── */

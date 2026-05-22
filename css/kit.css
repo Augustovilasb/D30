@@ -4860,31 +4860,36 @@ nav.nav--floating .user-menu-info strong{ color: var(--text); }
 
 @keyframes highlight-pulse {
   0%   { transform: scale(1);    }
-  18%  { transform: scale(1.18); }
-  45%  { transform: scale(1.12); }
+  18%  { transform: scale(1.2);  }
+  50%  { transform: scale(1.12); }
   100% { transform: scale(1);    }
 }
 .highlight-flash {
   animation: highlight-pulse 3s cubic-bezier(.22,1,.36,1);
-  position: relative;
-  z-index: 20;
 }
 
-/* Overlay que escurece a página durante o highlight do livro */
-body.book-highlight-active::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.58);
-  z-index: 10;
+/* Spotlight: escurece irmãos do elemento destacado (sem z-index, sem overlay) */
+body.book-highlight-active .livro-card-wrap:not(.highlight-flash),
+body.book-highlight-active .talk-card:not(.highlight-flash),
+body.book-highlight-active .past-talk:not(.highlight-flash),
+body.book-highlight-active .rm3-course:not(.highlight-flash) {
+  opacity: 0.08;
+  transition: opacity 0.5s ease;
   pointer-events: none;
-  animation: bookOverlayFade 3s ease forwards;
 }
-@keyframes bookOverlayFade {
-  0%   { opacity: 0; }
-  12%  { opacity: 1; }
-  78%  { opacity: 1; }
-  100% { opacity: 0; }
+body.book-highlight-active .livros-header,
+body.book-highlight-active .livros-cats,
+body.book-highlight-active .palestras-header,
+body.book-highlight-active .rm-intro,
+body.book-highlight-active .rm-channel-link {
+  opacity: 0.08;
+  transition: opacity 0.5s ease;
+}
+body:not(.book-highlight-active) .livro-card-wrap,
+body:not(.book-highlight-active) .talk-card,
+body:not(.book-highlight-active) .past-talk,
+body:not(.book-highlight-active) .rm3-course {
+  transition: opacity 0.6s ease;
 }
 .stats-detail-item-title { font-size: 13px; font-weight: 600; color: #f0f0f0; }
 .stats-detail-item-sub   { font-size: 11px; color: #666; }
