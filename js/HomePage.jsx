@@ -118,37 +118,88 @@ function HomePage({ onNavigate, onSignIn }) {
   );
 }
 
+const STORY_BEATS = [
+  { id: 'b1', type: 'line',   range: [0.00, 0.15], text: 'Eu já tentei muita coisa.' },
+  { id: 'b2', type: 'tags',   range: [0.13, 0.27], items: ['Educação Física', 'Exército', 'Engenharia Civil', 'Produção'] },
+  { id: 'b3', type: 'muted',  range: [0.25, 0.39], text: 'No fundo, eu sabia que nada disso era pra mim.' },
+  { id: 'b4', type: 'big',    range: [0.37, 0.51], text: '4 anos atrás,\ndecidi sair do Brasil.' },
+  { id: 'b5', type: 'tags',   range: [0.49, 0.62], items: ['Sem inglês', 'Sem nunca ter saído do país', 'Cozinha', 'Cleaner', 'Segurança'] },
+  { id: 'b6', type: 'line',   range: [0.60, 0.73], text: 'Precisei escolher: voltar pro Brasil ou entrar numa faculdade e ficar.' },
+  { id: 'b7', type: 'line',   range: [0.71, 0.82], text: 'Entrei em Ciência da Computação. Sem nunca ter aberto um terminal na vida.' },
+  { id: 'b8', type: 'quote',  range: [0.80, 0.93], text: 'Pela primeira vez na vida,\neu tava feliz estudando.' },
+  { id: 'b9', type: 'close',  range: [0.91, 1.00], text: 'Criei a D30 pra você não perder tanto tempo quanto eu perdi.\nIsso aqui não é um curso. É uma comunidade de verdade.' },
+];
+
 function StorySection() {
+  const sectionRef = React.useRef(null);
+  const [progress, setProgress] = React.useState(0);
+
+  React.useEffect(() => {
+    const onScroll = () => {
+      const el = sectionRef.current;
+      if (!el) return;
+      const scrollable = el.offsetHeight - window.innerHeight;
+      if (scrollable <= 0) return;
+      const scrolled = window.scrollY - el.offsetTop;
+      setProgress(Math.max(0, Math.min(1, scrolled / scrollable)));
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  function beatStyle(range) {
+    const [s, e] = range;
+    const FI = 0.05, FO = 0.05;
+    let opacity = 0, ty = 20;
+    if (progress >= s && progress < s + FI) {
+      const t = (progress - s) / FI;
+      opacity = t; ty = 20 * (1 - t);
+    } else if (progress >= s + FI && progress < e - FO) {
+      opacity = 1; ty = 0;
+    } else if (progress >= e - FO && progress <= e) {
+      const t = (progress - (e - FO)) / FO;
+      opacity = 1 - t; ty = -10 * t;
+    }
+    return { opacity, transform: `translateY(${ty}px)` };
+  }
+
   return (
-    <div className="story-fp-wrap">
-      <div className="story-card-inner">
-        <div className="story-section-top">
-          <p className="story-eyebrow">minha história até aqui</p>
-          <p className="story-intro">
-            Tentei tudo: Educação Física, Exército, 3 anos de Civil, formei em Produção.
-            No fundo eu sabia que <strong>nada disso era pra mim.</strong>
-          </p>
+    <div ref={sectionRef} className="story-scroll-section">
+      {/* Desktop: scroll-driven */}
+      <div className="story-scroll-sticky">
+        <p className="story-scroll-label">minha história</p>
+        <div className="story-scroll-stage">
+          {STORY_BEATS.map(beat => (
+            <div key={beat.id} className={`story-beat story-beat--${beat.type}`} style={beatStyle(beat.range)}>
+              {beat.type === 'tags'
+                ? <div className="story-beat-tags">{beat.items.map((item, i) => <span key={i}>{item}</span>)}</div>
+                : beat.text.split('\n').map((line, i) => <p key={i}>{line}</p>)
+              }
+            </div>
+          ))}
         </div>
-
-        <div className="story-section-mid">
-          <p className="story-decision">4 anos atrás<br/>decidi sair do Brasil.</p>
-          <div className="story-tags">
-            <span>Sem inglês</span>
-            <span>Sem nunca ter saído do país</span>
-            <span>Cleaner</span>
-            <span>Warehouse</span>
-            <span>Cozinha</span>
-          </div>
+        <div className="story-scroll-track">
+          <div className="story-scroll-bar" style={{ width: `${progress * 100}%` }} />
         </div>
+      </div>
 
-        <blockquote className="story-quote">
-          Pela primeira vez na vida,<br/>eu tava feliz estudando.
-        </blockquote>
-
-        <p className="story-close">
-          É por isso que criei essa comunidade.{' '}
-          <span>Pra você não passar pelo mesmo.</span>
-        </p>
+      {/* Mobile: estático */}
+      <div className="story-mobile">
+        <p className="story-scroll-label">minha história</p>
+        <p className="story-beat--line">Eu já tentei muita coisa.</p>
+        <div className="story-beat-tags story-beat-tags--mobile">
+          {['Educação Física', 'Exército', 'Engenharia Civil', 'Produção'].map((t, i) => <span key={i}>{t}</span>)}
+        </div>
+        <p className="story-beat--muted">No fundo, eu sabia que nada disso era pra mim.</p>
+        <p className="story-beat--big">4 anos atrás, decidi sair do Brasil.</p>
+        <div className="story-beat-tags story-beat-tags--mobile">
+          {['Sem inglês', 'Sem nunca ter saído do país', 'Cozinha', 'Cleaner', 'Segurança'].map((t, i) => <span key={i}>{t}</span>)}
+        </div>
+        <p className="story-beat--line">Precisei escolher: voltar pro Brasil ou entrar numa faculdade e ficar.</p>
+        <p className="story-beat--line">Entrei em Ciência da Computação. Sem nunca ter aberto um terminal na vida.</p>
+        <blockquote className="story-beat--quote">Pela primeira vez na vida,<br/>eu tava feliz estudando.</blockquote>
+        <p className="story-beat--close">Criei a D30 pra você não perder tanto tempo quanto eu perdi. Isso aqui não é um curso. É uma comunidade de verdade.</p>
       </div>
     </div>
   );
