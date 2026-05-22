@@ -234,7 +234,7 @@ const FEATURES = [
   {
     num: '01', title: 'Fórum',
     backLabel: 'Por que existe',
-    desc: 'A maioria das pessoas estuda sozinha e trava na mesma dúvida por horas — às vezes desiste por isso. O Fórum existe pra acabar com isso. Você posta a dúvida, alguém que já travou no mesmo ponto responde com contexto real. Sem ego, sem julgamento, sem resposta genérica de StackOverflow.',
+    desc: 'A maioria das pessoas estuda sozinha e trava na mesma dúvida por horas e às vezes desiste por isso. O Fórum existe pra acabar com isso. Você posta a dúvida, alguém que já travou no mesmo ponto responde com contexto real. Sem ego, sem julgamento, sem resposta genérica de StackOverflow.',
     topics: [
       'Crie tópicos em categorias: Dúvidas, Dicas, Conquistas, Carreira e Tecnologias',
       'Responda outros membros e vote nas melhores respostas',
@@ -247,7 +247,7 @@ const FEATURES = [
   {
     num: '02', title: 'Roadmap',
     backLabel: 'Por que existe',
-    desc: 'A maior paralisia de quem começa é não saber o que estudar, em qual ordem, e se está no caminho certo. O Roadmap resolve isso. É uma skill tree interativa que vai dos fundamentos até dev pleno, com o conteúdo certo em cada etapa — sem você precisar decidir nada.',
+    desc: 'A maior paralisia de quem começa é não saber o que estudar, em qual ordem, e se está no caminho certo. O Roadmap resolve isso. É uma skill tree interativa que vai dos fundamentos até dev pleno, com o conteúdo certo em cada etapa. Sem você precisar decidir nada.',
     topics: [
       'Visualize as 4 fases: Fundamentos, Dev Júnior, Dev Pleno e Dev Sênior',
       'Clique em qualquer etapa e veja os cursos, exercícios e documentação daquele ponto',
@@ -261,7 +261,7 @@ const FEATURES = [
   {
     num: '03', title: 'Talks',
     backLabel: 'Por que existe',
-    desc: 'Curso ensina técnica. Talk ensina realidade. Todo mês um convidado diferente — devs que foram contratados sem faculdade, pessoas que trabalham remotamente no exterior, especialistas em carreira e dinheiro. É uma conversa direta, sem roteiro, com quem viveu o que você quer viver.',
+    desc: 'Curso ensina técnica. Talk ensina realidade. Todo mês um convidado diferente: devs que foram contratados sem faculdade, pessoas que trabalham remotamente no exterior, especialistas em carreira e dinheiro. É uma conversa direta, sem roteiro, com quem viveu o que você quer viver.',
     topics: [
       'Assista talks ao vivo com sessão de perguntas abertas ao público',
       'Acesse replays de todas as talks anteriores quando quiser',
@@ -274,13 +274,13 @@ const FEATURES = [
   {
     num: '04', title: 'Progresso',
     backLabel: 'Por que existe',
-    desc: 'A maioria das pessoas acha que estuda mais do que estuda. E quando fica dias sem estudar, nem percebe. O Progresso é um study tracker dentro da plataforma que torna seu ritmo visível — e o que se enxerga, se controla.',
+    desc: 'A maioria das pessoas acha que estuda mais do que estuda. E quando fica dias sem estudar, nem percebe. O Progresso é um study tracker dentro da plataforma que torna seu ritmo visível. O que se enxerga, se controla.',
     topics: [
       'Inicie uma sessão de estudo com timer e diga o que vai estudar',
       'Ao terminar, registre o que aprendeu e como foi a sessão',
-      'Veja seu heatmap de atividade do ano inteiro — igual ao do GitHub',
+      'Veja seu heatmap de atividade do ano inteiro, igual ao do GitHub',
       'Acompanhe KPIs: total de horas, média por semana, sequência atual',
-      'Receba análises geradas por IA com base no seu histórico real',
+      'Análises de IA opcionais com sua própria API key da Anthropic',
       'Desbloqueie badges por conquistas e suba no ranking da comunidade',
     ],
     tagline: 'O que se mede, melhora.',
@@ -288,7 +288,7 @@ const FEATURES = [
   {
     num: '05', title: 'Livros',
     backLabel: 'Por que existe',
-    desc: 'Os melhores livros técnicos custam caro e estão espalhados pela internet. A D30 reuniu centenas de títulos gratuitos num catálogo organizado, mais uma seleção curada com os livros que realmente valem o tempo — escolhidos por quem já leu e aplicou.',
+    desc: 'Os melhores livros técnicos custam caro e estão espalhados pela internet. A D30 reuniu centenas de títulos gratuitos num catálogo organizado, mais uma seleção curada com os livros que realmente valem o tempo. Escolhidos por quem já leu e aplicou.',
     topics: [
       'Acesse centenas de livros técnicos gratuitos organizados por categoria',
       '7 categorias: Web, Algoritmos, Banco de Dados, Carreira, Arquitetura e mais',
@@ -301,7 +301,7 @@ const FEATURES = [
   {
     num: '06', title: 'Vagas',
     backLabel: 'Por que existe',
-    desc: 'Garimpar vaga é exaustivo. Você passa horas filtrando lixo no LinkedIn e ainda cai em vaga que pede 5 anos de experiência pra estágio. A D30 faz esse filtro por você — vagas nacionais curadas a mão e remotas internacionais do mundo todo, só o que faz sentido pra quem está começando ou em transição.',
+    desc: 'Garimpar vaga é exaustivo. Você passa horas filtrando lixo no LinkedIn e ainda cai em vaga que pede 5 anos de experiência pra estágio. A D30 faz esse filtro por você: vagas nacionais curadas a mão e remotas internacionais do mundo todo, só o que faz sentido pra quem está começando ou em transição.',
     topics: [
       'Navegue entre vagas nacionais curadas e remotas internacionais',
       'Filtre por nível de experiência, faixa salarial e localização',
@@ -314,7 +314,7 @@ const FEATURES = [
   {
     num: '07', title: 'Ranking',
     backLabel: 'Por que existe',
-    desc: 'Estudar sozinho é difícil. Estudar sabendo que outras pessoas estão avançando junto — e que seu esforço é visível — é completamente diferente. O Ranking não é sobre competição: é sobre accountability coletiva. Ver alguém na sua frente motiva mais do que qualquer guru de produtividade.',
+    desc: 'Estudar sozinho é difícil. Estudar sabendo que outras pessoas estão avançando junto, e que seu esforço é visível, é completamente diferente. O Ranking não é sobre competição: é sobre accountability coletiva. Ver alguém na sua frente motiva mais do que qualquer guru de produtividade.',
     topics: [
       'Veja o top 100 membros mais ativos da comunidade',
       'Seis critérios: horas estudadas, livros lidos, talks assistidas, tópicos no fórum, sessões e cursos completos',

@@ -367,7 +367,7 @@ function AiHistoryTab({ onOpenModal }) {
           </svg>
         </div>
         <p className="trk-ai-history-empty-title">Nenhuma análise gerada ainda</p>
-        <p className="trk-ai-history-empty-sub">Estude por 7 dias e registre ao menos 30min para a análise ser gerada automaticamente após cada sessão.</p>
+        <p className="trk-ai-history-empty-sub">Ao terminar uma sessão, você pode pedir uma análise de IA. É opcional e usa sua própria API key da Anthropic.</p>
       </div>
     );
   }
@@ -567,8 +567,51 @@ function TrackerEnded({ elapsed }) {
 }
 
 /* ─── Success ─── */
+function AiOfferModal({ apiKey, onClose }) {
+  const [accepted, setAccepted] = React.useState(false);
+
+  if (accepted && apiKey) {
+    const allSessions = window.Data.load();
+    return (
+      <div className="trk-ai-offer-wrap">
+        <AiAnalysis sessions={allSessions} type="daily" apiKey={apiKey} autoRun={false} />
+        <button className="trk-ai-offer-close" onClick={onClose}>Fechar</button>
+      </div>
+    );
+  }
+
+  if (accepted && !apiKey) {
+    return (
+      <div className="trk-ai-offer-wrap trk-ai-offer-wrap--info">
+        <p className="trk-ai-offer-title">Como funciona a análise de IA</p>
+        <p className="trk-ai-offer-body">
+          As análises usam a API da Anthropic diretamente da sua conta. A D30 não paga por isso e não tem acesso à sua chave.
+        </p>
+        <p className="trk-ai-offer-body">
+          Para ativar: vá em <strong>Configurações</strong>, cole sua API key da Anthropic e salve. Depois volte aqui e gere quando quiser.
+        </p>
+        <p className="trk-ai-offer-hint">Você consegue sua key em console.anthropic.com</p>
+        <button className="trk-ai-offer-close" onClick={onClose}>Entendi</button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="trk-ai-offer-wrap">
+      <p className="trk-ai-offer-title">Quer uma análise desta sessão?</p>
+      <p className="trk-ai-offer-body">
+        Geramos um relatório do seu desempenho de hoje usando IA.
+      </p>
+      <div className="trk-ai-offer-btns">
+        <button className="trk-btn" data-cursor="hover" onClick={() => setAccepted(true)}>Sim, quero</button>
+        <button className="trk-btn trk-btn--ghost" data-cursor="hover" onClick={onClose}>Não, obrigado</button>
+      </div>
+    </div>
+  );
+}
+
 function TrackerSuccess({ session, newBadges, onNew, onDashboard, onAnalises, apiKey }) {
-  const allSessions = window.Data.load();
+  const [showAiOffer, setShowAiOffer] = React.useState(false);
   const hrs  = Math.floor((session?.duration || 0) / 3600);
   const mins = Math.floor(((session?.duration || 0) % 3600) / 60);
   const label = hrs > 0 ? `${hrs}h ${mins}min` : `${mins}min`;
@@ -589,7 +632,12 @@ function TrackerSuccess({ session, newBadges, onNew, onDashboard, onAnalises, ap
           ))}
         </div>
       )}
-      <AiAnalysis sessions={allSessions} type="daily" apiKey={apiKey} autoRun />
+      {showAiOffer
+        ? <AiOfferModal apiKey={apiKey} onClose={() => setShowAiOffer(false)} />
+        : <button className="trk-ai-offer-trigger" data-cursor="hover" onClick={() => setShowAiOffer(true)}>
+            Gerar análise de IA desta sessão
+          </button>
+      }
       <div className="trk-success-actions">
         <button className="trk-btn" data-cursor="hover" onClick={onNew}>Nova Sessão</button>
         <button className="trk-btn trk-btn--ghost" data-cursor="hover" onClick={onDashboard}>Dashboard</button>
