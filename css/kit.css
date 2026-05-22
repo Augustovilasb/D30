@@ -4871,8 +4871,7 @@ nav.nav--floating .user-menu-info strong{ color: var(--text); }
 /* Spotlight: escurece irmãos do elemento destacado (sem z-index, sem overlay) */
 body.book-highlight-active .livro-card-wrap:not(.highlight-flash),
 body.book-highlight-active .talk-card:not(.highlight-flash),
-body.book-highlight-active .past-talk:not(.highlight-flash),
-body.book-highlight-active .rm3-course:not(.highlight-flash) {
+body.book-highlight-active .past-talk:not(.highlight-flash) {
   opacity: 0.08;
   transition: opacity 0.5s ease;
   pointer-events: none;
@@ -4887,10 +4886,25 @@ body.book-highlight-active .rm-channel-link {
 }
 body:not(.book-highlight-active) .livro-card-wrap,
 body:not(.book-highlight-active) .talk-card,
-body:not(.book-highlight-active) .past-talk,
-body:not(.book-highlight-active) .rm3-course {
+body:not(.book-highlight-active) .past-talk {
   transition: opacity 0.6s ease;
 }
+
+/* Roadmap spotlight: escurece cards inteiros exceto o card do curso destacado */
+body.book-highlight-active .rm3-card:not(.rm3-highlight-card),
+body.book-highlight-active .rm3-entry:not(:has(.rm3-highlight-card)) .rm3-ruler-top,
+body.book-highlight-active .rm3-entry:not(:has(.rm3-highlight-card)) .rm3-ruler-bot {
+  opacity: 0.08;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+body.book-highlight-active .rm3-highlight-card .rm3-course:not(.highlight-flash),
+body.book-highlight-active .rm3-highlight-card .rm3-card-header {
+  opacity: 0.08;
+  transition: opacity 0.5s ease;
+}
+.rm3-highlight-card { overflow: visible !important; }
+body:not(.book-highlight-active) .rm3-card { transition: opacity 0.6s ease; }
 .stats-detail-item-title { font-size: 13px; font-weight: 600; color: #f0f0f0; }
 .stats-detail-item-sub   { font-size: 11px; color: #666; }
 

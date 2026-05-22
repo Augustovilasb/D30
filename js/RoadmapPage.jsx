@@ -135,13 +135,16 @@ function RoadmapPage({ user }) {
       setTimeout(() => {
         const el = document.querySelector(`[data-highlight-id="${courseId}"]`);
         if (!el) return;
+        const card = el.closest('.rm3-card');
         el.scrollIntoView({ behavior: 'instant', block: 'center' });
         el.classList.remove('highlight-flash');
         void el.offsetWidth;
         document.body.classList.add('book-highlight-active');
+        if (card) card.classList.add('rm3-highlight-card');
         el.classList.add('highlight-flash');
         setTimeout(() => {
           document.body.classList.remove('book-highlight-active');
+          if (card) card.classList.remove('rm3-highlight-card');
           el.classList.remove('highlight-flash');
         }, 3000);
       }, 800);
