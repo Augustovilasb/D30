@@ -74,7 +74,7 @@ function EditProfilePage({ user, onUpdate, onNavigate }) {
     setSaving(true); setError('');
     try {
       if (window.sb && user.id) {
-        const { error: dbErr } = await window.sb.from('profiles').update({
+        const { data: updatedRows, error: dbErr } = await window.sb.from('profiles').update({
           full_name:     form.full_name.trim(),
           username:      form.username.trim()      || null,
           bio:           form.bio.trim()           || null,
@@ -85,11 +85,12 @@ function EditProfilePage({ user, onUpdate, onNavigate }) {
           instagram_url: form.instagram_url.trim() || null,
           twitter_url:   form.twitter_url.trim()   || null,
           website_url:   form.website_url.trim()   || null,
-        }).eq('id', user.id);
-        console.log('[D30] update error:', dbErr);
+        }).eq('id', user.id).select();
+        console.log('[D30] update result:', updatedRows, '| error:', dbErr);
         if (dbErr) throw new Error(
           dbErr.code === '23505' ? 'Esse username já está em uso.' : dbErr.message
         );
+        if (!updatedRows || updatedRows.length === 0) throw new Error('RLS bloqueou o update — verifique as políticas no Supabase.');
       }
       try {
         localStorage.setItem('d30_profile_v2', JSON.stringify({
