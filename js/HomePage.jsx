@@ -119,15 +119,16 @@ function HomePage({ onNavigate, onSignIn }) {
 }
 
 const STORY_BEATS = [
-  { id: 'b1', type: 'line',   range: [0.00, 0.13], text: 'Eu já tentei muita coisa.' },
-  { id: 'b2', type: 'tags',   range: [0.11, 0.24], items: ['Educação Física', 'Exército', 'Engenharia Civil', 'Produção'] },
-  { id: 'b3', type: 'muted',  range: [0.22, 0.35], text: 'No fundo, eu sabia que nada disso era pra mim.' },
-  { id: 'b4', type: 'big',    range: [0.33, 0.48], text: '4 anos atrás,\ndecidi sair do Brasil.' },
-  { id: 'b5', type: 'tags',   range: [0.46, 0.59], items: ['Sem inglês', 'Sem nunca ter saído do país', 'Cozinha', 'Cleaner', 'Segurança'] },
-  { id: 'b6', type: 'line',   range: [0.57, 0.70], text: 'Precisei escolher: voltar pro Brasil ou entrar numa faculdade e ficar.' },
-  { id: 'b7', type: 'line',   range: [0.68, 0.80], text: 'Entrei em Ciência da Computação. Sem nunca ter aberto um terminal na vida.' },
-  { id: 'b8', type: 'quote',  range: [0.78, 0.92], text: 'Pela primeira vez na vida,\neu tava feliz estudando.' },
-  { id: 'b9', type: 'close',  range: [0.90, 1.00], text: 'Criei a D30 pra você não perder tanto tempo quanto eu perdi.\nIsso aqui não é um curso. É uma comunidade de verdade.' },
+  { id: 'b1', type: 'line',  text: 'Eu já tentei muita coisa.' },
+  { id: 'b2', type: 'tags',  items: ['Educação Física', 'Exército', 'Engenharia Civil', 'Produção'] },
+  { id: 'b3', type: 'muted', text: 'No fundo, eu sabia que nada disso era pra mim.' },
+  { id: 'b4', type: 'big',   text: '4 anos atrás,\ndecidi sair do Brasil.' },
+  { id: 'b5', type: 'tags',  items: ['Sem inglês', 'Sem nunca ter saído do país', 'Cozinha', 'Cleaner', 'Segurança'] },
+  { id: 'b6', type: 'line',  text: 'Precisei escolher: voltar pro Brasil ou entrar numa faculdade e ficar.' },
+  { id: 'b7', type: 'line',  text: 'Entrei em Ciência da Computação. Sem nunca ter aberto um terminal na vida.' },
+  { id: 'b8', type: 'quote', text: 'Pela primeira vez na vida,\neu tava feliz estudando.' },
+  { id: 'b9', type: 'close', text: 'Criei a D30 pra você não perder tanto tempo quanto eu perdi.\nIsso aqui não é um curso. É uma comunidade de verdade.' },
+  { id: 'b10', type: 'next', text: 'O que você vai encontrar aqui' },
 ];
 
 function StorySection() {
@@ -179,9 +180,23 @@ function StorySection() {
     };
   }, [selected, go]);
 
+  const goToAbout = () => {
+    const el = document.getElementById('fp-about');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <div ref={stageRef} className="story-scroll-section">
-      <p className="story-scroll-label">minha história</p>
+
+      {/* Label colada ao stage */}
+      <div className="story-header-row">
+        <span className="story-scroll-label">minha história</span>
+        {selected < STORY_BEATS.length - 1 && (
+          <button className="story-skip-btn" onClick={goToAbout} data-cursor="hover">
+            pular ↓
+          </button>
+        )}
+      </div>
 
       <div className="story-scroll-stage">
         {STORY_BEATS.map((beat, i) => (
@@ -191,6 +206,11 @@ function StorySection() {
           >
             {beat.type === 'tags'
               ? <div className="story-beat-tags">{beat.items.map((item, j) => <span key={j}>{item}</span>)}</div>
+              : beat.type === 'next'
+              ? <button className="story-next-btn" onClick={goToAbout} data-cursor="hover">
+                  <span>{beat.text}</span>
+                  <span className="story-next-arrow">↓</span>
+                </button>
               : beat.text.split('\n').map((line, j) => <p key={j}>{line}</p>)
             }
           </div>
@@ -201,7 +221,6 @@ function StorySection() {
         <div className="story-scroll-bar" style={{ width: `${(selected / (STORY_BEATS.length - 1)) * 100}%` }} />
       </div>
 
-      {/* Indicador mobile: setas */}
       <div className="story-nav-mobile">
         <button onClick={() => go(selected - 1)} disabled={selected === 0}>←</button>
         <span>{selected + 1} / {STORY_BEATS.length}</span>
