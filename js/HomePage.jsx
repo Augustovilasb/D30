@@ -119,15 +119,15 @@ function HomePage({ onNavigate, onSignIn }) {
 }
 
 const STORY_BEATS = [
-  { id: 'b1', type: 'line',   range: [0.00, 0.15], text: 'Eu já tentei muita coisa.' },
-  { id: 'b2', type: 'tags',   range: [0.13, 0.27], items: ['Educação Física', 'Exército', 'Engenharia Civil', 'Produção'] },
-  { id: 'b3', type: 'muted',  range: [0.25, 0.39], text: 'No fundo, eu sabia que nada disso era pra mim.' },
-  { id: 'b4', type: 'big',    range: [0.37, 0.51], text: '4 anos atrás,\ndecidi sair do Brasil.' },
-  { id: 'b5', type: 'tags',   range: [0.49, 0.62], items: ['Sem inglês', 'Sem nunca ter saído do país', 'Cozinha', 'Cleaner', 'Segurança'] },
-  { id: 'b6', type: 'line',   range: [0.60, 0.73], text: 'Precisei escolher: voltar pro Brasil ou entrar numa faculdade e ficar.' },
-  { id: 'b7', type: 'line',   range: [0.71, 0.82], text: 'Entrei em Ciência da Computação. Sem nunca ter aberto um terminal na vida.' },
-  { id: 'b8', type: 'quote',  range: [0.80, 0.93], text: 'Pela primeira vez na vida,\neu tava feliz estudando.' },
-  { id: 'b9', type: 'close',  range: [0.91, 1.00], text: 'Criei a D30 pra você não perder tanto tempo quanto eu perdi.\nIsso aqui não é um curso. É uma comunidade de verdade.' },
+  { id: 'b1', type: 'line',   range: [0.00, 0.13], text: 'Eu já tentei muita coisa.' },
+  { id: 'b2', type: 'tags',   range: [0.11, 0.24], items: ['Educação Física', 'Exército', 'Engenharia Civil', 'Produção'] },
+  { id: 'b3', type: 'muted',  range: [0.22, 0.35], text: 'No fundo, eu sabia que nada disso era pra mim.' },
+  { id: 'b4', type: 'big',    range: [0.33, 0.48], text: '4 anos atrás,\ndecidi sair do Brasil.' },
+  { id: 'b5', type: 'tags',   range: [0.46, 0.59], items: ['Sem inglês', 'Sem nunca ter saído do país', 'Cozinha', 'Cleaner', 'Segurança'] },
+  { id: 'b6', type: 'line',   range: [0.57, 0.70], text: 'Precisei escolher: voltar pro Brasil ou entrar numa faculdade e ficar.' },
+  { id: 'b7', type: 'line',   range: [0.68, 0.80], text: 'Entrei em Ciência da Computação. Sem nunca ter aberto um terminal na vida.' },
+  { id: 'b8', type: 'quote',  range: [0.78, 0.92], text: 'Pela primeira vez na vida,\neu tava feliz estudando.' },
+  { id: 'b9', type: 'close',  range: [0.90, 1.00], text: 'Criei a D30 pra você não perder tanto tempo quanto eu perdi.\nIsso aqui não é um curso. É uma comunidade de verdade.' },
 ];
 
 function StorySection() {

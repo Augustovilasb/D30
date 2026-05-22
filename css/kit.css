@@ -194,7 +194,7 @@ body[data-cursor-mode="ghost"] *::after { cursor: none !important; }
 
 /* ── Story scroll-driven section ── */
 #fp-story {
-  height: 500vh !important;
+  height: 900vh !important;
   overflow: visible !important;
   scroll-snap-align: start;
   display: block !important;
