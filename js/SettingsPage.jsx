@@ -17,8 +17,9 @@ function SettingsPage({ user, onSignOut, onNavigate }) {
   const [pwErr,          setPwErr]          = React.useState('');
   const [pwSaving,       setPwSaving]       = React.useState(false);
 
-  /* AI key */
-  const [aiKey,          setAiKey]          = React.useState(() => { try { return localStorage.getItem('d30_ai_key') || ''; } catch { return ''; } });
+  /* AI key — escopada por user.id para não vazar entre contas */
+  const AI_KEY_STORAGE = `d30_ai_key_${user.id}`;
+  const [aiKey,          setAiKey]          = React.useState(() => { try { return localStorage.getItem(`d30_ai_key_${user.id}`) || ''; } catch { return ''; } });
   const [showKey,        setShowKey]        = React.useState(false);
   const [keySaved,       setKeySaved]       = React.useState(false);
 
@@ -78,9 +79,12 @@ function SettingsPage({ user, onSignOut, onNavigate }) {
     } finally { setPwSaving(false); }
   };
 
-  /* AI key save */
+  /* AI key save — remove key legada sem escopo para limpar o vazamento */
   const saveKey = () => {
-    try { localStorage.setItem('d30_ai_key', aiKey.trim()); } catch {}
+    try {
+      localStorage.setItem(AI_KEY_STORAGE, aiKey.trim());
+      localStorage.removeItem('d30_ai_key');
+    } catch {}
     setKeySaved(true);
     setTimeout(() => setKeySaved(false), 2500);
   };

@@ -990,8 +990,8 @@ function StudyTracker({ user }) {
   const tickRef    = React.useRef(null);
 
   const apiKey = React.useMemo(() => {
-    try { return localStorage.getItem('d30_ai_key') || ''; } catch { return ''; }
-  }, []);
+    try { return localStorage.getItem(`d30_ai_key_${user?.id}`) || ''; } catch { return ''; }
+  }, [user?.id]);
 
   React.useEffect(() => () => clearInterval(tickRef.current), []);
 
