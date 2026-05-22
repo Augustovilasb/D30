@@ -324,6 +324,19 @@ const FEATURES = [
     ],
     tagline: 'Consistência vira resultado.',
   },
+  {
+    num: '08', title: 'Discord',
+    backLabel: 'Por que existe',
+    desc: 'Texto, fórum e vídeo resolvem muito. Mas tem hora que você precisa de uma resposta agora, de ver outras pessoas estudando ao mesmo tempo, de sentir que não está sozinho nessa. O Discord é onde a comunidade respira ao vivo: salas de estudo abertas, dúvidas em tempo real e as talks acontecem por lá.',
+    topics: [
+      'Salas de estudo abertas: entre, coloque o fone e estude junto com outros membros',
+      'Canais por tema: Java, SQL, carreira, dúvidas gerais e mais',
+      'Dúvidas em tempo real, sem esperar resposta no fórum',
+      'Avisos de talks, eventos e novidades da comunidade',
+      'Conexão direta com outros membros em transição de carreira',
+    ],
+    tagline: 'A comunidade ao vivo.',
+  },
 ];
 
 function FeatureTab({ f, active, onClick }) {

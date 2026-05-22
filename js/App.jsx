@@ -27,8 +27,9 @@ async function buildUserObj(supabaseUser) {
 }
 
 function App() {
-  const [indicCount,       setIndicCount]       = React.useState(0);
-  const [showDiscordModal, setShowDiscordModal] = React.useState(false);
+  const [indicCount,        setIndicCount]        = React.useState(0);
+  const [showDiscordModal,  setShowDiscordModal]  = React.useState(false);
+  const [showFoundingBadge, setShowFoundingBadge] = React.useState(false);
 
   const [loaded, setLoaded] = React.useState(() => {
     try { return sessionStorage.getItem('d30-pre-played') === '1'; } catch { return false; }
@@ -93,7 +94,7 @@ function App() {
   React.useEffect(() => {
     if (!authReady) return;
     if (user && page === 'home') {
-      navigate('forum', user);
+      navigate('roadmap', user);
     } else if (!user && PROTECTED.includes(page)) {
       setPage('home');
       window.history.replaceState({ page: 'home' }, '', '#');
@@ -141,7 +142,7 @@ function App() {
     }
     const discordDone = u.discord_onboarded || localStorage.getItem('d30_discord_done') === '1';
     if (!discordDone) setShowDiscordModal(true);
-    if (!publicUsername) navigate('forum', u);
+    if (!publicUsername) navigate('roadmap', u);
   };
 
   const signOut = async () => {
@@ -199,7 +200,14 @@ function App() {
         <LoginModal   open={modal === 'login'}   onClose={() => setModal(null)} onSignIn={signIn} onSwitch={setModal} toast={pushToast} />
         <SignupModal  open={modal === 'signup'}  onClose={() => setModal(null)} onSignIn={signIn} onSwitch={setModal} toast={pushToast} />
         <NewPostModal open={modal === 'newPost'} onClose={() => setModal(null)} toast={pushToast} />
-        <DiscordOnboardingModal open={showDiscordModal} user={user} onClose={(confirmed) => { setShowDiscordModal(false); if (confirmed) setUser(u => ({ ...u, discord_onboarded: true })); }} />
+        <DiscordOnboardingModal open={showDiscordModal} user={user} onClose={(confirmed) => {
+          setShowDiscordModal(false);
+          if (confirmed) {
+            setUser(u => ({ ...u, discord_onboarded: true }));
+            if (user?.dev_number != null && user.dev_number <= 100) setShowFoundingBadge(true);
+          }
+        }} />
+        <FoundingBadgeModal open={showFoundingBadge} user={user} onClose={() => setShowFoundingBadge(false)} />
 
         <ToastStack toasts={toasts} />
       </div>

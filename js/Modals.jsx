@@ -481,4 +481,25 @@ function DiscordOnboardingModal({ open, user, onClose }) {
   );
 }
 
-Object.assign(window, { Modal, Field, LoginModal, SignupModal, NewPostModal, NewTalkModal, SuggestSpeakerModal, DiscordOnboardingModal, ToastStack, useToasts });
+function FoundingBadgeModal({ open, user, onClose }) {
+  if (!open || !user) return null;
+  const devNum = String(user.dev_number).padStart(2, '0');
+  return (
+    <div className="founding-badge-overlay" onClick={onClose}>
+      <div className="founding-badge-modal" onClick={e => e.stopPropagation()}>
+        <div className="founding-badge-icon">👑</div>
+        <p className="founding-badge-num">DEV {devNum}</p>
+        <h2 className="founding-badge-title">Badge desbloqueada</h2>
+        <p className="founding-badge-sub">
+          Obrigado por ajudar a construir essa comunidade.<br/>
+          Você é o membro <strong>DEV {devNum}</strong> da D30.
+        </p>
+        <button className="founding-badge-close" data-cursor="hover" onClick={onClose}>
+          Valeu, vamos começar →
+        </button>
+      </div>
+    </div>
+  );
+}
+
+Object.assign(window, { Modal, Field, LoginModal, SignupModal, NewPostModal, NewTalkModal, SuggestSpeakerModal, DiscordOnboardingModal, FoundingBadgeModal, ToastStack, useToasts });
