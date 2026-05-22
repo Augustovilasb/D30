@@ -305,7 +305,7 @@ function NodeDetail({ node, unlocked, progress, done, unlocking, onToggle, tab, 
                 frameBorder="0"
               />
             </div>
-            <a className="rm-channel-link" href="https://www.youtube.com/@renato.augusto" target="_blank" rel="noopener noreferrer" data-cursor="hover">
+            <a className="rm-channel-link" href="https://www.youtube.com/@RenatoAugustoTech" target="_blank" rel="noopener noreferrer" data-cursor="hover">
               ↗ Seguir o canal do Renato Augusto
             </a>
             <label className={'rm-intro-check' + (done.has('intro-video') ? ' checked' : '')} data-cursor="hover">
