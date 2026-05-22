@@ -276,9 +276,14 @@ function LivrosPage({ user, toast }) {
       setTimeout(() => {
         el.classList.remove('highlight-flash');
         void el.offsetWidth;
+        document.body.classList.add('book-highlight-active');
         el.classList.add('highlight-flash');
-      }, 400);
-    }, 600);
+        setTimeout(() => {
+          document.body.classList.remove('book-highlight-active');
+          el.classList.remove('highlight-flash');
+        }, 3000);
+      }, 500);
+    }, 700);
   }, [loading, loadingRecom]);
 
   /* Contagens */

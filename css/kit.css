@@ -4860,11 +4860,32 @@ nav.nav--floating .user-menu-info strong{ color: var(--text); }
 
 @keyframes highlight-pulse {
   0%   { transform: scale(1);    }
-  25%  { transform: scale(1.12); }
-  55%  { transform: scale(1.06); }
+  18%  { transform: scale(1.18); }
+  45%  { transform: scale(1.12); }
   100% { transform: scale(1);    }
 }
-.highlight-flash { animation: highlight-pulse 0.9s cubic-bezier(.22,1,.36,1); }
+.highlight-flash {
+  animation: highlight-pulse 3s cubic-bezier(.22,1,.36,1);
+  position: relative;
+  z-index: 20;
+}
+
+/* Overlay que escurece a página durante o highlight do livro */
+body.book-highlight-active::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.58);
+  z-index: 10;
+  pointer-events: none;
+  animation: bookOverlayFade 3s ease forwards;
+}
+@keyframes bookOverlayFade {
+  0%   { opacity: 0; }
+  12%  { opacity: 1; }
+  78%  { opacity: 1; }
+  100% { opacity: 0; }
+}
 .stats-detail-item-title { font-size: 13px; font-weight: 600; color: #f0f0f0; }
 .stats-detail-item-sub   { font-size: 11px; color: #666; }
 
