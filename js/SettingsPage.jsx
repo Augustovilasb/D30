@@ -19,7 +19,15 @@ function SettingsPage({ user, onSignOut, onNavigate }) {
 
   /* AI key — escopada por user.id para não vazar entre contas */
   const AI_KEY_STORAGE = `d30_ai_key_${user.id}`;
-  const [aiKey,          setAiKey]          = React.useState(() => { try { return localStorage.getItem(`d30_ai_key_${user.id}`) || ''; } catch { return ''; } });
+  const [aiKey,          setAiKey]          = React.useState(() => {
+    try {
+      const scoped = localStorage.getItem(`d30_ai_key_${user.id}`);
+      if (scoped) return scoped;
+      const legacy = localStorage.getItem('d30_ai_key');
+      if (legacy) { localStorage.setItem(`d30_ai_key_${user.id}`, legacy); localStorage.removeItem('d30_ai_key'); return legacy; }
+      return '';
+    } catch { return ''; }
+  });
   const [showKey,        setShowKey]        = React.useState(false);
   const [keySaved,       setKeySaved]       = React.useState(false);
 
