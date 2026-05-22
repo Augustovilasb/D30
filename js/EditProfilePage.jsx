@@ -16,6 +16,7 @@ function EditProfilePage({ user, onUpdate, onNavigate }) {
   const [saving,    setSaving]    = React.useState(false);
   const [saved,     setSaved]     = React.useState(false);
   const [error,     setError]     = React.useState('');
+  const urlFields = ['avatar_url','github_url','linkedin_url','instagram_url','twitter_url','website_url'];
   const [uploading, setUploading] = React.useState(false);
   const [cropSrc,   setCropSrc]   = React.useState(null);
   const fileInputRef = React.useRef(null);
@@ -71,6 +72,15 @@ function EditProfilePage({ user, onUpdate, onNavigate }) {
 
   const save = async () => {
     if (!form.full_name.trim()) { setError('Nome não pode ser vazio.'); return; }
+
+    /* Validação de URLs (OWASP: rejeitar protocolos não-HTTP) */
+    if (window.Sanitize) {
+      const urlMap = {};
+      urlFields.forEach(f => { urlMap[f] = form[f].trim(); });
+      const urlErr = window.Sanitize.validateUrls(urlMap);
+      if (urlErr) { setError(urlErr); return; }
+    }
+
     setSaving(true); setError('');
     try {
       if (window.sb && user.id) {
@@ -86,11 +96,10 @@ function EditProfilePage({ user, onUpdate, onNavigate }) {
           twitter_url:   form.twitter_url.trim()   || null,
           website_url:   form.website_url.trim()   || null,
         }).eq('id', user.id).select();
-        console.log('[D30] update result:', updatedRows, '| error:', dbErr);
         if (dbErr) throw new Error(
-          dbErr.code === '23505' ? 'Esse username já está em uso.' : dbErr.message
+          dbErr.code === '23505' ? 'Esse username já está em uso.' : 'Erro ao salvar. Tente novamente.'
         );
-        if (!updatedRows || updatedRows.length === 0) throw new Error('RLS bloqueou o update — verifique as políticas no Supabase.');
+        if (!updatedRows || updatedRows.length === 0) throw new Error('Sem permissão para atualizar. Tente sair e entrar novamente.');
       }
       try {
         localStorage.setItem('d30_profile_v2', JSON.stringify({
@@ -121,7 +130,8 @@ function EditProfilePage({ user, onUpdate, onNavigate }) {
         website_url:   form.website_url.trim()   || null,
         initials,
       });
-      onNavigate('profile');
+      setSaved(true);
+      setTimeout(() => onNavigate('profile'), 900);
     } catch (err) {
       setError(err.message || 'Erro ao salvar.');
     } finally { setSaving(false); }

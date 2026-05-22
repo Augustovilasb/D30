@@ -1,6 +1,7 @@
 /* App.jsx — entry. Wires together Nav, pages, modals, toasts, cursor. */
 
 const PROTECTED = ['forum', 'roadmap', 'palestras', 'profile', 'tracker', 'settings', 'edit-profile', 'ranking', 'vagas', 'livros'];
+const PUBLIC_PAGES = ['home', 'privacy', 'public-profile'];
 
 async function buildUserObj(supabaseUser) {
   let profile = null;
@@ -197,6 +198,7 @@ function App() {
           {page === 'ranking'   && user && <RankingPage   key={navKey} user={user} />}
           {page === 'vagas'     && user && <VagasPage     key={navKey} user={user} toast={pushToast} />}
           {page === 'livros'    && user && <LivrosPage    key={navKey} user={user} toast={pushToast} />}
+          {page === 'privacy'           && <PrivacyPage   key={navKey} user={user} onNavigate={navigate} />}
         </div>
 
         <LoginModal   open={modal === 'login'}   onClose={() => setModal(null)} onSignIn={signIn} onSwitch={setModal} toast={pushToast} />
@@ -212,6 +214,7 @@ function App() {
         <FoundingBadgeModal open={showFoundingBadge} user={user} onClose={() => setShowFoundingBadge(false)} />
 
         <ToastStack toasts={toasts} />
+        <GdprBanner onNavigate={navigate} />
       </div>
     </React.Fragment>
   );

@@ -414,7 +414,7 @@ function ThreadPane({ topic, user, isAdmin, onSignIn, msgs, loadingMsgs, onReply
                 </div>
                 {isBlocked
                   ? <div className="msg-blocked-text">Mensagem oculta.</div>
-                  : <div className="msg-text" dangerouslySetInnerHTML={{ __html: m.text }} />
+                  : <div className="msg-text" dangerouslySetInnerHTML={{ __html: window.Sanitize ? window.Sanitize.forum(m.text) : '' }} />
                 }
                 <div className="msg-actions">
                   {!isMine && (

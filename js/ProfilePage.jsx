@@ -209,8 +209,8 @@ function ShareCardModal({ user, onClose }) {
   const [downloading, setDownloading] = React.useState(false);
 
   const devLabel   = user.dev_number !== null && user.dev_number !== undefined ? 'DEV ' + String(user.dev_number).padStart(2, '0') : null;
-  const badgeLabel = user.email === 'augustovilasb@hotmail.com' ? 'FOUNDER' : devLabel || 'MEMBRO';
-  const badgeColor = user.email === 'augustovilasb@hotmail.com' ? '#6d5ce6' : devLabel ? '#888' : '#555';
+  const badgeLabel = !!user.is_founding_member ? 'FOUNDER' : devLabel || 'MEMBRO';
+  const badgeColor = !!user.is_founding_member ? '#6d5ce6' : devLabel ? '#888' : '#555';
 
   const handleDownload = async () => {
     if (!cardRef.current || !window.html2canvas) return;
@@ -259,7 +259,7 @@ function ShareCardModal({ user, onClose }) {
             <div className="d30-card-name">{user.name}</div>
             <div className="d30-card-handle">{user.username ? `@${user.username}` : user.email.split('@')[0]}</div>
             <div className="d30-card-badges">
-              {user.email === 'augustovilasb@hotmail.com' && (
+              {!!user.is_founding_member && (
                 <div className="d30-card-badge-item">
                   <svg width="22" height="25" viewBox="0 0 34 38" fill="none" style={{ color: '#6d5ce6' }}>
                     <path d="M17 1.5L32.5 10V28L17 36.5L1.5 28V10Z" stroke="currentColor" strokeWidth="1.5"/>
@@ -513,13 +513,13 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
           <div className="pub-hero-body">
             <h1 className="pub-name">{user.name}</h1>
 
-            {(devLabel || user.username || user.profession || user.email === 'augustovilasb@hotmail.com') && (
+            {(devLabel || user.username || user.profession || !!user.is_founding_member) && (
               <div className="pub-identity-row">
                 <div className="pub-identity-text">
                   {user.username   && <span className="pub-username">@{user.username}</span>}
                   {user.profession && <span className="pub-profession">{user.profession}</span>}
                 </div>
-                {user.email === 'augustovilasb@hotmail.com' && (
+                {!!user.is_founding_member && (
                   <div className="pub-pioneer-badge pub-founder-badge">
                     <svg width="30" height="34" viewBox="0 0 34 38" fill="none" style={{ color: '#6d5ce6' }}>
                       <path d="M17 1.5L32.5 10V28L17 36.5L1.5 28V10Z" stroke="currentColor" strokeWidth="1.5"/>

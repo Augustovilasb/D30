@@ -6015,4 +6015,168 @@ button:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
 [data-theme="dark"] .rank-badge--1 { background: #451a0333; color: #fbbf24; border-color: #92400e; }
 [data-theme="dark"] .rank-badge--2 { background: #1e293b;   color: #94a3b8; border-color: #334155; }
 [data-theme="dark"] .rank-badge--3 { background: #431407;   color: #fb923c; border-color: #7c2d12; }
+
+/* ════════════════════════════════════════════════════════════
+   GDPR / LGPD — Banner de consentimento + Página de privacidade
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Banner de consentimento ─────────────────────────────── */
+.gdpr-banner {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 9999;
+  background: var(--bg);
+  border-top: 1px solid var(--border2);
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.08);
+  padding: 14px 20px;
+}
+.gdpr-banner-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.gdpr-banner-text {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+  flex: 1;
+  min-width: 200px;
+  margin: 0;
+}
+.gdpr-banner-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #6d5ce6;
+  font-size: 13px;
+  cursor: none;
+  text-decoration: underline;
+  font-family: inherit;
+}
+.gdpr-banner-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.gdpr-btn {
+  padding: 7px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: none;
+  transition: opacity .15s;
+  border: none;
+}
+.gdpr-btn--primary  { background: var(--text); color: var(--bg); }
+.gdpr-btn--secondary { background: transparent; color: var(--muted); border: 1px solid var(--border2); }
+.gdpr-btn:hover { opacity: 0.82; }
+
+/* ── Página de Privacidade ───────────────────────────────── */
+.privacy-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+  display: flex;
+  flex-direction: column;
+}
+.privacy-updated { font-size: 12px; color: var(--muted2); margin: -8px 0 28px; }
+.privacy-section  { margin-bottom: 32px; }
+.privacy-h2 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 10px;
+  letter-spacing: -0.2px;
+}
+.privacy-section p  { font-size: 13px; color: var(--muted); line-height: 1.7; margin: 0 0 8px; }
+.privacy-list       { font-size: 13px; color: var(--muted); line-height: 1.7; padding-left: 18px; margin: 0 0 8px; }
+.privacy-list li    { margin-bottom: 4px; }
+
+.privacy-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.privacy-table th {
+  text-align: left;
+  padding: 7px 10px;
+  background: var(--bg2);
+  font-weight: 600;
+  color: var(--text);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border);
+}
+.privacy-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  line-height: 1.5;
+}
+.privacy-table tr:last-child td { border-bottom: none; }
+.privacy-table code {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  background: var(--bg3);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+/* ── Ações GDPR (exportar / excluir) ────────────────────── */
+.privacy-action-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 10px;
+  background: var(--bg2);
+  flex-wrap: wrap;
+}
+.privacy-action-card--danger { border-color: #ef444433; background: #ef44440a; }
+.privacy-action-title { font-size: 13px; font-weight: 600; color: var(--text); margin: 0 0 3px !important; }
+.privacy-action-desc  { font-size: 12px; color: var(--muted); margin: 0 !important; max-width: 460px; }
+
+.gdpr-delete-btn {
+  padding: 7px 14px;
+  border-radius: 7px;
+  border: 1px solid #ef444433;
+  background: transparent;
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: none;
+  flex-shrink: 0;
+  transition: background .15s;
+}
+.gdpr-delete-btn:hover { background: #ef44441a; }
+
+.privacy-delete-confirm {
+  padding: 16px;
+  border: 1px solid #ef444433;
+  border-radius: 10px;
+  background: #ef44440a;
+  margin-top: 4px;
+}
+.privacy-delete-confirm p { font-size: 13px; color: var(--muted); margin: 0 0 10px; line-height: 1.6; }
+
+/* ── Dark mode ───────────────────────────────────────────── */
+[data-theme="dark"] .gdpr-banner       { box-shadow: 0 -4px 24px rgba(0,0,0,0.4); }
+[data-theme="dark"] .privacy-table th  { background: var(--bg3); }
+
+/* ── Mobile ──────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .gdpr-banner-inner   { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .gdpr-banner-actions { width: 100%; justify-content: flex-end; }
+  .privacy-wrap        { padding: 32px 16px 100px; }
+  .privacy-action-card { flex-direction: column; align-items: flex-start; }
+  .privacy-table       { font-size: 11px; }
+}
 [data-theme="dark"] .ranking-row.is-me { border-color: #6366f155 !important; background: #6366f110 !important; }

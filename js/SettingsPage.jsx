@@ -42,6 +42,10 @@ function SettingsPage({ user, onSignOut, onNavigate }) {
   const [showDeleteForm, setShowDeleteForm] = React.useState(false);
   const [deleteInput,    setDeleteInput]    = React.useState('');
   const [deleteMsg,      setDeleteMsg]      = React.useState('');
+  const [deleting,       setDeleting]       = React.useState(false);
+
+  /* Export data */
+  const [exporting,      setExporting]      = React.useState(false);
 
   /* Load profile_public from Supabase on mount */
   React.useEffect(() => {
@@ -112,14 +116,36 @@ function SettingsPage({ user, onSignOut, onNavigate }) {
     finally { setPrivacySaving(false); }
   };
 
-  /* Delete confirm */
+  /* GDPR Art. 17 — Exclusão real de todos os dados */
   const confirmDelete = async () => {
-    if (deleteInput !== 'EXCLUIR') return;
+    if (deleteInput !== 'EXCLUIR' || deleting) return;
+    setDeleting(true);
+    setDeleteMsg('Excluindo todos os seus dados…');
     try {
-      await window.sb.auth.signOut();
-    } catch {}
-    setDeleteMsg('Solicitação de exclusão registrada. Sua conta será analisada para remoção.');
-    onSignOut();
+      await window.Auth.deleteAccount(user.id);
+      onSignOut();
+    } catch (e) {
+      setDeleteMsg('Erro ao excluir: ' + (e.message || 'tente novamente.'));
+      setDeleting(false);
+    }
+  };
+
+  /* GDPR Art. 20 — Exportar dados pessoais como JSON */
+  const exportData = async () => {
+    if (exporting) return;
+    setExporting(true);
+    try {
+      const data = await window.Auth.exportUserData(user.id);
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href     = url;
+      a.download = `d30-meus-dados-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      alert('Erro ao exportar dados. Tente novamente.');
+    } finally { setExporting(false); }
   };
 
   return (
@@ -256,6 +282,19 @@ function SettingsPage({ user, onSignOut, onNavigate }) {
           </div>
         </div>
 
+        {/* GDPR — Direitos de dados */}
+        <div className="settings-section">
+          <p className="settings-section-label">Seus dados (LGPD / GDPR)</p>
+          <p className="settings-hint" style={{ marginBottom: 12, lineHeight: 1.6 }}>
+            Você tem direito de acessar e exportar todos os dados que a D30 armazena sobre você, ou solicitar a exclusão completa da sua conta.
+          </p>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <button className="settings-save-btn" data-cursor="hover" onClick={exportData} disabled={exporting}>
+              {exporting ? 'Exportando…' : '⬇ Exportar meus dados (JSON)'}
+            </button>
+          </div>
+        </div>
+
         {/* Zona de perigo */}
         <div className="settings-section settings-danger-zone">
           <p className="settings-section-label">Zona de perigo</p>
@@ -291,10 +330,10 @@ function SettingsPage({ user, onSignOut, onNavigate }) {
                   <button
                     data-cursor="hover"
                     onClick={confirmDelete}
-                    disabled={deleteInput !== 'EXCLUIR'}
-                    style={{ padding: '7px 16px', borderRadius: 7, border: 'none', background: '#ef4444', color: '#fff', fontSize: 12, fontWeight: 700, fontFamily: "'Inter', sans-serif", cursor: 'none', opacity: deleteInput !== 'EXCLUIR' ? 0.35 : 1, transition: 'opacity .15s' }}
+                    disabled={deleteInput !== 'EXCLUIR' || deleting}
+                    style={{ padding: '7px 16px', borderRadius: 7, border: 'none', background: '#ef4444', color: '#fff', fontSize: 12, fontWeight: 700, fontFamily: "'Inter', sans-serif", cursor: 'none', opacity: (deleteInput !== 'EXCLUIR' || deleting) ? 0.35 : 1, transition: 'opacity .15s' }}
                   >
-                    Confirmar exclusão
+                    {deleting ? 'Excluindo…' : 'Confirmar exclusão'}
                   </button>
                   <button className="settings-key-toggle" data-cursor="hover" onClick={() => { setShowDeleteForm(false); setDeleteInput(''); }}>Cancelar</button>
                 </div>
