@@ -103,6 +103,9 @@ function App() {
   React.useEffect(() => {
     const { data } = window.Auth.onAuthChange(async (event, supabaseUser) => {
       if (event === 'SIGNED_OUT') {
+        if (window.Data)   window.Data.init(null);
+        if (window.Badges) window.Badges.init(null);
+        if (window.DB)     window.DB.roadmap.init(null);
         setUser(null);
         setAuthReady(true);
         return;
@@ -111,6 +114,9 @@ function App() {
 
       if (supabaseUser) {
         buildUserObj(supabaseUser).then(u => {
+          if (window.Data)   window.Data.init(supabaseUser.id);
+          if (window.Badges) window.Badges.init(supabaseUser.id);
+          if (window.DB)     window.DB.roadmap.init(supabaseUser.id);
           setUser(u);
           setAuthReady(true);
           if (window.Data) window.Data.updateProfileStats(supabaseUser.id);
@@ -126,6 +132,9 @@ function App() {
   }, []);
 
   const signIn = (u) => {
+    if (window.Data)   window.Data.init(u.id);
+    if (window.Badges) window.Badges.init(u.id);
+    if (window.DB)     window.DB.roadmap.init(u.id);
     setUser(u);
     if (u?.is_admin && window.DB) {
       window.DB.talks.getSuggestions().then(list => setIndicCount(list.length)).catch(() => {});

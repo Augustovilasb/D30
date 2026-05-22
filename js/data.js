@@ -3,6 +3,10 @@
 const Data = {
   KEY: 'd30_sessions_v1',
 
+  init(userId) {
+    Data.KEY = userId ? `d30_sessions_v1_${userId}` : 'd30_sessions_v1';
+  },
+
   saveSession(session) {
     const all = Data.load();
     const s = { ...session, id: crypto.randomUUID(), createdAt: new Date().toISOString() };
@@ -138,8 +142,9 @@ const Data = {
   async updateProfileStats(userId) {
     if (!userId || !window.sb) return;
     try {
-      const livrosLidos = (() => { try { return JSON.parse(localStorage.getItem('d30_livros_lidos') || '[]').length; } catch { return 0; } })();
-      const coursesDone = (() => { try { return JSON.parse(localStorage.getItem('d30_roadmap_v3') || '[]').length; } catch { return 0; } })();
+      const livrosKey   = userId ? `d30_livros_lidos_v2_${userId}` : 'd30_livros_lidos_v2';
+      const livrosLidos = (() => { try { return JSON.parse(localStorage.getItem(livrosKey) || '[]').length; } catch { return 0; } })();
+      const coursesDone = (() => { try { return window.DB?.roadmap._loadLocal().size || 0; } catch { return 0; } })();
 
       const [{ count: talks }, { count: forum }] = await Promise.all([
         window.sb.from('talk_rsvp').select('id',         { count: 'exact', head: true }).eq('user_id', userId),

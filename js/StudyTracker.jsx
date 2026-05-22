@@ -44,19 +44,19 @@ function computeMetrics(sessions) {
 }
 
 /* ─── AI history ─── */
-const AI_HISTORY_KEY = 'd30_ai_history';
-const AI_LAST_KEY    = type => `d30_ai_last_${type}`;
-const AI_TEXT_KEY    = type => `d30_ai_text_${type}`;
+const AI_HISTORY_KEY = uid => uid ? `d30_ai_history_${uid}` : 'd30_ai_history';
+const AI_LAST_KEY    = (type, uid) => uid ? `d30_ai_last_${type}_${uid}` : `d30_ai_last_${type}`;
+const AI_TEXT_KEY    = (type, uid) => uid ? `d30_ai_text_${type}_${uid}` : `d30_ai_text_${type}`;
 const MIN_DAILY_SECS = 30 * 60;
 
-function loadAiHistory() {
-  try { return JSON.parse(localStorage.getItem(AI_HISTORY_KEY) || '[]'); } catch { return []; }
+function loadAiHistory(uid) {
+  try { return JSON.parse(localStorage.getItem(AI_HISTORY_KEY(uid)) || '[]'); } catch { return []; }
 }
-function saveToAiHistory(entry) {
+function saveToAiHistory(entry, uid) {
   try {
-    const h = loadAiHistory();
+    const h = loadAiHistory(uid);
     h.unshift(entry);
-    localStorage.setItem(AI_HISTORY_KEY, JSON.stringify(h.slice(0, 120)));
+    localStorage.setItem(AI_HISTORY_KEY(uid), JSON.stringify(h.slice(0, 120)));
   } catch {}
 }
 
@@ -148,8 +148,8 @@ function MdRenderer({ text, loading }) {
 }
 
 /* ─── AiAnalysis ─── */
-function AiAnalysis({ sessions, type, apiKey, autoRun }) {
-  const [text,    setText]    = React.useState(() => { try { return localStorage.getItem(AI_TEXT_KEY(type)) || ''; } catch { return ''; } });
+function AiAnalysis({ sessions, type, apiKey, autoRun, uid }) {
+  const [text,    setText]    = React.useState(() => { try { return localStorage.getItem(AI_TEXT_KEY(type, uid)) || ''; } catch { return ''; } });
   const [loading, setLoading] = React.useState(false);
   const [error,   setError]   = React.useState('');
   const accRef    = React.useRef('');
@@ -162,8 +162,8 @@ function AiAnalysis({ sessions, type, apiKey, autoRun }) {
   [sessions, today]);
 
   const alreadyUsedToday = React.useMemo(() => {
-    try { return localStorage.getItem(AI_LAST_KEY(type)) === today; } catch { return false; }
-  }, [type, today]);
+    try { return localStorage.getItem(AI_LAST_KEY(type, uid)) === today; } catch { return false; }
+  }, [type, uid, today]);
 
   const hasWeekOfData = React.useMemo(() => {
     if (!sessions.length) return false;
@@ -266,7 +266,7 @@ Use **negrito** nos números. Máximo 5 linhas por seção.`;
   const run = React.useCallback(async () => {
     if (!apiKey) { setError('Configure sua API key em Meu Perfil.'); return; }
     setLoading(true); setText(''); setError(''); accRef.current = '';
-    try { localStorage.setItem(AI_LAST_KEY(type), today); } catch {}
+    try { localStorage.setItem(AI_LAST_KEY(type, uid), today); } catch {}
     try {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -297,10 +297,10 @@ Use **negrito** nos números. Máximo 5 linhas por seção.`;
           } catch {}
         }
       }
-      try { localStorage.setItem(AI_TEXT_KEY(type), accRef.current); } catch {}
-      saveToAiHistory({ id: Date.now().toString(), type, date: today, generatedAt: new Date().toISOString(), text: accRef.current });
+      try { localStorage.setItem(AI_TEXT_KEY(type, uid), accRef.current); } catch {}
+      saveToAiHistory({ id: Date.now().toString(), type, date: today, generatedAt: new Date().toISOString(), text: accRef.current }, uid);
     } catch (e) {
-      try { localStorage.removeItem(AI_LAST_KEY(type)); } catch {}
+      try { localStorage.removeItem(AI_LAST_KEY(type, uid)); } catch {}
       setError('Não foi possível gerar a análise. Verifique sua API key.');
     }
     setLoading(false);
@@ -342,13 +342,13 @@ Use **negrito** nos números. Máximo 5 linhas por seção.`;
 }
 
 /* ─── AI History Tab ─── */
-function AiHistoryTab({ onOpenModal }) {
-  const [history, setHistory] = React.useState(() => loadAiHistory());
+function AiHistoryTab({ onOpenModal, uid }) {
+  const [history, setHistory] = React.useState(() => loadAiHistory(uid));
   const [tick, setTick] = React.useState(0);
 
   React.useEffect(() => {
-    setHistory(loadAiHistory());
-  }, [tick]);
+    setHistory(loadAiHistory(uid));
+  }, [tick, uid]);
 
   React.useEffect(() => {
     const id = setInterval(() => setTick(t => t + 1), 3000);
@@ -567,14 +567,14 @@ function TrackerEnded({ elapsed }) {
 }
 
 /* ─── Success ─── */
-function AiOfferModal({ apiKey, onClose }) {
+function AiOfferModal({ apiKey, onClose, uid }) {
   const [accepted, setAccepted] = React.useState(false);
 
   if (accepted && apiKey) {
     const allSessions = window.Data.load();
     return (
       <div className="trk-ai-offer-wrap">
-        <AiAnalysis sessions={allSessions} type="daily" apiKey={apiKey} autoRun={false} />
+        <AiAnalysis sessions={allSessions} type="daily" apiKey={apiKey} autoRun={false} uid={uid} />
         <button className="trk-ai-offer-close" onClick={onClose}>Fechar</button>
       </div>
     );
@@ -610,7 +610,7 @@ function AiOfferModal({ apiKey, onClose }) {
   );
 }
 
-function TrackerSuccess({ session, newBadges, onNew, onDashboard, onAnalises, apiKey }) {
+function TrackerSuccess({ session, newBadges, onNew, onDashboard, onAnalises, apiKey, uid }) {
   const [showAiOffer, setShowAiOffer] = React.useState(false);
   const hrs  = Math.floor((session?.duration || 0) / 3600);
   const mins = Math.floor(((session?.duration || 0) % 3600) / 60);
@@ -633,7 +633,7 @@ function TrackerSuccess({ session, newBadges, onNew, onDashboard, onAnalises, ap
         </div>
       )}
       {showAiOffer
-        ? <AiOfferModal apiKey={apiKey} onClose={() => setShowAiOffer(false)} />
+        ? <AiOfferModal apiKey={apiKey} onClose={() => setShowAiOffer(false)} uid={uid} />
         : <button className="trk-ai-offer-trigger" data-cursor="hover" onClick={() => setShowAiOffer(true)}>
             Gerar análise de IA desta sessão
           </button>
@@ -1108,7 +1108,7 @@ function StudyTracker({ user }) {
           <>
             {view === 'success' ? (
               <TrackerSuccess
-                session={lastSession} newBadges={newBadges} apiKey={apiKey}
+                session={lastSession} newBadges={newBadges} apiKey={apiKey} uid={user?.id}
                 onNew={handleNew}
                 onDashboard={() => { setView('idle'); setTab('dashboard'); }}
                 onAnalises={() => { setView('idle'); setTab('analises'); }}
@@ -1173,7 +1173,7 @@ function StudyTracker({ user }) {
         {/* Análises tab */}
         {tab === 'analises' && (
           <div>
-            <AiHistoryTab onOpenModal={setAiModal} />
+            <AiHistoryTab onOpenModal={setAiModal} uid={user?.id} />
           </div>
         )}
 

@@ -82,10 +82,11 @@ function BookCover({ title, category, staticSrc }) {
   );
 }
 
-/* ── Livros lidos (localStorage v2 — guarda título/autor) ── */
-function useLivrosLidos() {
+/* ── Livros lidos (localStorage — escopado por userId) ── */
+function useLivrosLidos(userId) {
+  const KEY = userId ? `d30_livros_lidos_v2_${userId}` : 'd30_livros_lidos_v2';
   const [books, setBooks] = React.useState(() => {
-    try { return JSON.parse(localStorage.getItem('d30_livros_lidos_v2') || '[]'); }
+    try { return JSON.parse(localStorage.getItem(KEY) || '[]'); }
     catch { return []; }
   });
   const ids = React.useMemo(() => new Set(books.map(b => b.id)), [books]);
@@ -93,7 +94,7 @@ function useLivrosLidos() {
     const next = prev.some(b => b.id === id)
       ? prev.filter(b => b.id !== id)
       : [...prev, { id, title: info?.title || '', author: info?.author || '' }];
-    try { localStorage.setItem('d30_livros_lidos_v2', JSON.stringify(next)); } catch {}
+    try { localStorage.setItem(KEY, JSON.stringify(next)); } catch {}
     return next;
   });
   return [ids, toggle];
@@ -228,7 +229,7 @@ function AdminLivroForm({ onSaved, toast }) {
 function LivrosPage({ user, toast }) {
   const isAdmin = user?.email === OWNER_EMAIL;
 
-  const [readIds, toggleRead] = useLivrosLidos();
+  const [readIds, toggleRead] = useLivrosLidos(user?.id);
 
   const [tab,          setTab]          = React.useState('free'); // free | recom
   const [lang,         setLang]         = React.useState('pt');

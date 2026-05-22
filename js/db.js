@@ -300,6 +300,10 @@ const DB = {
   roadmap: {
     LS_KEY: 'd30_roadmap_v3',
 
+    init(userId) {
+      DB.roadmap.LS_KEY = userId ? `d30_roadmap_v3_${userId}` : 'd30_roadmap_v3';
+    },
+
     async getProgress(userId) {
       if (userId) {
         const { data, error } = await window.sb

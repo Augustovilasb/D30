@@ -3,6 +3,10 @@
 const Badges = {
   KEY: 'd30_earned_badges',
 
+  init(userId) {
+    Badges.KEY = userId ? `d30_earned_badges_${userId}` : 'd30_earned_badges';
+  },
+
   /* SVG inner HTML for each badge (24×24 viewBox, stroke/fill use currentColor) */
   ICONS: {
     primeira_sessao:  '<polygon points="5,3 19,12 5,21" fill="currentColor"/>',
