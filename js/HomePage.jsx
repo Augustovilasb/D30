@@ -131,75 +131,81 @@ const STORY_BEATS = [
 ];
 
 function StorySection() {
-  const [progress, setProgress] = React.useState(0);
+  const [selected, setSelected] = React.useState(0);
+  const lockedRef    = React.useRef(false);
+  const touchStartRef = React.useRef(null);
+  const stageRef     = React.useRef(null);
 
-  React.useEffect(() => {
-    const onScroll = () => {
-      const el = document.getElementById('fp-story');
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const scrollable = el.offsetHeight - window.innerHeight;
-      if (scrollable <= 0) return;
-      setProgress(Math.max(0, Math.min(1, -rect.top / scrollable)));
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener('scroll', onScroll);
+  const go = React.useCallback((next) => {
+    if (lockedRef.current || next < 0 || next >= STORY_BEATS.length) return;
+    lockedRef.current = true;
+    setSelected(next);
+    setTimeout(() => { lockedRef.current = false; }, 600);
   }, []);
 
-  function beatStyle(range) {
-    const [s, e] = range;
-    const FI = s === 0 ? 0 : 0.05;
-    const FO = 0.05;
-    let opacity = 0, ty = 20;
-    if (progress >= s && progress < s + FI) {
-      const t = FI === 0 ? 1 : (progress - s) / FI;
-      opacity = t; ty = 20 * (1 - t);
-    } else if (progress >= s + FI && progress < e - FO) {
-      opacity = 1; ty = 0;
-    } else if (progress >= e - FO && progress <= e) {
-      const t = (progress - (e - FO)) / FO;
-      opacity = 1 - t; ty = -10 * t;
-    }
-    return { opacity, transform: `translateY(${ty}px)` };
-  }
+  React.useEffect(() => {
+    const el = stageRef.current;
+    if (!el) return;
+
+    const onWheel = (e) => {
+      if (window.innerWidth <= 768) return;
+      if (lockedRef.current) { e.stopPropagation(); e.preventDefault(); return; }
+      const down = e.deltaY > 0;
+      if (down && selected < STORY_BEATS.length - 1) {
+        e.stopPropagation(); e.preventDefault(); go(selected + 1);
+      } else if (!down && selected > 0) {
+        e.stopPropagation(); e.preventDefault(); go(selected - 1);
+      }
+    };
+
+    const onTouchStart = (e) => {
+      touchStartRef.current = e.touches[0].clientY;
+    };
+    const onTouchEnd = (e) => {
+      if (touchStartRef.current === null || lockedRef.current) return;
+      const dy = touchStartRef.current - e.changedTouches[0].clientY;
+      touchStartRef.current = null;
+      if (Math.abs(dy) < 40) return;
+      dy > 0 ? go(selected + 1) : go(selected - 1);
+    };
+
+    el.addEventListener('wheel',      onWheel,      { passive: false });
+    el.addEventListener('touchstart', onTouchStart, { passive: true });
+    el.addEventListener('touchend',   onTouchEnd,   { passive: true });
+    return () => {
+      el.removeEventListener('wheel',      onWheel);
+      el.removeEventListener('touchstart', onTouchStart);
+      el.removeEventListener('touchend',   onTouchEnd);
+    };
+  }, [selected, go]);
 
   return (
-    <div className="story-scroll-section">
-      {/* Desktop: scroll-driven */}
-      <div className="story-scroll-sticky">
-        <p className="story-scroll-label">minha história</p>
-        <div className="story-scroll-stage">
-          {STORY_BEATS.map(beat => (
-            <div key={beat.id} className={`story-beat story-beat--${beat.type}`} style={beatStyle(beat.range)}>
-              {beat.type === 'tags'
-                ? <div className="story-beat-tags">{beat.items.map((item, i) => <span key={i}>{item}</span>)}</div>
-                : beat.text.split('\n').map((line, i) => <p key={i}>{line}</p>)
-              }
-            </div>
-          ))}
-        </div>
-        <div className="story-scroll-track">
-          <div className="story-scroll-bar" style={{ width: `${progress * 100}%` }} />
-        </div>
+    <div ref={stageRef} className="story-scroll-section">
+      <p className="story-scroll-label">minha história</p>
+
+      <div className="story-scroll-stage">
+        {STORY_BEATS.map((beat, i) => (
+          <div
+            key={beat.id}
+            className={'story-beat story-beat--' + beat.type + (i === selected ? ' story-beat--active' : '') + (i < selected ? ' story-beat--past' : '')}
+          >
+            {beat.type === 'tags'
+              ? <div className="story-beat-tags">{beat.items.map((item, j) => <span key={j}>{item}</span>)}</div>
+              : beat.text.split('\n').map((line, j) => <p key={j}>{line}</p>)
+            }
+          </div>
+        ))}
       </div>
 
-      {/* Mobile: estático */}
-      <div className="story-mobile">
-        <p className="story-scroll-label">minha história</p>
-        <p className="story-beat--line">Eu já tentei muita coisa.</p>
-        <div className="story-beat-tags story-beat-tags--mobile">
-          {['Educação Física', 'Exército', 'Engenharia Civil', 'Produção'].map((t, i) => <span key={i}>{t}</span>)}
-        </div>
-        <p className="story-beat--muted">No fundo, eu sabia que nada disso era pra mim.</p>
-        <p className="story-beat--big">4 anos atrás, decidi sair do Brasil.</p>
-        <div className="story-beat-tags story-beat-tags--mobile">
-          {['Sem inglês', 'Sem nunca ter saído do país', 'Cozinha', 'Cleaner', 'Segurança'].map((t, i) => <span key={i}>{t}</span>)}
-        </div>
-        <p className="story-beat--line">Precisei escolher: voltar pro Brasil ou entrar numa faculdade e ficar.</p>
-        <p className="story-beat--line">Entrei em Ciência da Computação. Sem nunca ter aberto um terminal na vida.</p>
-        <blockquote className="story-beat--quote">Pela primeira vez na vida,<br/>eu tava feliz estudando.</blockquote>
-        <p className="story-beat--close">Criei a D30 pra você não perder tanto tempo quanto eu perdi. Isso aqui não é um curso. É uma comunidade de verdade.</p>
+      <div className="story-scroll-track">
+        <div className="story-scroll-bar" style={{ width: `${(selected / (STORY_BEATS.length - 1)) * 100}%` }} />
+      </div>
+
+      {/* Indicador mobile: setas */}
+      <div className="story-nav-mobile">
+        <button onClick={() => go(selected - 1)} disabled={selected === 0}>←</button>
+        <span>{selected + 1} / {STORY_BEATS.length}</span>
+        <button onClick={() => go(selected + 1)} disabled={selected === STORY_BEATS.length - 1}>→</button>
       </div>
     </div>
   );
