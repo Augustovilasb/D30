@@ -74,20 +74,19 @@ function EditProfilePage({ user, onUpdate, onNavigate }) {
     setSaving(true); setError('');
     try {
       if (window.sb && user.id) {
-        const { data: upsertData, error: dbErr } = await window.sb.from('profiles').upsert({
-          id:            user.id,
+        const { error: dbErr } = await window.sb.from('profiles').update({
           full_name:     form.full_name.trim(),
-          username:      form.username.trim() || null,
-          bio:           form.bio.trim()      || null,
-          profession:    form.profession.trim() || null,
+          username:      form.username.trim()      || null,
+          bio:           form.bio.trim()           || null,
+          profession:    form.profession.trim()    || null,
           avatar_url:    form.avatar_url.trim()    || null,
           github_url:    form.github_url.trim()    || null,
           linkedin_url:  form.linkedin_url.trim()  || null,
           instagram_url: form.instagram_url.trim() || null,
           twitter_url:   form.twitter_url.trim()   || null,
           website_url:   form.website_url.trim()   || null,
-        }, { onConflict: 'id' }).select();
-        console.log('[D30] upsert data:', upsertData, '| error:', dbErr);
+        }).eq('id', user.id);
+        console.log('[D30] update error:', dbErr);
         if (dbErr) throw new Error(
           dbErr.code === '23505' ? 'Esse username já está em uso.' : dbErr.message
         );
