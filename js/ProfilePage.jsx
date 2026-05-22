@@ -530,12 +530,15 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
                 )}
                 {devLabel && (
                   <div className="pub-pioneer-badge">
-                    <svg width="30" height="34" viewBox="0 0 34 38" fill="none" style={{ color: '#999' }}>
+                    <svg width="30" height="34" viewBox="0 0 34 38" fill="none" style={{ color: '#888' }}>
                       <path d="M17 1.5L32.5 10V28L17 36.5L1.5 28V10Z" stroke="currentColor" strokeWidth="1.5"/>
-                      <path d="M17 6L28 12.5V25.5L17 32L6 25.5V12.5Z" stroke="currentColor" strokeWidth="0.6" strokeOpacity="0.4"/>
-                      <path d="M13 16l-4 3 4 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M21 16l4 3-4 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-                      <line x1="19" y1="14" x2="15" y2="25" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+                      <path d="M17 6L28 12.5V25.5L17 32L6 25.5V12.5Z" stroke="currentColor" strokeWidth="0.5" strokeOpacity="0.35"/>
+                      {/* < */}
+                      <path d="M12 15L8 19L12 23" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                      {/* / */}
+                      <line x1="20" y1="13.5" x2="14" y2="24.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+                      {/* > */}
+                      <path d="M22 15L26 19L22 23" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                     <span className="pub-pioneer-label">{devLabel}</span>
                   </div>
