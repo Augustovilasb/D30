@@ -314,7 +314,7 @@ function StatsDetailModal({ type, user, onClose, onNavigate }) {
 
   React.useEffect(() => {
     if (type === 'livros') {
-      try { setItems(JSON.parse(localStorage.getItem('d30_livros_lidos_v2') || '[]')); }
+      try { setItems(JSON.parse(localStorage.getItem(`d30_livros_lidos_v2_${user.id}`) || '[]')); }
       catch { setItems([]); }
     } else if (type === 'cursos') {
       DB.roadmap.getProgress(user.id).then(done => {
@@ -467,11 +467,11 @@ function ProfilePage({ user, onSignOut, onNavigate }) {
   const totalHours  = (totalSecs / 3600).toFixed(1);
   const bestStreak  = window.Data.getBestStreak();
   const livrosLidos = React.useMemo(() => {
-    try { return JSON.parse(localStorage.getItem('d30_livros_lidos_v2') || '[]').length; } catch { return 0; }
+    try { return JSON.parse(localStorage.getItem(`d30_livros_lidos_v2_${user.id}`) || '[]').length; } catch { return 0; }
   }, []);
 
   const rmDone = React.useMemo(() => {
-    try { return new Set(JSON.parse(localStorage.getItem('d30_roadmap_v3') || '[]')); } catch { return new Set(); }
+    try { return window.DB?.roadmap._loadLocal() || new Set(); } catch { return new Set(); }
   }, []);
   const totalCourses = typeof COURSES !== 'undefined' && COURSES ? COURSES.length : 0;
   const doneCourses  = typeof COURSES !== 'undefined' && COURSES ? COURSES.filter(c => rmDone.has(c.id)).length : rmDone.size;
