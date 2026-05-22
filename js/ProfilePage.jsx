@@ -3,6 +3,9 @@
 function BadgeIcon({ slug, color, size = 22 }) {
   const inner = (window.Badges.ICONS || {})[slug] || '';
   if (!inner) return null;
+  if (!inner.startsWith('<')) {
+    return <span style={{ fontSize: size * 0.9, lineHeight: 1, flexShrink: 0 }}>{inner}</span>;
+  }
   return (
     <svg
       width={size} height={size} viewBox="0 0 24 24" fill="none"
