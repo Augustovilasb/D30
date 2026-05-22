@@ -4859,11 +4859,12 @@ nav.nav--floating .user-menu-info strong{ color: var(--text); }
 .stats-detail-item--link:hover .stats-detail-item-title { color: #fff; }
 
 @keyframes highlight-pulse {
-  0%   { transform: scale(1);    box-shadow: 0 0 0 0px rgba(109,92,230,.6); }
-  35%  { transform: scale(1.04); box-shadow: 0 0 0 6px rgba(109,92,230,.18); }
-  100% { transform: scale(1);    box-shadow: 0 0 0 0px rgba(109,92,230,0);  }
+  0%   { transform: scale(1);    }
+  25%  { transform: scale(1.12); }
+  55%  { transform: scale(1.06); }
+  100% { transform: scale(1);    }
 }
-.highlight-flash { animation: highlight-pulse 1s ease; }
+.highlight-flash { animation: highlight-pulse 0.9s cubic-bezier(.22,1,.36,1); }
 .stats-detail-item-title { font-size: 13px; font-weight: 600; color: #f0f0f0; }
 .stats-detail-item-sub   { font-size: 11px; color: #666; }
 
