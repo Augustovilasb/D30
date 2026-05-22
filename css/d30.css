@@ -342,14 +342,15 @@ nav {
 }
 .feat-topics li {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 14px;
   font-size: 13px;
   color: var(--muted);
-  line-height: 1;
-  padding: 9px 0;
+  line-height: 1.5;
+  padding: 8px 0;
   border-bottom: 1px solid var(--border);
 }
+.feat-topics li::before { margin-top: 7px; }
 .feat-topics li:first-child { border-top: 1px solid var(--border); }
 .feat-topics li::before {
   content: '';
