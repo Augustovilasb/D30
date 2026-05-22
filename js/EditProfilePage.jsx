@@ -77,9 +77,9 @@ function EditProfilePage({ user, onUpdate, onNavigate }) {
         const { data: upsertData, error: dbErr } = await window.sb.from('profiles').upsert({
           id:            user.id,
           full_name:     form.full_name.trim(),
-          username:      form.username.trim(),
-          bio:           form.bio.trim(),
-          profession:    form.profession.trim(),
+          username:      form.username.trim() || null,
+          bio:           form.bio.trim()      || null,
+          profession:    form.profession.trim() || null,
           avatar_url:    form.avatar_url.trim()    || null,
           github_url:    form.github_url.trim()    || null,
           linkedin_url:  form.linkedin_url.trim()  || null,
