@@ -192,6 +192,20 @@ body[data-cursor-mode="ghost"] *::after { cursor: none !important; }
   width: 100%;
 }
 
+/* Story section full-page */
+.story-fp-wrap {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.story-fp-wrap .story-card-inner {
+  width: 100%;
+}
+
 /* ── Founder section (fp-founder) ── */
 .founder-section {
   display: grid;

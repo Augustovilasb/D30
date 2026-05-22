@@ -1,9 +1,10 @@
 /* HomePage.jsx — fullpage scroll: hero → about → founder */
 
 const FP_SECTIONS = [
-  { id: 'fp-hero',    label: 'Início'   },
-  { id: 'fp-about',  label: 'Sobre'    },
-  { id: 'fp-founder',label: 'Fundador' },
+  { id: 'fp-hero',    label: 'Início'         },
+  { id: 'fp-story',   label: 'Minha história' },
+  { id: 'fp-about',   label: 'Sobre'          },
+  { id: 'fp-founder', label: 'Fundador'       },
 ];
 
 function FpDots() {
@@ -91,19 +92,24 @@ function HomePage({ onNavigate, onSignIn }) {
               </div>
               <div className="hero-actions">
                 <button className="btn-primary" data-cursor="hover" onClick={() => onSignIn('signup')}>Quero fazer parte →</button>
-                <button className="btn-ghost" data-cursor="hover" onClick={() => document.getElementById('fp-about').scrollIntoView({ behavior: 'smooth' })}>Saber mais</button>
+                <button className="btn-ghost" data-cursor="hover" onClick={() => document.getElementById('fp-story').scrollIntoView({ behavior: 'smooth' })}>Saber mais</button>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── Seção 2: Sobre + Features ── */}
+      {/* ── Seção 2: Minha história ── */}
+      <section className="fp-section" id="fp-story">
+        <StorySection />
+      </section>
+
+      {/* ── Seção 3: Sobre + Features ── */}
       <section className="fp-section" id="fp-about">
         <AboutWithFeatures />
       </section>
 
-      {/* ── Seção 3: Fundador + Footer ── */}
+      {/* ── Seção 4: Fundador + Footer ── */}
       <section className="fp-section" id="fp-founder">
         <AugustoSection />
         <Footer />
@@ -112,8 +118,43 @@ function HomePage({ onNavigate, onSignIn }) {
   );
 }
 
+function StorySection() {
+  return (
+    <div className="story-fp-wrap">
+      <div className="story-card-inner">
+        <div className="story-section-top">
+          <p className="story-eyebrow">minha história até aqui</p>
+          <p className="story-intro">
+            Tentei tudo: Educação Física, Exército, 3 anos de Civil, formei em Produção.
+            No fundo eu sabia que <strong>nada disso era pra mim.</strong>
+          </p>
+        </div>
+
+        <div className="story-section-mid">
+          <p className="story-decision">4 anos atrás<br/>decidi sair do Brasil.</p>
+          <div className="story-tags">
+            <span>Sem inglês</span>
+            <span>Sem nunca ter saído do país</span>
+            <span>Cleaner</span>
+            <span>Warehouse</span>
+            <span>Cozinha</span>
+          </div>
+        </div>
+
+        <blockquote className="story-quote">
+          Pela primeira vez na vida,<br/>eu tava feliz estudando.
+        </blockquote>
+
+        <p className="story-close">
+          É por isso que criei essa comunidade.{' '}
+          <span>Pra você não passar pelo mesmo.</span>
+        </p>
+      </div>
+    </div>
+  );
+}
+
 const FEATURES = [
-  { num: '·', title: 'Minha história', isStory: true },
   {
     num: '01', title: 'Fórum ativo',
     backLabel: 'Discussões sobre',
@@ -161,50 +202,17 @@ const FEATURES = [
 function FeatureTab({ f, active, onClick }) {
   return (
     <div
-      className={'feature-item' + (active ? ' active-tab' : '') + (f.isStory ? ' feature-item--story' : '')}
+      className={'feature-item' + (active ? ' active-tab' : '')}
       data-cursor="hover"
       onClick={onClick}
     >
-      {!f.isStory && <div className="feat-num">{f.num}</div>}
+      <div className="feat-num">{f.num}</div>
       <div className="feat-title">{f.title}</div>
     </div>
   );
 }
 
 function FeaturePanel({ card }) {
-  if (card.isStory) {
-    return (
-      <div className="story-card-inner">
-        <div className="story-section-top">
-          <p className="story-eyebrow">minha história até aqui</p>
-          <p className="story-intro">
-            Tentei tudo: Educação Física, Exército, 3 anos de Civil, formei em Produção.
-            No fundo eu sabia que <strong>nada disso era pra mim.</strong>
-          </p>
-        </div>
-
-        <div className="story-section-mid">
-          <p className="story-decision">4 anos atrás<br/>decidi sair do Brasil.</p>
-          <div className="story-tags">
-            <span>Sem inglês</span>
-            <span>Sem nunca ter saído do país</span>
-            <span>Cleaner</span>
-            <span>Warehouse</span>
-            <span>Cozinha</span>
-          </div>
-        </div>
-
-        <blockquote className="story-quote">
-          Pela primeira vez na vida,<br/>eu tava feliz estudando.
-        </blockquote>
-
-        <p className="story-close">
-          É por isso que criei essa comunidade.{' '}
-          <span>Pra você não passar pelo mesmo.</span>
-        </p>
-      </div>
-    );
-  }
   return (
     <div className="feature-panel-content">
       <div className="feat-top">
@@ -282,7 +290,7 @@ function AboutWithFeatures() {
               onClick={() => go(i)}
               data-cursor="hover"
             >
-              <span className="folders-nav-num">{f.isStory ? '·' : f.num}</span>
+              <span className="folders-nav-num">{f.num}</span>
               <span className="folders-nav-title">{f.title}</span>
             </button>
           ))}
@@ -307,7 +315,7 @@ function AboutWithFeatures() {
           return (
             <div key={f.num} className={'folder-card' + (i === selected ? ' folder-card--active' : '')} style={style} onClick={i > selected ? () => go(i) : undefined}>
               <div className="folder-card-header">
-                {!f.isStory && <span className="folder-card-num">{f.num}</span>}
+                <span className="folder-card-num">{f.num}</span>
                 <span className="folder-card-title">{f.title}</span>
                 {i === selected && selected < FEATURES.length - 1 && (
                   <span className="folder-card-hint">deslize →</span>
