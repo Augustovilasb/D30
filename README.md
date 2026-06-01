@@ -8,7 +8,13 @@
 
 ## O que é
 
-A D30 é uma comunidade real, sem fórmula mágica, feita por quem tá no mesmo caminho. Fórum ativo, palestras mensais, roadmap de estudos com foco em Java, sala de estudos no Discord e vagas filtradas para jr e transição de carreira.
+A D30 é uma comunidade real, sem fórmula mágica, feita por quem tá no mesmo caminho. É um projeto para quem quer **mudar de carreira e entrar na TI** — em qualquer idade. Fórum ativo, palestras mensais, **roadmaps específicos** para cada ramificação da área, sala de estudos no Discord e vagas filtradas para jr e transição de carreira.
+
+## Por que existe
+
+Eu demorei muito tempo pra entender cada ramificação da TI — quais caminhos existem, por onde começar, o que estudar primeiro. Foi confuso e solitário.
+
+A D30 nasceu pra encurtar esse caminho pra quem vem depois. Quero ajudar as pessoas a não se perderem como eu me perdi: com **roadmaps específicos** por área, uma comunidade que apoia e gente que tá trilhando a mesma jornada. Se eu puder poupar alguém de meses de confusão, já valeu a pena.
 
 ## Stack
 
