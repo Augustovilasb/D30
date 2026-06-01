@@ -1,51 +1,47 @@
-# D30 — Dev aos 30
+# D30 - Dev aos 30
 
-> Comunidade gratuita em português para quem está em transição de carreira para dev — em qualquer idade.
+> A free Portuguese speaking community for people changing careers into tech, at any age.
 
 ![D30 Preview](images/preview.png)
 
----
+## What it is
 
-## O que é
+D30 is a real community with no magic formula, built by people walking the same path. It is a project for anyone who wants to switch careers and get into tech, at any age. It offers an active forum, monthly talks, specific roadmaps for each branch of the field, a study room on Discord and a curated job board for junior and career transition roles.
 
-A D30 é uma comunidade real, sem fórmula mágica, feita por quem tá no mesmo caminho. É um projeto para quem quer **mudar de carreira e entrar na TI** — em qualquer idade. Fórum ativo, palestras mensais, **roadmaps específicos** para cada ramificação da área, sala de estudos no Discord e vagas filtradas para jr e transição de carreira.
+## Why it exists
 
-## Por que existe
-
-Eu demorei muito tempo pra entender cada ramificação da TI — quais caminhos existem, por onde começar, o que estudar primeiro. Foi confuso e solitário.
-
-A D30 nasceu pra encurtar esse caminho pra quem vem depois. Quero ajudar as pessoas a não se perderem como eu me perdi: com **roadmaps específicos** por área, uma comunidade que apoia e gente que tá trilhando a mesma jornada. Se eu puder poupar alguém de meses de confusão, já valeu a pena.
+It took me a long time to understand the branches of tech: which paths exist, where to start, what to study first. It was confusing and lonely. D30 was created to shorten that path for the people coming next, with specific roadmaps per area, a supportive community and people walking the same journey. If it saves someone months of confusion, it was worth it.
 
 ## Stack
 
-- HTML + CSS + JavaScript puro
-- React 18 (UMD, sem build step)
-- Babel Standalone (JSX no browser)
+- HTML, CSS and plain JavaScript
+- React 18 (UMD, no build step)
+- Babel Standalone (JSX in the browser)
 - Lenis smooth scroll
 
-## Como rodar
+## How to run
 
-Abre `html/website/index.html` direto no browser. Sem instalação, sem npm.
+Open `html/website/index.html` directly in the browser. No install, no npm.
 
-## Estrutura
+## Structure
 
 ```
 css/
-  d30.css       — tokens, componentes base (dark)
-  kit.css       — light theme + overrides do site
+  d30.css       tokens and base components (dark)
+  kit.css       light theme and site overrides
 js/
-  App.jsx       — roteamento
-  HomePage.jsx  — hero + pastas + seção fundador
-  Nav.jsx       — navegação fixa
-  motion.js     — fullpage scroll + animações
+  App.jsx       routing
+  HomePage.jsx  hero, sections and founder block
+  Nav.jsx       fixed navigation
+  motion.js     fullpage scroll and animations
   ...
 html/
   website/
-    index.html  — entry point
+    index.html  entry point
 images/
   augusto.png
 ```
 
 ---
 
-Feito por [@Dev.aos30](https://www.instagram.com/dev.aos30/) · D30 é de todo mundo
+Made by [@Dev.aos30](https://www.instagram.com/dev.aos30/) · D30 belongs to everyone
